@@ -1,8 +1,8 @@
 # files: *.sdf, *.logs, ...
-/hge_game/*.sdf
-/hge_game/*.opensdf
+hge_game/*.sdf
+hge_game/*.opensdf
 
 
 # Project compile folders
-/hge_game/hge_game/Debug/*
-/hge_game/hge_game/Release/*
+hge_game/Debug/
+hge_game/Release/
