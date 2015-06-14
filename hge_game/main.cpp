@@ -1,20 +1,12 @@
 #include "hge.h"
-
-HGE *hge = 0;
-hgeQuad quad;
-
-float x = 100.0f, y = 100.0f;
-float dx = 0.0f, dy = 0.0f;
-
-const float speed = 50;
-const float friction = 0.98f;
+#include "c_cube.h"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
-//Радиус фигуры
-#define CUBE_SIZE 20
+HGE *hge = 0;
 
+c_cube* cube;
 
 void SetWindowState(HGE *hge, hgeCallback framefunc)
 {
@@ -32,58 +24,15 @@ bool FrameFunc()
 {
     //Узнаем сколько прошло времени с последнего вызова функции кадра
     float dt = hge->Timer_GetDelta();
-
+    
     if (hge->Input_GetKeyState(HGEK_ESCAPE))
         return true;
-
-    if (hge->Input_GetKeyState(HGEK_LEFT))  dx -= speed*dt;
-    if (hge->Input_GetKeyState(HGEK_RIGHT)) dx += speed*dt;
-    if (hge->Input_GetKeyState(HGEK_UP))    dy -= speed*dt;
-    if (hge->Input_GetKeyState(HGEK_DOWN))  dy += speed*dt;
-
-    dx *= friction;
-    dy *= friction; 
-    x += dx;
-    y += dy;
-
-    //Если ушли вправо
-    if (x > SCREEN_WIDTH-CUBE_SIZE)
-    {
-        x = 2*(SCREEN_WIDTH - CUBE_SIZE) - x;
-        dx = -dx;
-    }
-
-    //Если ушли влево
-    if (x < CUBE_SIZE)
-    {
-        x = 2*CUBE_SIZE - x;
-        dx = -dx; 
-    }
-
-    //Если ушли вниз
-    if (y > SCREEN_HEIGHT-CUBE_SIZE)
-    { 
-        y = 2*(SCREEN_HEIGHT - CUBE_SIZE) - y;
-        dy = -dy; 
-    }
-
-    //Если ушли вверх
-    if (y < CUBE_SIZE)
-    { 
-        y = 2*CUBE_SIZE - y;
-        dy = -dy;
-    }
-
-    quad.v[0].x = x - CUBE_SIZE; quad.v[0].y = y - CUBE_SIZE;
-    quad.v[1].x = x + CUBE_SIZE; quad.v[1].y = y - CUBE_SIZE;
-    quad.v[2].x = x + CUBE_SIZE; quad.v[2].y = y + CUBE_SIZE;
-    quad.v[3].x = x - CUBE_SIZE; quad.v[3].y = y + CUBE_SIZE;
 
     hge->Gfx_BeginScene();
     hge->Gfx_Clear(0);
 
     //Рендерим всё тут
-    hge->Gfx_RenderQuad(&quad);
+    cube->Update(dt);
 
     hge->Gfx_EndScene();
 
@@ -95,30 +44,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     hge = hgeCreate(HGE_VERSION);
     SetWindowState(hge, FrameFunc);
 
-    //Загрузка текстур
-    quad.tex = hge->Texture_Load("url.jpeg");
-
-    //Настройка текстур
-    quad.blend = BLEND_ALPHAADD | BLEND_COLORMUL | BLEND_ZWRITE;
-
-    quad.v[0].tx = 96.0 / 128.0;   quad.v[0].ty = 64.0 / 128.0;
-    quad.v[1].tx = 128.0 / 128.0;  quad.v[1].ty = 64.0 / 128.0;
-    quad.v[2].tx = 128.0 / 128.0;  quad.v[2].ty = 96.0 / 128.0;
-    quad.v[3].tx = 96.0 / 128.0;   quad.v[3].ty = 96.0 / 128.0;
-
-    for (int i = 0; i<4; i++)
-    {
-        quad.v[i].z = 0.5f;
-        quad.v[i].col = 0xFFFFA000;
-    }
-
     //Запуск игры
     if (hge->System_Initiate())
     {
+        cube = new c_cube(20, hgeVector(SCREEN_WIDTH / 2, SCREEN_HEIGHT/2));
+
         hge->System_Start();
-        
-        //Удаляем загруженные объекты
-        hge->Texture_Free(quad.tex);
+
+        delete cube;
     }
     else
     {
