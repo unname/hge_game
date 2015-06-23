@@ -23,11 +23,8 @@ private:
     float           Friction;
     u_int           Size;
 
-    u_int           sWidth;
-    u_int           sHeight;
-
 public:
-    c_cube(u_int size, hgeVector position);
+    c_cube(u_int size);
     ~c_cube();
 
     bool Update(float delta);
@@ -38,6 +35,9 @@ public:
 
     hgeRect GetBoundingBox();
     hgeVector GetPosition();
+
+    int GetScreenWidth(HGE* hge);
+    int GetScreenHeight(HGE* hge);
 };
 
 #endif

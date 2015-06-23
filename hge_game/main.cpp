@@ -5,7 +5,6 @@
 #define SCREEN_HEIGHT 600
 
 HGE *hge = 0;
-
 c_cube* cube;
 
 void SetWindowState(HGE *hge, hgeCallback framefunc)
@@ -31,9 +30,13 @@ bool FrameFunc()
     hge->Gfx_BeginScene();
     hge->Gfx_Clear(0);
 
-    //Рендерим всё тут
-    cube->Update(dt);
+    //Рендерим всё тут:
+    //==========================/=============================/
 
+    cube->Update(dt);  // рендер игрока
+
+
+    //==========================/=============================/
     hge->Gfx_EndScene();
 
     return false;
@@ -47,7 +50,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     //Запуск игры
     if (hge->System_Initiate())
     {
-        cube = new c_cube(20, hgeVector(SCREEN_WIDTH / 2, SCREEN_HEIGHT/2));
+        //Создание персонажа
+        cube = new c_cube(20);
 
         hge->System_Start();
 

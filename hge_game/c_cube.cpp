@@ -2,44 +2,48 @@
 
 HGE* c_cube::hge = 0;
 
-c_cube::c_cube(u_int size, hgeVector position)
+//конструктор
+c_cube::c_cube(u_int size)
 {
-    hge = hgeCreate(HGE_VERSION); //Get interface to hge
-
-    //Получаем размер экрана
-    sWidth = hge->System_GetState(HGE_SCREENWIDTH);
-    sHeight = hge->System_GetState(HGE_SCREENHEIGHT);
-
-    //Установка переменных
-    SetPosition(hgeVector(position.x, position.y));
-    Size = size;
-    Speed = 50.0f;
-    Friction = 0.98f;
-    
-    //Графические настройки
-    Quad.tex = hge->Texture_Load("images/cube_tex.jpeg");
-
-    Quad.blend = BLEND_ALPHAADD | BLEND_COLORMUL | BLEND_ZWRITE;
-
-    Quad.v[0].tx = 96.0 / 128.0;   Quad.v[0].ty = 64.0 / 128.0;
-    Quad.v[1].tx = 128.0 / 128.0;  Quad.v[1].ty = 64.0 / 128.0;
-    Quad.v[2].tx = 128.0 / 128.0;  Quad.v[2].ty = 96.0 / 128.0;
-    Quad.v[3].tx = 96.0 / 128.0;   Quad.v[3].ty = 96.0 / 128.0;
-
-    for (int i = 0; i<4; i++)
+    if (hge = hgeCreate(HGE_VERSION))
     {
-        Quad.v[i].z = 0.5f;
-        Quad.v[i].col = 0xFFFFA000;
+        //Установка переменных
+        SetPosition(hgeVector(GetScreenWidth(hge)/2, GetScreenHeight(hge)/2));    // позиция
+        Size = size;                                                          // размер
+        Speed = 50.0f;                                                        // скорость
+        Friction = 0.98f;                                                     // коэф.трения
+
+        //Графические настройки
+        //Quad.tex = hge->Texture_Load("images/cube_tex.jpeg");
+
+        Quad.blend = BLEND_ALPHAADD | BLEND_COLORMUL | BLEND_ZWRITE;
+
+        Quad.v[0].tx = 96.0 / 128.0;   Quad.v[0].ty = 64.0 / 128.0;
+        Quad.v[1].tx = 128.0 / 128.0;  Quad.v[1].ty = 64.0 / 128.0;
+        Quad.v[2].tx = 128.0 / 128.0;  Quad.v[2].ty = 96.0 / 128.0;
+        Quad.v[3].tx = 96.0 / 128.0;   Quad.v[3].ty = 96.0 / 128.0;
+
+        for (int i = 0; i < 4; i++)
+        {
+            Quad.v[i].z = 0.5f;
+            Quad.v[i].col = 0xFFFFA000;
+        }
+
+        //Sprite = new hgeAnimation(Texture, 4, 4, 0, 0, 64, 29);
+        //Sprite->SetHotSpot(32, 14.5);
+        //Sprite->Play();
     }
-
-    //Sprite = new hgeAnimation(Texture, 4, 4, 0, 0, 64, 29);
-    //Sprite->SetHotSpot(32, 14.5);
-    //Sprite->Play();
+    else
+    {
+        //MessageBox
+    }
 }
-
+//деструктор
 c_cube::~c_cube()
 {
-    hge->Texture_Free(Texture);
+    if (Texture)
+        hge->Texture_Free(Texture);
+
     //delete Sprite;
 
     hge->Release();
@@ -65,16 +69,28 @@ hgeVector c_cube::GetPosition()
     return Position;
 };
 
+int c_cube::GetScreenWidth(HGE* hge)
+{
+    return hge->System_GetState(HGE_SCREENWIDTH);
+}
+
+int c_cube::GetScreenHeight(HGE* hge)
+{
+    return hge->System_GetState(HGE_SCREENHEIGHT);
+}
+
+
 void c_cube::Render()
 {
+    hge->Gfx_RenderQuad(&Quad);
     //Sprite->Render(Position.x, Position.y);
 }
 
 //Повторный расчёт свойств объекта
 bool c_cube::Update(float delta)
 {
-    sWidth  = hge->System_GetState(HGE_SCREENWIDTH);
-    sHeight = hge->System_GetState(HGE_SCREENHEIGHT);
+    int sWidth = GetScreenWidth(hge);
+    int sHeight = GetScreenHeight(hge);
 
     if (hge->Input_GetKeyState(HGEK_LEFT))  Velocity.x -= Speed*delta;
     if (hge->Input_GetKeyState(HGEK_RIGHT)) Velocity.x += Speed*delta;
@@ -120,7 +136,9 @@ bool c_cube::Update(float delta)
     Quad.v[2].x = Position.x + Size; Quad.v[2].y = Position.y + Size;
     Quad.v[3].x = Position.x - Size; Quad.v[3].y = Position.y + Size;
 
-    hge->Gfx_RenderQuad(&Quad);
+
+    Render();
+    //hge->Gfx_RenderQuad(&Quad);
 
     //Sprite->GetBoundingBox(Position.x, Position.y, &BoundingBox);
     return false;
