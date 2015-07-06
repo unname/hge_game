@@ -12,10 +12,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="c_cube.cpp" />
+    <ClCompile Include="c_gameobject.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="c_cube.h" />
+    <ClInclude Include="c_gameobject.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8EFC771B-77DE-472B-8A9B-208DF18780A9}</ProjectGuid>

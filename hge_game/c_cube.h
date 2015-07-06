@@ -6,38 +6,26 @@
 #include "hgevector.h"
 #include "hgeanim.h"
 
-class c_cube
+#include "c_gameobject.h"
+
+class c_cube: c_gameobject
 {
 private:
-    static HGE*     hge;
 
     hgeQuad         Quad;
     HTEXTURE        Texture;
     hgeAnimation*   Sprite;
     hgeRect         BoundingBox; //необходимо  для обнаружения столкновений
 
-    hgeVector       Position;   // x,y
-    hgeVector       Velocity;   // dx,dy
-
-    float           Speed;
-    float           Friction;
-    u_int           Size;
-
 public:
     c_cube(u_int size);
     ~c_cube();
 
-    bool Update(float delta);
     void Render();
-
-    void SetVelocity(hgeVector velocity);
-    void SetPosition(hgeVector position);
+    void Update(float delta);
 
     hgeRect GetBoundingBox();
     hgeVector GetPosition();
-
-    int GetScreenWidth(HGE* hge);
-    int GetScreenHeight(HGE* hge);
 };
 
 #endif

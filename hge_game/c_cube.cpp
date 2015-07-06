@@ -1,7 +1,5 @@
 #include "c_cube.h"
 
-HGE* c_cube::hge = 0;
-
 //конструктор
 c_cube::c_cube(u_int size)
 {
@@ -49,36 +47,10 @@ c_cube::~c_cube()
     hge->Release();
 }
 
-void c_cube::SetVelocity(hgeVector velocity)
-{
-    Velocity = velocity;
-};
-
-void c_cube::SetPosition(hgeVector position)
-{
-    Position = position;
-};
-
 hgeRect c_cube::GetBoundingBox()
 {
     return BoundingBox;
 };
-
-hgeVector c_cube::GetPosition()
-{
-    return Position;
-};
-
-int c_cube::GetScreenWidth(HGE* hge)
-{
-    return hge->System_GetState(HGE_SCREENWIDTH);
-}
-
-int c_cube::GetScreenHeight(HGE* hge)
-{
-    return hge->System_GetState(HGE_SCREENHEIGHT);
-}
-
 
 void c_cube::Render()
 {
@@ -87,8 +59,10 @@ void c_cube::Render()
 }
 
 //Повторный расчёт свойств объекта
-bool c_cube::Update(float delta)
+void c_cube::Update(float delta)
 {
+    c_gameobject::Update(delta);
+
     int sWidth = GetScreenWidth(hge);
     int sHeight = GetScreenHeight(hge);
 
@@ -141,5 +115,4 @@ bool c_cube::Update(float delta)
     //hge->Gfx_RenderQuad(&Quad);
 
     //Sprite->GetBoundingBox(Position.x, Position.y, &BoundingBox);
-    return false;
 }
