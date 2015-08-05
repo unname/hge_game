@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="support">
+      <UniqueIdentifier>{986cf86c-59b3-4049-90f9-d94737e8687d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,6 +27,9 @@
     <ClCompile Include="c_gameobject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="c_bool.cpp">
+      <Filter>support</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="c_cube.h">
@@ -31,6 +37,9 @@
     </ClInclude>
     <ClInclude Include="c_gameobject.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="c_bool.h">
+      <Filter>support</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
