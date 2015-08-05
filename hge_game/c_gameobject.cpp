@@ -2,7 +2,7 @@
 
 HGE* c_gameobject::hge = 0;
 
-float c_gameobject::g = 25.0;
+float c_gameobject::g = 30.0;
 
 void c_gameobject::SetVelocity(hgeVector velocity)
 {

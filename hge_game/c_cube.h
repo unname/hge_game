@@ -17,6 +17,8 @@ private:
     hgeAnimation*   Sprite;
     hgeRect         BoundingBox; //необходимо  для обнаружения столкновений
 
+    c_bool SpaceHoldDown;
+
 public:
     c_cube(u_int size);
     ~c_cube();

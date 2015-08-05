@@ -4,6 +4,7 @@
 
 #include "hge.h"
 #include "hgevector.h"
+#include "c_bool.h"
  
 class c_gameobject
 {
@@ -14,8 +15,19 @@ protected:
     hgeVector       Velocity;   // dx,dy
 
     float           Speed;
-    float           Friction;
+    float           Max_Speed;
+
+    float Acceleration;
+    float Max_Acceleration;
+    float Acceleration_step;
+
+    float Friction;
+    float JumpImpulse;
+
+    c_bool OnTheGround;
+
     static float    g;
+
     u_int           Size;
 
 public:

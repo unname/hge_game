@@ -6,10 +6,18 @@ c_cube::c_cube(u_int size)
     if (hge = hgeCreate(HGE_VERSION))
     {
         //Установка переменных
-        SetPosition(hgeVector(GetScreenWidth(hge)/2, GetScreenHeight(hge)/2));    // позиция
-        Size = size;                                                          // размер
-        Speed = 50.0f;                                                        // скорость
-        Friction = 0.98f;                                                     // коэф.трения
+        SetPosition(hgeVector(GetScreenWidth(hge)/2, GetScreenHeight(hge)/2));
+        Size = size;    
+
+        Speed = 3.0;  
+        Max_Speed = Speed * 10;
+
+        Acceleration = 1.0;
+        Max_Acceleration = 4.0;
+        Acceleration_step = 0.5;
+
+        Friction = 0.98;       
+        JumpImpulse = 1500;
 
         //Графические настройки
         //Quad.tex = hge->Texture_Load("images/cube_tex.jpeg");
@@ -66,16 +74,57 @@ void c_cube::Update(float delta)
     int sWidth = GetScreenWidth(hge);
     int sHeight = GetScreenHeight(hge);
 
-    if (hge->Input_GetKeyState(HGEK_LEFT))  Velocity.x -= Speed*delta;
-    if (hge->Input_GetKeyState(HGEK_RIGHT)) Velocity.x += Speed*delta;
-    if (hge->Input_GetKeyState(HGEK_UP))    Velocity.y -= Speed*delta;
-    if (hge->Input_GetKeyState(HGEK_DOWN))  Velocity.y += Speed*delta;
+    if (hge->Input_GetKeyState(HGEK_LEFT))
+    {
+        if (Acceleration < Max_Acceleration)
+            Acceleration += Acceleration_step;
+        else
+            Acceleration = Max_Acceleration;
 
+        Velocity.x -= Speed*Acceleration*delta;
+    }
+  
+    if (hge->Input_GetKeyState(HGEK_RIGHT))
+    {
+        if (Acceleration < Max_Acceleration)
+            Acceleration += Acceleration_step;
+        else
+            Acceleration = Max_Acceleration;
+
+        Velocity.x += Speed*Acceleration*delta;
+    }
+
+    if (hge->Input_GetKeyState(HGEK_SPACE))
+    {
+        //Если прыгаем с земли:
+        if (OnTheGround.GetState())
+        {
+            //Позволяем удерживать клавишу для набора высоты
+            SpaceHoldDown.SetTrue();
+
+            //Даём импульс
+            Velocity.y -= (Speed + JumpImpulse)*delta;
+
+            OnTheGround.SetFalse();
+        }
+
+        if (SpaceHoldDown.GetState())
+        {
+            Velocity.y -= Speed*delta;
+        }
+    }
+    else
+        SpaceHoldDown.SetFalse();
+
+    //Учёт силы трения
     Velocity.x *= Friction;
     Velocity.y *= Friction;
 
+    // Актуальная позиция после всех расчётов
     Position.x += Velocity.x;
     Position.y += Velocity.y;
+
+
 
     //Если ушли вправо
     if (Position.x > sWidth - Size)
@@ -92,10 +141,11 @@ void c_cube::Update(float delta)
     }
 
     //Если ушли вниз
-    if (Position.y > sHeight - Size)
+    if (Position.y >= sHeight - Size)
     {
         Position.y = 2 * (sHeight - Size) - Position.y;
-        Velocity.y = - Velocity.y;
+        Velocity.y = 0;
+        OnTheGround.SetTrue();
     }
 
     //Если ушли вверх
