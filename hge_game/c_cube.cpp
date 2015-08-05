@@ -10,14 +10,18 @@ c_cube::c_cube(u_int size)
         Size = size;    
 
         Speed = 3.0;  
-        Max_Speed = Speed * 10;
+        Max_Speed = Speed * 30;
 
-        Acceleration = 1.0;
-        Max_Acceleration = 4.0;
+        Min_Acceleration = 1.0;
+        Max_Acceleration = 8.0;
+        Acceleration = Min_Acceleration;
         Acceleration_step = 0.5;
 
-        Friction = 0.98;       
-        JumpImpulse = 1500;
+        Max_JumpImpulse = g + 100;
+        JumpImpulse = 0.0;
+        JumpImpulse_step = 4.0;
+
+        Friction = 0.96;       
 
         //Графические настройки
         //Quad.tex = hge->Texture_Load("images/cube_tex.jpeg");
@@ -94,36 +98,56 @@ void c_cube::Update(float delta)
         Velocity.x += Speed*Acceleration*delta;
     }
 
+    //Ускорение сбрасывается, как только отпускаем кнопку движения
+    if (!hge->Input_GetKeyState(HGEK_RIGHT) && !hge->Input_GetKeyState(HGEK_LEFT))
+        Acceleration = Min_Acceleration;
+
     if (hge->Input_GetKeyState(HGEK_SPACE))
     {
-        //Если прыгаем с земли:
-        if (OnTheGround.GetState())
+        //Если находимя на земле и пробел только что нажат:
+        if (OnTheGround.GetState() && !SpaceHoldDown.GetState())
         {
-            //Позволяем удерживать клавишу для набора высоты
+            //Позволяем удерживать клавишу прыжка для набора высоты
             SpaceHoldDown.SetTrue();
 
-            //Даём импульс
-            Velocity.y -= (Speed + JumpImpulse)*delta;
-
             OnTheGround.SetFalse();
+
+            //При прыжке с земли даём максимальный импульс
+            JumpImpulse = Max_JumpImpulse;
         }
 
+        //Если удерживаем клавишу прыжка, импульс уменьшается постепенно
         if (SpaceHoldDown.GetState())
         {
-            Velocity.y -= Speed*delta;
+            if (JumpImpulse > 0)
+                JumpImpulse -= JumpImpulse_step;
+            else
+                JumpImpulse = 0;
         }
+
+        Velocity.y -= JumpImpulse*delta;
     }
     else
+    {
         SpaceHoldDown.SetFalse();
+
+        //Если отпустили клавишу прыжка, импульс исчезает
+        JumpImpulse = 0;
+    }
+
 
     //Учёт силы трения
     Velocity.x *= Friction;
     Velocity.y *= Friction;
 
+    //Ограничение максимальной скорости
+    if (Velocity.x>Max_Speed)   Velocity.x = Max_Speed;
+    if (Velocity.y>Max_Speed)   Velocity.y = Max_Speed;
+
+
     // Актуальная позиция после всех расчётов
     Position.x += Velocity.x;
     Position.y += Velocity.y;
-
 
 
     //Если ушли вправо
@@ -154,12 +178,11 @@ void c_cube::Update(float delta)
         Position.y = 2 * Size - Position.y;
         Velocity.y = - Velocity.y;
     }
-
+    
     Quad.v[0].x = Position.x - Size; Quad.v[0].y = Position.y - Size;
     Quad.v[1].x = Position.x + Size; Quad.v[1].y = Position.y - Size;
     Quad.v[2].x = Position.x + Size; Quad.v[2].y = Position.y + Size;
     Quad.v[3].x = Position.x - Size; Quad.v[3].y = Position.y + Size;
-
 
     Render();
     //hge->Gfx_RenderQuad(&Quad);

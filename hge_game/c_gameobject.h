@@ -11,24 +11,27 @@ class c_gameobject
 protected:
     static HGE*     hge;
 
-    hgeVector       Position;   // x,y
-    hgeVector       Velocity;   // dx,dy
+    hgeVector   Position;   // x,y
+    hgeVector   Velocity;   // dx,dy
 
-    float           Speed;
-    float           Max_Speed;
+    float   Speed;
+    float   Max_Speed;
 
-    float Acceleration;
-    float Max_Acceleration;
-    float Acceleration_step;
+    float   Acceleration;
+    float   Min_Acceleration;
+    float   Max_Acceleration;
+    float   Acceleration_step;
 
     float Friction;
-    float JumpImpulse;
 
-    c_bool OnTheGround;
+    float   JumpImpulse;
+    float   Max_JumpImpulse;
+    float   JumpImpulse_step;
 
     static float    g;
 
-    u_int           Size;
+    u_int   Size;
+    c_bool  OnTheGround;
 
 public:
 

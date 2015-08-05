@@ -2,7 +2,7 @@
 
 HGE* c_gameobject::hge = 0;
 
-float c_gameobject::g = 30.0;
+float c_gameobject::g = 40.0;
 
 void c_gameobject::SetVelocity(hgeVector velocity)
 {
@@ -45,10 +45,15 @@ void c_gameobject::Update(float delta)
     int sWidth = GetScreenWidth(hge);
     int sHeight = GetScreenHeight(hge);
 
-    //Реализовываем гравитацию
-    if (Position.y < sHeight - Size)
+    //Если объект в воздухе, то он падаем под силой гравитации
+    if (!OnTheGround.GetState())
     {
         Velocity.y += g*delta;
+    }
+    else
+    {
+        //Если объект на земле, то импульса нет
+        JumpImpulse = 0;
     }
 
     Render();
