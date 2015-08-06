@@ -1,12 +1,12 @@
 #include "hge.h"
-#include "c_cube.h"
+#include "c_player.h"
 #include "c_loadmap.h"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
 HGE *hge = 0;
-c_cube* cube;
+c_player* player;
 
 void SetWindowState(HGE *hge, hgeCallback framefunc)
 {
@@ -34,7 +34,7 @@ bool FrameFunc()
     //Рендерим всё тут:
     //==========================/=============================/
 
-    cube->Update(dt);  // рендер игрока
+    player->Update(dt);  // рендер игрока
 
 
     //==========================/=============================/
@@ -55,11 +55,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         c_loadmap* map = new c_loadmap();
 
         //Создание персонажа
-        cube = new c_cube(20);
+        player = new c_player(20);
 
         hge->System_Start();
 
-        delete cube;
+        delete player;
         delete map;
     }
     else

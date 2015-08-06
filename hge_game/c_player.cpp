@@ -1,82 +1,74 @@
-#include "c_cube.h"
+#include "c_player.h"
 
 //конструктор
-c_cube::c_cube(u_int size)
+c_player::c_player(u_int size)
 {
-    if (hge = hgeCreate(HGE_VERSION))
+    //Установка переменных
+    SetPosition(hgeVector(GetScreenWidth() / 2, GetScreenHeight() / 2));
+    Size = size;
+
+    Speed = 3.0;
+    Max_Speed = Speed * 30;
+
+    Min_Acceleration = 1.0;
+    Max_Acceleration = 8.0;
+    Acceleration = Min_Acceleration;
+    Acceleration_step = 0.5;
+
+    Max_JumpImpulse = g + 100;
+    JumpImpulse = 0.0;
+    JumpImpulse_step = 4.0;
+
+    Friction = 0.96;
+
+    //Графические настройки
+    //Quad.tex = hge->Texture_Load("images/cube_tex.jpeg");
+
+    Quad.blend = BLEND_ALPHAADD | BLEND_COLORMUL | BLEND_ZWRITE;
+
+    Quad.v[0].tx = 96.0 / 128.0;   Quad.v[0].ty = 64.0 / 128.0;
+    Quad.v[1].tx = 128.0 / 128.0;  Quad.v[1].ty = 64.0 / 128.0;
+    Quad.v[2].tx = 128.0 / 128.0;  Quad.v[2].ty = 96.0 / 128.0;
+    Quad.v[3].tx = 96.0 / 128.0;   Quad.v[3].ty = 96.0 / 128.0;
+
+    for (int i = 0; i < 4; i++)
     {
-        //Установка переменных
-        SetPosition(hgeVector(GetScreenWidth(hge)/2, GetScreenHeight(hge)/2));
-        Size = size;    
-
-        Speed = 3.0;  
-        Max_Speed = Speed * 30;
-
-        Min_Acceleration = 1.0;
-        Max_Acceleration = 8.0;
-        Acceleration = Min_Acceleration;
-        Acceleration_step = 0.5;
-
-        Max_JumpImpulse = g + 100;
-        JumpImpulse = 0.0;
-        JumpImpulse_step = 4.0;
-
-        Friction = 0.96;       
-
-        //Графические настройки
-        //Quad.tex = hge->Texture_Load("images/cube_tex.jpeg");
-
-        Quad.blend = BLEND_ALPHAADD | BLEND_COLORMUL | BLEND_ZWRITE;
-
-        Quad.v[0].tx = 96.0 / 128.0;   Quad.v[0].ty = 64.0 / 128.0;
-        Quad.v[1].tx = 128.0 / 128.0;  Quad.v[1].ty = 64.0 / 128.0;
-        Quad.v[2].tx = 128.0 / 128.0;  Quad.v[2].ty = 96.0 / 128.0;
-        Quad.v[3].tx = 96.0 / 128.0;   Quad.v[3].ty = 96.0 / 128.0;
-
-        for (int i = 0; i < 4; i++)
-        {
-            Quad.v[i].z = 0.5f;
-            Quad.v[i].col = 0xFFFFA000;
-        }
-
-        //Sprite = new hgeAnimation(Texture, 4, 4, 0, 0, 64, 29);
-        //Sprite->SetHotSpot(32, 14.5);
-        //Sprite->Play();
+        Quad.v[i].z = 0.5f;
+        Quad.v[i].col = 0xFFFFA000;
     }
-    else
-    {
-        //MessageBox
-    }
+
+    //Sprite = new hgeAnimation(Texture, 4, 4, 0, 0, 64, 29);
+    //Sprite->SetHotSpot(32, 14.5);
+    //Sprite->Play();
 }
+
 //деструктор
-c_cube::~c_cube()
+c_player::~c_player()
 {
     if (Texture)
         hge->Texture_Free(Texture);
 
     //delete Sprite;
-
-    hge->Release();
 }
 
-hgeRect c_cube::GetBoundingBox()
+hgeRect c_player::GetBoundingBox()
 {
     return BoundingBox;
 };
 
-void c_cube::Render()
+void c_player::Render()
 {
     hge->Gfx_RenderQuad(&Quad);
     //Sprite->Render(Position.x, Position.y);
 }
 
 //Повторный расчёт свойств объекта
-void c_cube::Update(float delta)
+void c_player::Update(float delta)
 {
     c_gameobject::Update(delta);
 
-    int sWidth = GetScreenWidth(hge);
-    int sHeight = GetScreenHeight(hge);
+    int sWidth = GetScreenWidth();
+    int sHeight = GetScreenHeight();
 
     if (hge->Input_GetKeyState(HGEK_LEFT))
     {

@@ -21,9 +21,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="c_cube.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="c_gameobject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -36,11 +33,14 @@
     <ClCompile Include="c_loadmap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="c_hge.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="c_player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="c_cube.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="c_gameobject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -51,6 +51,12 @@
       <Filter>support</Filter>
     </ClInclude>
     <ClInclude Include="c_loadmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="c_hge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="c_player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

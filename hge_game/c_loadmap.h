@@ -6,6 +6,7 @@
 
 #include "hgesprite.h"
 #include "hgerect.h"
+#include "c_hge.h"
 
 #include <vector>
 #include <string>
@@ -35,7 +36,7 @@ struct Layer
 };
 
 
-class c_loadmap
+class c_loadmap: public c_hge
 {
 public:
     c_loadmap();

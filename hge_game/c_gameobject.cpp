@@ -1,7 +1,5 @@
 #include "c_gameobject.h"
 
-HGE* c_gameobject::hge = 0;
-
 float c_gameobject::g = 40.0;
 
 void c_gameobject::SetVelocity(hgeVector velocity)
@@ -24,16 +22,15 @@ hgeVector c_gameobject::GetPosition()
     return Position;
 };
 
-int c_gameobject::GetScreenWidth(HGE* hge)
+int c_gameobject::GetScreenWidth()
 {
     return hge->System_GetState(HGE_SCREENWIDTH);
 }
 
-int c_gameobject::GetScreenHeight(HGE* hge)
+int c_gameobject::GetScreenHeight()
 {
     return hge->System_GetState(HGE_SCREENHEIGHT);
 }
-
 
 void c_gameobject::Render()
 {
@@ -42,8 +39,8 @@ void c_gameobject::Render()
 
 void c_gameobject::Update(float delta)
 {
-    int sWidth = GetScreenWidth(hge);
-    int sHeight = GetScreenHeight(hge);
+    int sWidth = GetScreenWidth();
+    int sHeight = GetScreenHeight();
 
     //Если объект в воздухе, то он падаем под силой гравитации
     if (!OnTheGround.GetState())

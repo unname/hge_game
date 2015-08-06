@@ -1,5 +1,5 @@
-#ifndef C_CUBE_H
-#define C_CUBE_H
+#ifndef C_PLAYER_H
+#define C_PLAYER_H
 #pragma once
 
 #include "hge.h"
@@ -8,7 +8,7 @@
 
 #include "c_gameobject.h"
 
-class c_cube: c_gameobject
+class c_player: c_gameobject
 {
 private:
 
@@ -20,8 +20,8 @@ private:
     c_bool SpaceHoldDown;
 
 public:
-    c_cube(u_int size);
-    ~c_cube();
+    c_player(u_int size);
+    ~c_player();
 
     void Render();
     void Update(float delta);

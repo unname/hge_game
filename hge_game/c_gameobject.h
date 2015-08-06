@@ -5,12 +5,11 @@
 #include "hge.h"
 #include "hgevector.h"
 #include "c_bool.h"
+#include "c_hge.h"
  
-class c_gameobject
+class c_gameobject: public c_hge
 {
 protected:
-    static HGE*     hge;
-
     hgeVector   Position;   // x,y
     hgeVector   Velocity;   // dx,dy
 
@@ -34,7 +33,6 @@ protected:
     c_bool  OnTheGround;
 
 public:
-
     virtual void Update(float delta);
     virtual void Render();
 
@@ -44,8 +42,8 @@ public:
     hgeVector GetPosition();
     hgeVector GetVelocity();
 
-    int GetScreenWidth(HGE* hge);
-    int GetScreenHeight(HGE* hge);
+    int GetScreenWidth();
+    int GetScreenHeight();
 };
 
 
