@@ -13,13 +13,17 @@
   <ItemGroup>
     <ClCompile Include="c_cube.cpp" />
     <ClCompile Include="c_gameobject.cpp" />
+    <ClCompile Include="c_loadmap.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="c_bool.cpp" />
+    <ClCompile Include="support\c_bool.cpp" />
+    <ClCompile Include="support\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="c_cube.h" />
     <ClInclude Include="c_gameobject.h" />
-    <ClInclude Include="c_bool.h" />
+    <ClInclude Include="c_loadmap.h" />
+    <ClInclude Include="support\c_bool.h" />
+    <ClInclude Include="support\tinyxml2.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8EFC771B-77DE-472B-8A9B-208DF18780A9}</ProjectGuid>
@@ -64,7 +68,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>hge\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>support;hge\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>

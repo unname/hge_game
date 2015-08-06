@@ -27,8 +27,14 @@
     <ClCompile Include="c_gameobject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="c_bool.cpp">
+    <ClCompile Include="support\c_bool.cpp">
       <Filter>support</Filter>
+    </ClCompile>
+    <ClCompile Include="support\tinyxml2.cpp">
+      <Filter>support</Filter>
+    </ClCompile>
+    <ClCompile Include="c_loadmap.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -38,8 +44,14 @@
     <ClInclude Include="c_gameobject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="c_bool.h">
+    <ClInclude Include="support\c_bool.h">
       <Filter>support</Filter>
+    </ClInclude>
+    <ClInclude Include="support\tinyxml2.h">
+      <Filter>support</Filter>
+    </ClInclude>
+    <ClInclude Include="c_loadmap.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
