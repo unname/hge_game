@@ -1,5 +1,6 @@
 #include "hge.h"
 #include "c_cube.h"
+#include "c_loadmap.h"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -50,12 +51,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     //Запуск игры
     if (hge->System_Initiate())
     {
+        //Создание уровня
+        c_loadmap* map = new c_loadmap();
+
         //Создание персонажа
         cube = new c_cube(20);
 
         hge->System_Start();
 
         delete cube;
+        delete map;
     }
     else
     {

@@ -1,9 +1,8 @@
 #include "c_loadmap.h"
 
-
 c_loadmap::c_loadmap()
 {
-    XMLDocument TME_MAP;
+    tinyxml2::XMLDocument TME_MAP;
     TME_MAP.LoadFile("resources/test_tmx.tmx");
 
     XMLElement *Map = NULL;
@@ -22,5 +21,5 @@ c_loadmap::c_loadmap()
 
 c_loadmap::~c_loadmap()
 {
-
+    //hge->Release();
 }
