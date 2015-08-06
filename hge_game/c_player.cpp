@@ -22,7 +22,7 @@ c_player::c_player(u_int size)
     Friction = 0.96;
 
     //Графические настройки
-    //Quad.tex = hge->Texture_Load("images/cube_tex.jpeg");
+    //Quad.tex = hge->Texture_Load("resources/cube_tex.jpg");
 
     Quad.blend = BLEND_ALPHAADD | BLEND_COLORMUL | BLEND_ZWRITE;
 
@@ -41,7 +41,7 @@ c_player::c_player(u_int size)
     //Sprite->SetHotSpot(32, 14.5);
     //Sprite->Play();
 
-   c_game::GameObjects.push_back(*this);
+   c_game::GameObjects.push_back(this);
 }
 
 //деструктор

@@ -21,7 +21,7 @@ private:
     static bool FrameFunc();
 
 public:
-    static std::vector < c_gameobject > GameObjects;
+    static std::vector < c_gameobject* > GameObjects;
     
     static size_t SCREEN_WIDTH;
     static size_t SCREEN_HEIGHT;

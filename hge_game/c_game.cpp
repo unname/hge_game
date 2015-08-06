@@ -3,7 +3,7 @@
 size_t c_game::SCREEN_WIDTH = 800;
 size_t c_game::SCREEN_HEIGHT = 600;
 
-std::vector < c_gameobject > c_game::GameObjects;
+std::vector < c_gameobject* > c_game::GameObjects;
 
 void c_game::SetWindowState(hgeCallback framefunc)
 {
@@ -33,7 +33,7 @@ bool c_game::FrameFunc()
 
     for (size_t obj_num = 0; obj_num < GameObjects.size(); obj_num++)
     {
-        GameObjects[obj_num].Update(dt);
+        GameObjects[obj_num]->Update(dt);
     }
 
     //==========================/=============================/
@@ -44,20 +44,17 @@ bool c_game::FrameFunc()
 
 void c_game::Run()
 {
-    //Загрузка карты
-    c_loadmap* map = new c_loadmap();
-
-    //Создание персонажа
-    c_player* player = new c_player(20);
-
     SetWindowState(FrameFunc);
+
+    hge->System_Initiate();
+
+    //Загрузка карты
+    c_loadmap map;
+    //Создание персонажа
+    c_player player(20);
 
     hge->System_Start();
 
     //Завершаем работу
-    delete player;
-    delete map;
-
     hge->System_Shutdown();
-    hge->Release();
 }
