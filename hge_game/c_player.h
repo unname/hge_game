@@ -6,6 +6,7 @@
 #include "hgevector.h"
 #include "hgeanim.h"
 
+#include "c_game.h"
 #include "c_gameobject.h"
 
 class c_player: c_gameobject

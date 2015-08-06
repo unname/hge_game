@@ -21,5 +21,5 @@ c_loadmap::c_loadmap()
 
 c_loadmap::~c_loadmap()
 {
-    //hge->Release();
+
 }

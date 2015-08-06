@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="c_game.cpp" />
     <ClCompile Include="c_player.cpp" />
     <ClCompile Include="c_gameobject.cpp" />
     <ClCompile Include="c_hge.cpp" />
@@ -20,6 +21,7 @@
     <ClCompile Include="support\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="c_game.h" />
     <ClInclude Include="c_player.h" />
     <ClInclude Include="c_gameobject.h" />
     <ClInclude Include="c_hge.h" />

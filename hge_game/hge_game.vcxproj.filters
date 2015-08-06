@@ -39,6 +39,9 @@
     <ClCompile Include="c_player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="c_game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="c_gameobject.h">
@@ -57,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="c_player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="c_game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

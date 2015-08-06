@@ -40,6 +40,8 @@ c_player::c_player(u_int size)
     //Sprite = new hgeAnimation(Texture, 4, 4, 0, 0, 64, 29);
     //Sprite->SetHotSpot(32, 14.5);
     //Sprite->Play();
+
+   c_game::GameObjects.push_back(*this);
 }
 
 //деструктор
@@ -47,6 +49,10 @@ c_player::~c_player()
 {
     if (Texture)
         hge->Texture_Free(Texture);
+
+    //TODO:
+    //Ќадо удол€ть обект из списка - c_game::GameObjects.push_back(*this);
+
 
     //delete Sprite;
 }
