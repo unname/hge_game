@@ -1,7 +1,7 @@
 # include "c_hge.h"
 
 HGE* c_hge::hge = 0;
-size_t c_hge::counter = 0;
+int c_hge::counter = 0;
 
 c_hge::c_hge()
 {
@@ -11,7 +11,7 @@ c_hge::c_hge()
 
         if (!hge)
         {
-            //Error;
+            MessageBox(NULL, hge->System_GetErrorMessage(), "Error", MB_OK | MB_ICONERROR | MB_APPLMODAL);
         }
     }
     

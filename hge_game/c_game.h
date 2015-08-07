@@ -19,6 +19,8 @@ class c_game : public c_hge
 private:
     void SetWindowState(hgeCallback framefunc);
     static bool FrameFunc();
+    void DisplayError();
+    bool LoadResources();
 
 public:
     static std::vector < c_gameobject* > GameObjects;
@@ -26,7 +28,9 @@ public:
     static size_t SCREEN_WIDTH;
     static size_t SCREEN_HEIGHT;
 
-    void Run();
+    bool Initialize();
+    void Start();
+    void Shutdown();
 };
 
 #endif

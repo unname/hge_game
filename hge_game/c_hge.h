@@ -8,7 +8,7 @@ class c_hge
 {
 protected:
     static HGE* hge;
-    static size_t counter;
+    static int  counter;
 public:
     c_hge();
     ~c_hge();

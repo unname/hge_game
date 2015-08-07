@@ -42,19 +42,52 @@ bool c_game::FrameFunc()
     return false;
 }
 
-void c_game::Run()
+
+bool c_game::LoadResources()
+{
+    //Загрузка карты
+    c_loadmap* map = new c_loadmap;
+
+    //Создание персонажа
+    c_player* player = new c_player(20);
+
+    return true;
+}
+
+bool c_game::Initialize()
 {
     SetWindowState(FrameFunc);
 
-    hge->System_Initiate();
+    if (hge->System_Initiate())
+    {
+        if (!LoadResources())
+        {
+            DisplayError();
+            return false;
+        }
+    }
+    else
+    {
+        DisplayError();
+        return false;
+    }
 
-    //Загрузка карты
-    c_loadmap map;
-    //Создание персонажа
-    c_player player(20);
+        return true;
+}
 
+void c_game::Start()
+{
     hge->System_Start();
+}
 
-    //Завершаем работу
+void c_game::Shutdown()
+{
+    //TODO: delete resources
+
     hge->System_Shutdown();
+}
+
+void c_game::DisplayError()
+{
+    MessageBox(NULL, hge->System_GetErrorMessage(), "Error", MB_OK | MB_ICONERROR);
 }
