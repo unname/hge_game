@@ -50,9 +50,15 @@ c_player::~c_player()
     if (Texture)
         hge->Texture_Free(Texture);
 
-    //TODO:
-    //Надо удолять обект из списка - c_game::GameObjects.push_back(*this);
-
+    
+    for (size_t obj_num = 0; obj_num < c_game::GameObjects.size(); obj_num++)
+    {
+        if (c_game::GameObjects[obj_num] == this)
+        {
+            c_game::GameObjects.erase(c_game::GameObjects.begin() + obj_num);
+            break;
+        }
+    }
 
     //delete Sprite;
 }
