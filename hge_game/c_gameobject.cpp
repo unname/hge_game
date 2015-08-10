@@ -7,38 +7,15 @@ void c_gameobject::SetVelocity(hgeVector velocity)
     Velocity = velocity;
 };
 
-void c_gameobject::SetPosition(hgeVector position)
-{
-    Position = position;
-};
-
 hgeVector c_gameobject::GetVelocity()
 {
     return Velocity;
 };
 
-hgeVector c_gameobject::GetPosition()
-{
-    return Position;
-};
-
-int c_gameobject::GetScreenWidth()
-{
-    return hge->System_GetState(HGE_SCREENWIDTH);
-}
-
-int c_gameobject::GetScreenHeight()
-{
-    return hge->System_GetState(HGE_SCREENHEIGHT);
-}
-
-void c_gameobject::Render()
-{
-
-}
-
 void c_gameobject::Update(float delta)
 {
+    c_drawobject::Update(delta);
+
     int sWidth = GetScreenWidth();
     int sHeight = GetScreenHeight();
 

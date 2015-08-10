@@ -3,8 +3,6 @@
 size_t c_game::SCREEN_WIDTH = 800;
 size_t c_game::SCREEN_HEIGHT = 600;
 
-std::vector < c_gameobject* > c_game::GameObjects;
-
 void c_game::SetWindowState(hgeCallback framefunc)
 {
     hge->System_SetState(HGE_FRAMEFUNC, framefunc);
@@ -31,9 +29,9 @@ bool c_game::FrameFunc()
     //Рендерим всё тут:
     //==========================/=============================/
 
-    for (size_t obj_num = 0; obj_num < GameObjects.size(); obj_num++)
+    for (size_t obj_num = 0; obj_num < c_drawobject::DrawObjects.size(); obj_num++)
     {
-        GameObjects[obj_num]->Update(dt);
+        c_drawobject::DrawObjects[obj_num]->Update(dt);
     }
 
     //==========================/=============================/
@@ -85,9 +83,4 @@ void c_game::Shutdown()
     //TODO: delete resources
 
     hge->System_Shutdown();
-}
-
-void c_game::DisplayError()
-{
-    MessageBox(NULL, hge->System_GetErrorMessage(), "Error", MB_OK | MB_ICONERROR);
 }

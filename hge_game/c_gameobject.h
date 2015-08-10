@@ -4,13 +4,13 @@
 
 #include "hge.h"
 #include "hgevector.h"
+
 #include "c_bool.h"
-#include "c_hge.h"
+#include "c_drawobject.h"
  
-class c_gameobject: public c_hge
+class c_gameobject: public c_drawobject
 {
 protected:
-    hgeVector   Position;   // x,y
     hgeVector   Velocity;   // dx,dy
 
     float   Speed;
@@ -32,18 +32,11 @@ protected:
     u_int   Size;
     c_bool  OnTheGround;
 
-public:
-    virtual void Update(float delta);
-    virtual void Render();
-
     void SetVelocity(hgeVector velocity);
-    void SetPosition(hgeVector position);
-
-    hgeVector GetPosition();
+public:
     hgeVector GetVelocity();
 
-    int GetScreenWidth();
-    int GetScreenHeight();
+    virtual void Update(float delta);
 };
 
 

@@ -40,38 +40,12 @@ c_player::c_player(u_int size)
     //Sprite = new hgeAnimation(Texture, 4, 4, 0, 0, 64, 29);
     //Sprite->SetHotSpot(32, 14.5);
     //Sprite->Play();
-
-   c_game::GameObjects.push_back(this);
 }
 
 //деструктор
 c_player::~c_player()
 {
-    if (Texture)
-        hge->Texture_Free(Texture);
 
-    
-    for (size_t obj_num = 0; obj_num < c_game::GameObjects.size(); obj_num++)
-    {
-        if (c_game::GameObjects[obj_num] == this)
-        {
-            c_game::GameObjects.erase(c_game::GameObjects.begin() + obj_num);
-            break;
-        }
-    }
-
-    //delete Sprite;
-}
-
-hgeRect c_player::GetBoundingBox()
-{
-    return BoundingBox;
-};
-
-void c_player::Render()
-{
-    hge->Gfx_RenderQuad(&Quad);
-    //Sprite->Render(Position.x, Position.y);
 }
 
 //Повторный расчёт свойств объекта
@@ -108,7 +82,7 @@ void c_player::Update(float delta)
 
     if (hge->Input_GetKeyState(HGEK_SPACE))
     {
-        //Если находимя на земле и пробел только что нажат:
+        //Если находимся на земле и пробел только что нажат:
         if (OnTheGround.GetState() && !SpaceHoldDown.GetState())
         {
             //Позволяем удерживать клавишу прыжка для набора высоты
