@@ -12,7 +12,8 @@ private:
 protected:
     static HGE* hge;
 
-    void c_hge::DisplayError();
+    void DisplayError(LPCSTR error_string);
+    void DisplayErrorHGE();
 public:
     c_hge();
     ~c_hge();

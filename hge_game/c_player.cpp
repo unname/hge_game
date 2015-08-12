@@ -145,7 +145,7 @@ void c_player::Update(float delta)
     //Если ушли вниз
     if (Position.y >= sHeight - Size)
     {
-        Position.y = 2 * (sHeight - Size) - Position.y;
+        Position.y = sHeight - Size;
         Velocity.y = 0;
         OnTheGround.SetTrue();
     }
@@ -153,7 +153,7 @@ void c_player::Update(float delta)
     //Если ушли вверх
     if (Position.y < Size)
     {
-        Position.y = 2 * Size - Position.y;
+        Position.y = Size;
         Velocity.y = - Velocity.y;
     }
     

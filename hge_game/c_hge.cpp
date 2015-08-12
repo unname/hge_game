@@ -11,7 +11,7 @@ c_hge::c_hge()
 
         if (!hge)
         {
-            DisplayError();
+            DisplayErrorHGE();
         }
     }
     
@@ -36,7 +36,13 @@ int c_hge::GetScreenHeight()
     return hge->System_GetState(HGE_SCREENHEIGHT);
 }
 
-void c_hge::DisplayError()
+
+void c_hge::DisplayError(LPCSTR error_string)
 {
-    MessageBox(NULL, hge->System_GetErrorMessage(), "Error", MB_OK | MB_ICONERROR);
+    MessageBox(NULL, error_string, "Error", MB_OK | MB_ICONERROR);
+}
+
+void c_hge::DisplayErrorHGE()
+{
+    MessageBox(NULL, hge->System_GetErrorMessage(), "HGE_Error", MB_OK | MB_ICONERROR);
 }

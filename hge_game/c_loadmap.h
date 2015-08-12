@@ -4,10 +4,14 @@
 
 #include "tinyxml2.h"
 
+#include "hgevector.h"
 #include "hgesprite.h"
 #include "hgerect.h"
-#include "c_hge.h"
 
+#include "c_hge.h"
+#include "c_drawobject.h"
+
+#include <map>
 #include <vector>
 #include <string>
 
@@ -24,7 +28,7 @@ struct Object
     string name;
     string type;
     hgeRect rect;
-    vector<pair<string, string>> properties;
+    map <string, string> properties;
 
     hgeSprite* sprite;
 };
@@ -45,16 +49,14 @@ public:
     //Загружает карту из указанного файла
     bool LoadFromFile(string filename);
 
-    //Возвращает первый объект с указанным именем
-    Object GetObject(string name);
-    
-    //Возвращает список объектов с указанным именем
-    vector<Object> GetObjects(string name);
+    //Возвращает указатель на первый объект с указанным именем
+    Object* GetObject(string name);
 
-    //Рисует все тайлы
-    void Draw();
+    //Возвращает список указателей на объекты с указанным именем
+    vector<Object*> GetObjects(string name);
 
-    //sf::Vector2i GetTileSize();
+    //Получаем размер тайлов
+    hgeVector GetTileSize();
 
 private:
     size_t          width, height,
@@ -64,8 +66,8 @@ private:
     hgeRect         drawingBounds;
     HTEXTURE        tilesetImage;
 
-    vector<Object>  objects;
-    vector<Layer>   layers;
+    vector<Object*>  objects;
+    vector<Layer*>   layers;
 };
 
 #endif

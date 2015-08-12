@@ -60,13 +60,13 @@ bool c_game::Initialize()
     {
         if (!LoadResources())
         {
-            DisplayError();
+            DisplayErrorHGE();
             return false;
         }
     }
     else
     {
-        DisplayError();
+        DisplayErrorHGE();
         return false;
     }
 
