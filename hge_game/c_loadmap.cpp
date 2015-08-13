@@ -19,26 +19,19 @@ std::string Object::GetPropertyString(std::string name)
 
 c_loadmap::c_loadmap()
 {
-    tinyxml2::XMLDocument TME_MAP;
-    TME_MAP.LoadFile("resources/test_tmx.tmx");
+    tilesetImageTex = NULL;
+    tilesetImage = nullptr;
 
-    XMLElement *Map = NULL;
-    Map = TME_MAP.FirstChildElement("map");
-
-    // Ширина и высота карты в тайлах
-    size_t MapWidth, MapHeight;
-    size_t TileWidth, TileHeight;
-
-    MapWidth = atoi(Map->Attribute("width"));
-    MapHeight = atoi(Map->Attribute("height"));
-
-    TileWidth = atoi(Map->Attribute("tilewidth"));
-    TileHeight = atoi(Map->Attribute("tileheight"));
+    LoadFromFile("resources/test_tmx.tmx");
 }
 
 c_loadmap::~c_loadmap()
 {
+    if (tilesetImage)
+        delete(tilesetImage);
 
+    if (tilesetImageTex)
+        hge->Texture_Free(tilesetImageTex);
 }
 
 Object* c_loadmap::GetObject(string name)
@@ -73,6 +66,7 @@ hgeVector c_loadmap::GetTileSize()
 
 bool c_loadmap::LoadFromFile(string filename)
 {
+    //Загрузка файла карты
     tinyxml2::XMLDocument TME_MAP;
     auto error_code = TME_MAP.LoadFile(filename.c_str());
 
@@ -85,6 +79,41 @@ bool c_loadmap::LoadFromFile(string filename)
 
         DisplayError(error_msg.c_str());
     }
+
+    //Получение парметров карты
+    XMLElement* Map = NULL;
+    Map = TME_MAP.FirstChildElement("map");
+
+    size_t MapWidth, MapHeight;
+    size_t TileWidth, TileHeight;
+
+    MapWidth = atoi(Map->Attribute("width"));
+    MapHeight = atoi(Map->Attribute("height"));
+
+    TileWidth = atoi(Map->Attribute("tilewidth"));
+    TileHeight = atoi(Map->Attribute("tileheight"));
+
+    //Получение описания тайлсета и идентификатора первого тайла
+    XMLElement* TileSet;
+    TileSet = Map->FirstChildElement("tileset");
+
+    firstTileID = atoi(TileSet->Attribute("firstgid"));
+
+    //Получение параметров картинки c тайлсетом
+    XMLElement* Image;
+    Image = TileSet->FirstChildElement("image");
+
+    string image_path;
+    size_t TileSetWidth, TileSetHeight;
+
+    image_path = Image->Attribute("source");
+    TileSetWidth = atoi(Image->Attribute("width"));
+    TileSetHeight = atoi(Image->Attribute("height"));
+
+    //Загрузка картинки
+    tilesetImageTex = hge->Texture_Load(image_path.c_str());
+    tilesetImage = new hgeSprite(tilesetImageTex, 0, 0, (float)TileSetWidth, (float)TileSetHeight);
+    
 
     return true;
 }

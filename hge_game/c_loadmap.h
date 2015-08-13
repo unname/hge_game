@@ -4,6 +4,7 @@
 
 #include "tinyxml2.h"
 
+#include "hge.h"
 #include "hgevector.h"
 #include "hgesprite.h"
 #include "hgerect.h"
@@ -64,7 +65,8 @@ private:
     size_t          firstTileID;
 
     hgeRect         drawingBounds;
-    HTEXTURE        tilesetImage;
+    hgeSprite*      tilesetImage;
+    HTEXTURE        tilesetImageTex;
 
     vector<Object*>  objects;
     vector<Layer*>   layers;
