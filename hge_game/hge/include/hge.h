@@ -16,6 +16,7 @@
 #include <windows.h>
 
 #define HGE_VERSION 0x181
+#define HGE_DIRECTX_VER 9
 
 // CMake adds PROJECTNAME_EXPORTS when compiles DLL
 #ifdef hge_EXPORTS
