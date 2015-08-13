@@ -2,6 +2,9 @@
 #define C_LOADMAP_H
 #pragma once
 
+#define RESOURCES_PATH "resources/"
+#define MAP_NAME "test_tmx.tmx"
+
 #include "tinyxml2.h"
 
 #include "hge.h"

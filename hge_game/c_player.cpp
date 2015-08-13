@@ -4,7 +4,7 @@
 c_player::c_player(u_int size)
 {
     //Установка переменных
-    SetPosition(hgeVector(GetScreenWidth() / 2, GetScreenHeight() / 2));
+    SetPosition(hgeVector((float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2));
     Size = size;
 
     Speed = 3.0;
@@ -145,7 +145,7 @@ void c_player::Update(float delta)
     //Если ушли вниз
     if (Position.y >= sHeight - Size)
     {
-        Position.y = sHeight - Size;
+        Position.y = (float)(sHeight - Size);
         Velocity.y = 0;
         OnTheGround.SetTrue();
     }
@@ -153,7 +153,7 @@ void c_player::Update(float delta)
     //Если ушли вверх
     if (Position.y < Size)
     {
-        Position.y = Size;
+        Position.y = (float)Size;
         Velocity.y = - Velocity.y;
     }
     

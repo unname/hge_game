@@ -4,7 +4,12 @@ hge_game/*.opensdf
 hge_game/*.suo
 hge_game/*.v12
 hge_game/*.v12.suo
-hge_game/hge_game.v12.suo
+
+# *.exe, *.pdb, *.ilk
+hge_game/*.exe
+hge_game/*.pdb
+hge_game/*.ilk
+
 
 # Project compile folders
 hge_game/Debug/

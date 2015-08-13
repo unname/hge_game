@@ -22,7 +22,10 @@ c_loadmap::c_loadmap()
     tilesetImageTex = NULL;
     tilesetImage = nullptr;
 
-    LoadFromFile("resources/test_tmx.tmx");
+    string map_path;
+    map_path.append(RESOURCES_PATH);
+    map_path.append(MAP_NAME);
+    LoadFromFile(map_path);
 }
 
 c_loadmap::~c_loadmap()
@@ -106,12 +109,18 @@ bool c_loadmap::LoadFromFile(string filename)
     string image_path;
     size_t TileSetWidth, TileSetHeight;
 
-    image_path = Image->Attribute("source");
+    image_path.append(RESOURCES_PATH);
+    image_path.append(Image->Attribute("source"));
+
     TileSetWidth = atoi(Image->Attribute("width"));
     TileSetHeight = atoi(Image->Attribute("height"));
 
-    //Загрузка картинки
+    //Загрузка картинки c тайлсетом
     tilesetImageTex = hge->Texture_Load(image_path.c_str());
+   
+    if (!tilesetImageTex)
+        DisplayErrorHGE();
+
     tilesetImage = new hgeSprite(tilesetImageTex, 0, 0, (float)TileSetWidth, (float)TileSetHeight);
     
 

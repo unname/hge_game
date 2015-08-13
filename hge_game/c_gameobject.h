@@ -29,7 +29,7 @@ protected:
 
     static float    g;
 
-    u_int   Size;
+    size_t   Size;
     c_bool  OnTheGround;
 
     void SetVelocity(hgeVector velocity);
