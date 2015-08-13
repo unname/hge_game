@@ -163,7 +163,6 @@ void c_player::Update(float delta)
     Quad.v[3].x = Position.x - Size; Quad.v[3].y = Position.y + Size;
 
     Render();
-    //hge->Gfx_RenderQuad(&Quad);
 
     //Sprite->GetBoundingBox(Position.x, Position.y, &BoundingBox);
 }

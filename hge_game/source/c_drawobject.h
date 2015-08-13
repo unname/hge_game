@@ -16,8 +16,9 @@ protected:
     hgeRect         BoundingBox; //необходимо  для обнаружения столкновений
     hgeQuad         Quad;
     HTEXTURE        Texture;
-    hgeAnimation*   Sprite;
+    hgeSprite*      Sprite;
 
+    void SetSprite(hgeSprite* sprite);
     void SetPosition(hgeVector position);
 public:
     static std::vector<c_drawobject*> DrawObjects;
@@ -25,6 +26,7 @@ public:
     hgeVector   Position;   // x,y
 
     c_drawobject();
+    c_drawobject(hgeSprite* sprite, hgeVector sprite_coord);
     ~c_drawobject();
 
 

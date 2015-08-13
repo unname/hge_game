@@ -40,7 +40,8 @@ struct Object
 struct Layer
 {
     int opacity;
-    vector<hgeSprite*> tiles;
+    vector<hgeSprite*>  tiles;
+    vector<hgeVector>   tiles_coord;
 };
 
 
@@ -63,8 +64,9 @@ public:
     hgeVector GetTileSize();
 
 private:
-    size_t          width, height,
-                    tileWidth, tileHeight;
+    size_t          mapWidth, mapHeight,
+                    tileWidth, tileHeight,
+                    tileSetWidth, tileSetHeight;
     size_t          firstTileID;
 
     hgeRect         drawingBounds;
@@ -72,7 +74,7 @@ private:
     HTEXTURE        tilesetImageTex;
 
     vector<Object*>  objects;
-    vector<Layer*>   layers;
+    vector<Layer>   layers;
 };
 
 #endif

@@ -7,6 +7,14 @@ c_drawobject::c_drawobject()
     DrawObjects.push_back(this);
 }
 
+c_drawobject::c_drawobject(hgeSprite* sprite, hgeVector sprite_coord)
+{
+    SetSprite(sprite);
+    SetPosition(sprite_coord);
+
+    DrawObjects.push_back(this);
+}
+
 c_drawobject::~c_drawobject()
 {
     if (Texture)
@@ -20,10 +28,12 @@ c_drawobject::~c_drawobject()
             break;
         }
     }
-
-    //delete Sprite;
 }
 
+void c_drawobject::SetSprite(hgeSprite* sprite)
+{
+    Sprite = sprite;
+}
 
 void c_drawobject::SetPosition(hgeVector position)
 {
@@ -44,12 +54,14 @@ hgeRect c_drawobject::GetBoundingBox()
 
 void c_drawobject::Update(float delta)
 {
-
+    Render();
 }
 
 void c_drawobject::Render()
 {
     hge->Gfx_RenderQuad(&Quad);
-    //Sprite->Render(Position.x, Position.y);
+
+    if(Sprite)
+        Sprite->Render(Position.x, Position.y);
 }
 
