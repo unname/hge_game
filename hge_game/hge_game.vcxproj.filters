@@ -18,58 +18,68 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="c_gameobject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="support\c_bool.cpp">
       <Filter>support</Filter>
     </ClCompile>
     <ClCompile Include="support\tinyxml2.cpp">
       <Filter>support</Filter>
     </ClCompile>
-    <ClCompile Include="c_loadmap.cpp">
+    <ClCompile Include="source\c_drawobject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="c_hge.cpp">
+    <ClCompile Include="source\c_game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="c_player.cpp">
+    <ClCompile Include="source\c_gameobject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="c_game.cpp">
+    <ClCompile Include="source\c_hge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="c_drawobject.cpp">
+    <ClCompile Include="source\c_loadmap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\c_player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="c_gameobject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="support\c_bool.h">
       <Filter>support</Filter>
     </ClInclude>
     <ClInclude Include="support\tinyxml2.h">
       <Filter>support</Filter>
     </ClInclude>
-    <ClInclude Include="c_loadmap.h">
+    <ClInclude Include="source\c_drawobject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="c_hge.h">
+    <ClInclude Include="source\c_game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="c_player.h">
+    <ClInclude Include="source\c_gameobject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="c_game.h">
+    <ClInclude Include="source\c_hge.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="c_drawobject.h">
+    <ClInclude Include="source\c_loadmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\c_player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\sameangle.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\test_tmx.tmx">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
