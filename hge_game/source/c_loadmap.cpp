@@ -35,6 +35,7 @@ c_loadmap::~c_loadmap()
 
     if (tilesetImageTex)
         hge->Texture_Free(tilesetImageTex);
+    Release();
 }
 
 Object* c_loadmap::GetObject(string name)
@@ -194,7 +195,7 @@ bool c_loadmap::LoadFromFile(string filename)
             int tileGID = atoi(Tiles->Attribute("gid"));
             int tileSetRectToUse = tileGID - firstTileID;
 
-            //Присваиваем каждому тайлу свой Sprite
+            //Присваиваем каждому тайлу свой Sprite и координаты hgeVector
             if (tileSetRectToUse >= 0)
             {
                 hgeSprite* sprite = new hgeSprite(0, 0, 0, 0, 0);
@@ -233,10 +234,7 @@ bool c_loadmap::LoadFromFile(string filename)
 
     }//Layers
 
-
     //Создадим на основе наших спрайтов рисующиеся объекты
-    vector<c_drawobject*> tiles;
-
     for (size_t layers_count = 0; layers_count < layers.size(); layers_count++)
     {
         for (size_t tiles_count = 0; tiles_count < layers[layers_count].tiles.size(); tiles_count++)
@@ -247,4 +245,17 @@ bool c_loadmap::LoadFromFile(string filename)
     }
 
     return true;
+}
+
+void c_loadmap::Release()
+{
+
+    for (size_t l_count = 0; l_count < layers.size(); l_count++)
+        for (size_t t_count = 0; t_count < layers[l_count].tiles.size(); t_count++)
+        {
+            delete layers[l_count].tiles[t_count];
+        }
+    
+    for (size_t do_count = 0; do_count < tiles.size(); do_count++)
+        delete tiles[do_count];
 }

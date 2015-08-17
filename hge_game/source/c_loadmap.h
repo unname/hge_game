@@ -54,6 +54,9 @@ public:
     //Загружает карту из указанного файла
     bool LoadFromFile(string filename);
 
+    //Удаляем выделенные ресурсы
+    void Release();
+
     //Возвращает указатель на первый объект с указанным именем
     Object* GetObject(string name);
 
@@ -73,6 +76,7 @@ private:
     hgeSprite*      tilesetImage;
     HTEXTURE        tilesetImageTex;
 
+    vector<c_drawobject*> tiles;
     vector<Object*>  objects;
     vector<Layer>   layers;
 };

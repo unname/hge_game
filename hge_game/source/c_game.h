@@ -18,6 +18,10 @@ private:
     void SetWindowState(hgeCallback framefunc);
     static bool FrameFunc();
     bool LoadResources();
+    void Release();
+
+    c_loadmap* map;
+    c_player* player;
 
 public:    
     static size_t SCREEN_WIDTH;

@@ -44,12 +44,18 @@ bool c_game::FrameFunc()
 bool c_game::LoadResources()
 {
     //Загрузка карты
-    c_loadmap* map = new c_loadmap;
+    map = new c_loadmap;
 
     //Создание персонажа
-    c_player* player = new c_player(20);
+    player = new c_player(20);
 
     return true;
+}
+
+void c_game::Release()
+{
+    delete map;
+    delete player;
 }
 
 bool c_game::Initialize()
@@ -80,7 +86,7 @@ void c_game::Start()
 
 void c_game::Shutdown()
 {
-    //TODO: delete resources
+    Release();
 
     hge->System_Shutdown();
 }
