@@ -2,6 +2,7 @@
 
 size_t c_game::SCREEN_WIDTH = 800;
 size_t c_game::SCREEN_HEIGHT = 600;
+hgeVector c_game::MAP_SIZE = hgeVector(0, 0);
 
 void c_game::SetWindowState(hgeCallback framefunc)
 {
@@ -44,7 +45,12 @@ bool c_game::FrameFunc()
 bool c_game::LoadResources()
 {
     //Загрузка карты
-    map = new c_loadmap;
+    string map_path;
+    map_path.append(RESOURCES_PATH);
+    map_path.append(MAP_NAME);
+
+    map = new c_loadmap(map_path);
+    MAP_SIZE = map->GetMapSize();
 
     //Создание персонажа
     player = new c_player(20);
@@ -87,6 +93,5 @@ void c_game::Start()
 void c_game::Shutdown()
 {
     Release();
-
     hge->System_Shutdown();
 }

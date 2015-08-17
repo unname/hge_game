@@ -1,6 +1,7 @@
 #include "c_drawobject.h"
 
 std::vector<c_drawobject*> c_drawobject::DrawObjects;
+hgeVector c_drawobject::PlayerPosition;
 
 c_drawobject::c_drawobject()
 {
@@ -62,6 +63,6 @@ void c_drawobject::Render()
     hge->Gfx_RenderQuad(&Quad);
 
     if(Sprite)
-        Sprite->Render(Position.x, Position.y);
+        Sprite->Render(Position.x - PlayerPosition.x, Position.y - PlayerPosition.y);
 }
 

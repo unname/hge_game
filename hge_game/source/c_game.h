@@ -2,6 +2,8 @@
 #define C_GAME_H
 #pragma once
 
+class c_player;
+
 #include "hge.h"
 
 #include <vector>
@@ -18,7 +20,6 @@ private:
     void SetWindowState(hgeCallback framefunc);
     static bool FrameFunc();
     bool LoadResources();
-    void Release();
 
     c_loadmap* map;
     c_player* player;
@@ -26,8 +27,10 @@ private:
 public:    
     static size_t SCREEN_WIDTH;
     static size_t SCREEN_HEIGHT;
+    static hgeVector MAP_SIZE;
 
     bool Initialize();
+    void Release();
     void Start();
     void Shutdown();
 };

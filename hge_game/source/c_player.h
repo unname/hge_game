@@ -5,6 +5,7 @@
 #include "hge.h"
 
 #include "c_gameobject.h"
+#include "c_game.h"
 
 class c_player: public c_gameobject
 {

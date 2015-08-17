@@ -17,25 +17,26 @@ std::string Object::GetPropertyString(std::string name)
 }
 
 
-c_loadmap::c_loadmap()
+c_loadmap::c_loadmap(string map_file)
 {
     tilesetImageTex = NULL;
-    tilesetImage = nullptr;
 
-    string map_path;
-    map_path.append(RESOURCES_PATH);
-    map_path.append(MAP_NAME);
-    LoadFromFile(map_path);
+    LoadFromFile(map_file);
 }
 
 c_loadmap::~c_loadmap()
 {
-    if (tilesetImage)
-        delete(tilesetImage);
-
     if (tilesetImageTex)
         hge->Texture_Free(tilesetImageTex);
-    Release();
+
+    for (size_t l_count = 0; l_count < layers.size(); l_count++)
+        for (size_t t_count = 0; t_count < layers[l_count].tiles.size(); t_count++)
+        {
+        delete layers[l_count].tiles[t_count];
+        }
+
+    for (size_t do_count = 0; do_count < tiles.size(); do_count++)
+        delete tiles[do_count];
 }
 
 Object* c_loadmap::GetObject(string name)
@@ -67,6 +68,10 @@ hgeVector c_loadmap::GetTileSize()
     return hgeVector((float)tileWidth, (float)tileHeight);
 }
 
+hgeVector c_loadmap::GetMapSize()
+{
+    return hgeVector((float)tileWidth*mapWidth, (float)tileHeight*mapHeight);
+}
 
 bool c_loadmap::LoadFromFile(string filename)
 {
@@ -142,10 +147,7 @@ bool c_loadmap::LoadFromFile(string filename)
     {
         DisplayErrorHGE();
         return false;
-    }
-
-    tilesetImage = new hgeSprite(tilesetImageTex, 0, 0, (float)tileSetWidth, (float)tileSetHeight);
-    
+    }    
 
     // Работа со слоями
     XMLElement* Layers;
@@ -245,17 +247,4 @@ bool c_loadmap::LoadFromFile(string filename)
     }
 
     return true;
-}
-
-void c_loadmap::Release()
-{
-
-    for (size_t l_count = 0; l_count < layers.size(); l_count++)
-        for (size_t t_count = 0; t_count < layers[l_count].tiles.size(); t_count++)
-        {
-            delete layers[l_count].tiles[t_count];
-        }
-    
-    for (size_t do_count = 0; do_count < tiles.size(); do_count++)
-        delete tiles[do_count];
 }

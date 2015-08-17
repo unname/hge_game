@@ -5,6 +5,8 @@ c_player::c_player(u_int size)
 {
     //Установка переменных
     SetPosition(hgeVector((float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2));
+    PlayerPosition = Position;
+
     Size = size;
 
     Speed = 3.0;
@@ -128,39 +130,65 @@ void c_player::Update(float delta)
     Position.y += Velocity.y;
 
 
-    //Если ушли вправо
-    if (Position.x > sWidth - Size)
+    //Если достигли правой границы
+    if (Position.x >= c_game::MAP_SIZE.x - Size)
     {
-        Position.x = 2 * (sWidth - Size) - Position.x;
-        Velocity.x = - Velocity.x;
+        Position.x = c_game::MAP_SIZE.x - Size;
     }
 
-    //Если ушли влево
-    if (Position.x < Size)
+    //Если достигли левой границы
+    if (Position.x <= Size)
     {
-        Position.x = 2 * Size - Position.x;
-        Velocity.x = - Velocity.x;
+        Position.x = Size;
     }
 
-    //Если ушли вниз
-    if (Position.y >= sHeight - Size)
+    //Если достигли нижней границы
+    if (Position.y >= c_game::MAP_SIZE.y - Size)
     {
-        Position.y = (float)(sHeight - Size);
+        Position.y = c_game::MAP_SIZE.y - Size;
         Velocity.y = 0;
         OnTheGround.SetTrue();
     }
 
-    //Если ушли вверх
-    if (Position.y < Size)
+    //Если достигли верхней границы
+    if (Position.y <= Size)
     {
-        Position.y = (float)Size;
-        Velocity.y = - Velocity.y;
+        Position.y = Size;
     }
-    
-    Quad.v[0].x = Position.x - Size; Quad.v[0].y = Position.y - Size;
-    Quad.v[1].x = Position.x + Size; Quad.v[1].y = Position.y - Size;
-    Quad.v[2].x = Position.x + Size; Quad.v[2].y = Position.y + Size;
-    Quad.v[3].x = Position.x - Size; Quad.v[3].y = Position.y + Size;
+
+    //Если дошли до левого или правого края экрана, то не рисуем персонажа в центре
+    if ((Position.x <= GetScreenWidth() / 2) || (Position.x >= c_game::MAP_SIZE.x - GetScreenWidth() / 2))
+    {
+        Quad.v[0].x = Position.x - Size;
+        Quad.v[1].x = Position.x + Size;
+        Quad.v[2].x = Position.x + Size;
+        Quad.v[3].x = Position.x - Size;
+    }
+    else
+    {
+        Quad.v[0].x = GetScreenWidth() / 2 - Size;
+        Quad.v[1].x = GetScreenWidth() / 2 + Size;
+        Quad.v[2].x = GetScreenWidth() / 2 + Size;
+        Quad.v[3].x = GetScreenWidth() / 2 - Size;
+    }
+
+    //Если дошли до верхнего или нижнего края экрана, то не рисуем персонажа в центре
+    if ((Position.y <= GetScreenHeight() / 2) || (Position.y >= c_game::MAP_SIZE.y - GetScreenHeight() / 2))
+    {
+        Quad.v[0].y = Position.y - Size;
+        Quad.v[1].y = Position.y - Size;
+        Quad.v[2].y = Position.y + Size;
+        Quad.v[3].y = Position.y + Size;
+    }
+    else
+    {
+        Quad.v[0].y = GetScreenHeight() / 2 - Size;
+        Quad.v[1].y = GetScreenHeight() / 2 - Size;
+        Quad.v[2].y = GetScreenHeight() / 2 + Size;
+        Quad.v[3].y = GetScreenHeight() / 2 + Size;
+    }
+
+    PlayerPosition = Position;
 
     Render();
 

@@ -24,6 +24,7 @@ public:
     static std::vector<c_drawobject*> DrawObjects;
 
     hgeVector   Position;   // x,y
+    static hgeVector   PlayerPosition;
 
     c_drawobject();
     c_drawobject(hgeSprite* sprite, hgeVector sprite_coord);

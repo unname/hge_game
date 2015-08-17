@@ -48,7 +48,7 @@ struct Layer
 class c_loadmap: public c_hge
 {
 public:
-    c_loadmap();
+    c_loadmap(string map_file);
     ~c_loadmap();
 
     //Загружает карту из указанного файла
@@ -63,6 +63,9 @@ public:
     //Возвращает список указателей на объекты с указанным именем
     vector<Object*> GetObjects(string name);
 
+    //Получаем размер карты
+    hgeVector GetMapSize();
+
     //Получаем размер тайлов
     hgeVector GetTileSize();
 
@@ -73,7 +76,6 @@ private:
     size_t          firstTileID;
 
     hgeRect         drawingBounds;
-    hgeSprite*      tilesetImage;
     HTEXTURE        tilesetImageTex;
 
     vector<c_drawobject*> tiles;
