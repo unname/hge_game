@@ -4,7 +4,7 @@
 c_player::c_player(u_int size)
 {
     //Установка переменных
-    SetPosition(hgeVector((float)GetScreenWidth() / 2, (float)GetScreenHeight() / 2));
+    SetPosition(hgeVector(2300, 3000));
     PlayerPosition = Position;
 
     Size = size;
@@ -54,9 +54,6 @@ c_player::~c_player()
 void c_player::Update(float delta)
 {
     c_gameobject::Update(delta);
-
-    int sWidth = GetScreenWidth();
-    int sHeight = GetScreenHeight();
 
     if (hge->Input_GetKeyState(HGEK_LEFT))
     {
@@ -156,39 +153,62 @@ void c_player::Update(float delta)
         Position.y = Size;
     }
 
-    //Если дошли до левого или правого края экрана, то не рисуем персонажа в центре
-    if ((Position.x <= GetScreenWidth() / 2) || (Position.x >= c_game::MAP_SIZE.x - GetScreenWidth() / 2))
+    //Игрок в центре
+    Quad.v[0].x = GetScreenWidth() / 2 - Size;
+    Quad.v[1].x = GetScreenWidth() / 2 + Size;
+    Quad.v[2].x = GetScreenWidth() / 2 + Size;
+    Quad.v[3].x = GetScreenWidth() / 2 - Size;
+
+    Quad.v[0].y = GetScreenHeight() / 2 - Size;
+    Quad.v[1].y = GetScreenHeight() / 2 - Size;
+    Quad.v[2].y = GetScreenHeight() / 2 + Size;
+    Quad.v[3].y = GetScreenHeight() / 2 + Size;
+
+    PlayerPosition = Position;
+
+    //Но если дошли до левого края экрана
+    if (Position.x <= GetScreenWidth() / 2)
     {
         Quad.v[0].x = Position.x - Size;
         Quad.v[1].x = Position.x + Size;
         Quad.v[2].x = Position.x + Size;
         Quad.v[3].x = Position.x - Size;
-    }
-    else
-    {
-        Quad.v[0].x = GetScreenWidth() / 2 - Size;
-        Quad.v[1].x = GetScreenWidth() / 2 + Size;
-        Quad.v[2].x = GetScreenWidth() / 2 + Size;
-        Quad.v[3].x = GetScreenWidth() / 2 - Size;
+
+        PlayerPosition.x = GetScreenWidth()/2;
     }
 
-    //Если дошли до верхнего или нижнего края экрана, то не рисуем персонажа в центре
-    if ((Position.y <= GetScreenHeight() / 2) || (Position.y >= c_game::MAP_SIZE.y - GetScreenHeight() / 2))
+    //Но если дошли до правого края экрана
+    if (Position.x >= c_game::MAP_SIZE.x - GetScreenWidth()/2)
+    {
+        Quad.v[0].x = GetScreenWidth()/2 + Position.x - (c_game::MAP_SIZE.x - GetScreenWidth() / 2) - Size;
+        Quad.v[1].x = GetScreenWidth()/2 + Position.x - (c_game::MAP_SIZE.x - GetScreenWidth() / 2) + Size;
+        Quad.v[2].x = GetScreenWidth()/2 + Position.x - (c_game::MAP_SIZE.x - GetScreenWidth() / 2) + Size;
+        Quad.v[3].x = GetScreenWidth()/2 + Position.x - (c_game::MAP_SIZE.x - GetScreenWidth() / 2) - Size;
+
+        PlayerPosition.x = c_game::MAP_SIZE.x - GetScreenWidth()/2;
+    }
+
+    //Если дошли до верхнего края экрана
+    if (Position.y <= GetScreenHeight() / 2)
     {
         Quad.v[0].y = Position.y - Size;
         Quad.v[1].y = Position.y - Size;
         Quad.v[2].y = Position.y + Size;
         Quad.v[3].y = Position.y + Size;
-    }
-    else
-    {
-        Quad.v[0].y = GetScreenHeight() / 2 - Size;
-        Quad.v[1].y = GetScreenHeight() / 2 - Size;
-        Quad.v[2].y = GetScreenHeight() / 2 + Size;
-        Quad.v[3].y = GetScreenHeight() / 2 + Size;
+
+        PlayerPosition.y = GetScreenHeight() / 2;
     }
 
-    PlayerPosition = Position;
+    //Если дошли до нижнего края экрана
+    if (Position.y >= c_game::MAP_SIZE.y - GetScreenHeight()/2)
+    {
+        Quad.v[0].y = GetScreenHeight()/2 + Position.y - (c_game::MAP_SIZE.y - GetScreenHeight() / 2) - Size;
+        Quad.v[1].y = GetScreenHeight()/2 + Position.y - (c_game::MAP_SIZE.y - GetScreenHeight() / 2) - Size;
+        Quad.v[2].y = GetScreenHeight()/2 + Position.y - (c_game::MAP_SIZE.y - GetScreenHeight() / 2) + Size;
+        Quad.v[3].y = GetScreenHeight()/2 + Position.y - (c_game::MAP_SIZE.y - GetScreenHeight() / 2) + Size;
+
+        PlayerPosition.y = c_game::MAP_SIZE.y - GetScreenHeight()/2;
+    }
 
     Render();
 

@@ -16,9 +16,6 @@ void c_gameobject::Update(float delta)
 {
     c_drawobject::Update(delta);
 
-    int sWidth = GetScreenWidth();
-    int sHeight = GetScreenHeight();
-
     //Если объект в воздухе, то он падаем под силой гравитации
     if (!OnTheGround.GetState())
     {

@@ -63,6 +63,6 @@ void c_drawobject::Render()
     hge->Gfx_RenderQuad(&Quad);
 
     if(Sprite)
-        Sprite->Render(Position.x - PlayerPosition.x, Position.y - PlayerPosition.y);
+        Sprite->Render(Position.x - PlayerPosition.x + GetScreenWidth()/2, Position.y - PlayerPosition.y + GetScreenHeight()/2);
 }
 

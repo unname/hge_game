@@ -53,7 +53,7 @@ bool c_game::LoadResources()
     MAP_SIZE = map->GetMapSize();
 
     //Создание персонажа
-    player = new c_player(20);
+    player = new c_player(16);
 
     return true;
 }
