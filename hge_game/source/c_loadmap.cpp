@@ -241,7 +241,7 @@ bool c_loadmap::LoadFromFile(string filename)
     {
         for (size_t tiles_count = 0; tiles_count < layers[layers_count].tiles.size(); tiles_count++)
         {
-            c_drawobject* tile = new c_drawobject(layers[layers_count].tiles[tiles_count], layers[layers_count].tiles_coord[tiles_count]);
+            c_platform* tile = new c_platform(layers[layers_count].tiles[tiles_count], layers[layers_count].tiles_coord[tiles_count]);
             tiles.push_back(tile);
         }
     }

@@ -5,11 +5,15 @@ hgeVector c_drawobject::PlayerPosition;
 
 c_drawobject::c_drawobject()
 {
+    Texture = NULL;
+
     DrawObjects.push_back(this);
 }
 
 c_drawobject::c_drawobject(hgeSprite* sprite, hgeVector sprite_coord)
 {
+    Texture = NULL;
+
     SetSprite(sprite);
     SetPosition(sprite_coord);
 

@@ -16,6 +16,7 @@
     <ClCompile Include="source\c_gameobject.cpp" />
     <ClCompile Include="source\c_hge.cpp" />
     <ClCompile Include="source\c_loadmap.cpp" />
+    <ClCompile Include="source\c_platform.cpp" />
     <ClCompile Include="source\c_player.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="support\c_bool.cpp" />
@@ -27,6 +28,7 @@
     <ClInclude Include="source\c_gameobject.h" />
     <ClInclude Include="source\c_hge.h" />
     <ClInclude Include="source\c_loadmap.h" />
+    <ClInclude Include="source\c_platform.h" />
     <ClInclude Include="source\c_player.h" />
     <ClInclude Include="support\c_bool.h" />
     <ClInclude Include="support\tinyxml2.h" />

@@ -13,7 +13,7 @@
 #include "hgerect.h"
 
 #include "c_hge.h"
-#include "c_drawobject.h"
+#include "c_platform.h"
 
 #include <map>
 #include <vector>
