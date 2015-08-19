@@ -202,7 +202,7 @@ bool c_loadmap::LoadFromFile(string filename)
             {
                 hgeSprite* sprite = new hgeSprite(0, 0, 0, 0, 0);
                 sprite->SetTexture(tilesetImageTex);
-                sprite->SetTextureRect(tileSetRects[tileSetRectToUse].x1, tileSetRects[tileSetRectToUse].y1, tileWidth, tileHeight);
+                sprite->SetTextureRect(tileSetRects[tileSetRectToUse].x1 + 0.5, tileSetRects[tileSetRectToUse].y1 + 0.5, tileWidth, tileHeight);
                 sprite->SetHotSpot(tileWidth/2, tileHeight/2);
                 sprite->SetColor(ARGB(255, 255, 255, layer.opacity));
 
