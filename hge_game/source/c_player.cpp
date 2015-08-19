@@ -23,31 +23,24 @@ c_player::c_player(u_int size)
 
     Friction = 0.96;
 
-    //Графические настройки
-    //Quad.tex = hge->Texture_Load("resources/cube_tex.jpg");
-
-    Quad.blend = BLEND_ALPHAADD | BLEND_COLORMUL | BLEND_ZWRITE;
-
-    Quad.v[0].tx = 96.0 / 128.0;   Quad.v[0].ty = 64.0 / 128.0;
-    Quad.v[1].tx = 128.0 / 128.0;  Quad.v[1].ty = 64.0 / 128.0;
-    Quad.v[2].tx = 128.0 / 128.0;  Quad.v[2].ty = 96.0 / 128.0;
-    Quad.v[3].tx = 96.0 / 128.0;   Quad.v[3].ty = 96.0 / 128.0;
-
-    for (int i = 0; i < 4; i++)
+    Texture = hge->Texture_Load("resources/cube_tex.jpg");
+    if (!Texture)
     {
-        Quad.v[i].z = 0.5f;
-        Quad.v[i].col = 0xFFFFA000;
+        DisplayErrorHGE();
     }
 
+    Sprite = new hgeSprite(Texture, 0 + 0.5f, 0 + 0.5f, Size * 2, Size * 2);
+    Sprite->SetHotSpot(Size, Size);
+    Sprite->SetColor(ARGB(255, 255, 255, 255));
+
     //Sprite = new hgeAnimation(Texture, 4, 4, 0, 0, 64, 29);
-    //Sprite->SetHotSpot(32, 14.5);
     //Sprite->Play();
 }
 
 //деструктор
 c_player::~c_player()
 {
-
+    delete(Sprite);
 }
 
 //Повторный расчёт свойств объекта
@@ -153,60 +146,30 @@ void c_player::Update(float delta)
         Position.y = Size;
     }
 
-    //Игрок в центре
-    Quad.v[0].x = GetScreenWidth() / 2 - Size;
-    Quad.v[1].x = GetScreenWidth() / 2 + Size;
-    Quad.v[2].x = GetScreenWidth() / 2 + Size;
-    Quad.v[3].x = GetScreenWidth() / 2 - Size;
-
-    Quad.v[0].y = GetScreenHeight() / 2 - Size;
-    Quad.v[1].y = GetScreenHeight() / 2 - Size;
-    Quad.v[2].y = GetScreenHeight() / 2 + Size;
-    Quad.v[3].y = GetScreenHeight() / 2 + Size;
 
     PlayerPosition = Position;
 
-    //Но если дошли до левого края экрана
+    //Если дошли до левого края экрана
     if (Position.x <= GetScreenWidth() / 2)
     {
-        Quad.v[0].x = Position.x - Size;
-        Quad.v[1].x = Position.x + Size;
-        Quad.v[2].x = Position.x + Size;
-        Quad.v[3].x = Position.x - Size;
-
         PlayerPosition.x = GetScreenWidth()/2;
     }
 
-    //Но если дошли до правого края экрана
+    //Если дошли до правого края экрана
     if (Position.x >= c_game::MAP_SIZE.x - GetScreenWidth()/2)
     {
-        Quad.v[0].x = GetScreenWidth()/2 + Position.x - (c_game::MAP_SIZE.x - GetScreenWidth() / 2) - Size;
-        Quad.v[1].x = GetScreenWidth()/2 + Position.x - (c_game::MAP_SIZE.x - GetScreenWidth() / 2) + Size;
-        Quad.v[2].x = GetScreenWidth()/2 + Position.x - (c_game::MAP_SIZE.x - GetScreenWidth() / 2) + Size;
-        Quad.v[3].x = GetScreenWidth()/2 + Position.x - (c_game::MAP_SIZE.x - GetScreenWidth() / 2) - Size;
-
         PlayerPosition.x = c_game::MAP_SIZE.x - GetScreenWidth()/2;
     }
 
     //Если дошли до верхнего края экрана
     if (Position.y <= GetScreenHeight() / 2)
     {
-        Quad.v[0].y = Position.y - Size;
-        Quad.v[1].y = Position.y - Size;
-        Quad.v[2].y = Position.y + Size;
-        Quad.v[3].y = Position.y + Size;
-
         PlayerPosition.y = GetScreenHeight() / 2;
     }
 
     //Если дошли до нижнего края экрана
     if (Position.y >= c_game::MAP_SIZE.y - GetScreenHeight()/2)
     {
-        Quad.v[0].y = GetScreenHeight()/2 + Position.y - (c_game::MAP_SIZE.y - GetScreenHeight() / 2) - Size;
-        Quad.v[1].y = GetScreenHeight()/2 + Position.y - (c_game::MAP_SIZE.y - GetScreenHeight() / 2) - Size;
-        Quad.v[2].y = GetScreenHeight()/2 + Position.y - (c_game::MAP_SIZE.y - GetScreenHeight() / 2) + Size;
-        Quad.v[3].y = GetScreenHeight()/2 + Position.y - (c_game::MAP_SIZE.y - GetScreenHeight() / 2) + Size;
-
         PlayerPosition.y = c_game::MAP_SIZE.y - GetScreenHeight()/2;
     }
 

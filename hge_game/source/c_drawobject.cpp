@@ -6,6 +6,7 @@ hgeVector c_drawobject::PlayerPosition;
 c_drawobject::c_drawobject()
 {
     Texture = NULL;
+    Sprite = nullptr;
 
     DrawObjects.push_back(this);
 }
@@ -13,6 +14,7 @@ c_drawobject::c_drawobject()
 c_drawobject::c_drawobject(hgeSprite* sprite, hgeVector sprite_coord)
 {
     Texture = NULL;
+    Sprite = nullptr;
 
     SetSprite(sprite);
     SetPosition(sprite_coord);
@@ -64,8 +66,6 @@ void c_drawobject::Update(float delta)
 
 void c_drawobject::Render()
 {
-    hge->Gfx_RenderQuad(&Quad);
-
     if(Sprite)
         Sprite->Render(Position.x - PlayerPosition.x + GetScreenWidth() / 2, Position.y - PlayerPosition.y + GetScreenHeight() / 2);
 }

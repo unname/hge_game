@@ -14,7 +14,7 @@ class c_drawobject : public c_hge
 {
 protected:
     hgeRect         BoundingBox; //необходимо  для обнаружения столкновений
-    hgeQuad         Quad;
+
     HTEXTURE        Texture;
     hgeSprite*      Sprite;
 
@@ -23,13 +23,12 @@ protected:
 public:
     static std::vector<c_drawobject*> DrawObjects;
 
-    hgeVector   Position;   // x,y
-    static hgeVector   PlayerPosition;
+    hgeVector           Position;
+    static hgeVector    PlayerPosition;
 
     c_drawobject();
     c_drawobject(hgeSprite* sprite, hgeVector sprite_coord);
     ~c_drawobject();
-
 
     hgeVector GetPosition();
     hgeRect GetBoundingBox();
