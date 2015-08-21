@@ -150,6 +150,8 @@ void c_player::Update(float delta)
     //Обработка столкновений
     BoundingBox = GetBoundingBox();
 
+    //Заного проверим стоим ли мы на платформе или земле
+    OnTheGround.SetFalse();
     for (size_t obj_num = 0; obj_num < c_drawobject::DrawObjects.size(); obj_num++)
     {
         c_platform* Platform = dynamic_cast<c_platform*>(c_drawobject::DrawObjects[obj_num]);
@@ -160,116 +162,26 @@ void c_player::Update(float delta)
             //Если пересекаемся, то обрабатываем столкновение
             if (BoundingBox.Intersect(&Platform->GetBoundingBox()))
             {
-                //if (Position.x < Platform->Position.x)
-                //{
-                //    
-                //}
-                //    Position.x -= BoundingBox.x2 - Platform->BoundingBox.x1;
-
-                //if (Position.x > Platform->BoundingBox.x2)
-                //    Position.x += Platform->BoundingBox.x2 - BoundingBox.x1;
-
-                //if (Position.y < Platform->BoundingBox.y1)
-                //{
-                //    Position.y -= BoundingBox.y2 - Platform->BoundingBox.y1;
-                //    OnTheGround.SetTrue();
-                //}
-
-                //if (Position.y > Platform->BoundingBox.y2)
-                //{
-                //    Position.y += Platform->BoundingBox.y2 - BoundingBox.y1;
-                //}
-
-                //Надо обработать 8 зон пересечения (4 по бокам и 4 по углам)
-
-                ////1. Левый бок
-                //if ((Position.x <= Platform->Position.x) && (Position.y > Platform->BoundingBox.y1) && (Position.y < Platform->BoundingBox.y2) && (Platform->LeftBound.GetState()))
-                //{
-                //    if (moving.MovingRigth.GetState())
-                //         Position.x -= BoundingBox.x2 - Platform->BoundingBox.x1;
-                //    else
-                //    {
-                //        if (moving.MovingDown.GetState())
-                //        {
-                //            Position.y -= BoundingBox.y2 - Platform->BoundingBox.y1;
-                //            OnTheGround.SetTrue();
-                //        }
-
-                //        if (moving.MovingUp.GetState())
-                //            Position.y += Platform->BoundingBox.y2 - BoundingBox.y1;
-                //    }
-                //}
-
-                ////2.Правый бок
-                //if ((Position.x >= Platform->Position.x) && (Position.y > Platform->BoundingBox.y1) && (Position.y < Platform->BoundingBox.y2) && (Platform->RightBound.GetState()))
-                //{
-                //    if (moving.MovingLeft.GetState())
-                //    {
-                //        Position.x += Platform->BoundingBox.x2 - BoundingBox.x1;
-                //    }
-                //    else
-                //    {
-                //        if (moving.MovingDown.GetState())
-                //        {
-                //            Position.y -= BoundingBox.y2 - Platform->BoundingBox.y1;
-                //            OnTheGround.SetTrue();
-                //        }
-
-                //        if (moving.MovingUp.GetState())
-                //            Position.y += Platform->BoundingBox.y2 - BoundingBox.y1;
-                //    }
-                //}
-
-                ////3. Верхняя сторона
-                //if ((Position.y <= Platform->Position.y) && (Position.x > Platform->BoundingBox.x1) && (Position.x < Platform->BoundingBox.x2) && (Platform->TopBound.GetState()))
-                //{
-                //    if (moving.MovingDown.GetState())
-                //    {
-                //        Position.y -= BoundingBox.y2 - Platform->BoundingBox.y1;
-                //        OnTheGround.SetTrue();
-                //    }
-                //    else
-                //    {
-                //        if (moving.MovingRigth.GetState())
-                //            Position.x -= BoundingBox.x2 - Platform->BoundingBox.x1;
-
-                //        if (moving.MovingLeft.GetState())
-                //            Position.x += Platform->BoundingBox.x2 - BoundingBox.x1;
-                //    }
-                //}
-
-                ////4. Нижняя сторона
-                //if ((Position.y >= Platform->Position.y) && (Position.x > Platform->BoundingBox.x1) && (Position.x < Platform->BoundingBox.x2) && (Platform->BottomBound.GetState()))
-                //{
-                //    if (moving.MovingUp.GetState())
-                //    {
-                //        Position.y += Platform->BoundingBox.y2 - BoundingBox.y1;
-                //    }
-                //    else
-                //    {
-                //        if (moving.MovingRigth.GetState())
-                //            Position.x -= BoundingBox.x2 - Platform->BoundingBox.x1;
-
-                //        if (moving.MovingLeft.GetState())
-                //            Position.x += Platform->BoundingBox.x2 - BoundingBox.x1;
-                //    }
-                //}
-
-                ////5. Левый верхнийугол
-                //if ((Position.x <= Platform->BoundingBox.x1) && (Position.y <= Platform->BoundingBox.y1))
-                //{
-                //    if (moving.MovingRigth.GetState() && moving.MovingDown.GetState())
-                //    {
-                //        if (BoundingBox.x2 - Platform->BoundingBox.x1)
-                //    }
-                //}
-
-                //Также каждый раз проверяем стоим ли мы до сип пор на платформе или на земле
-                OnTheGround.SetFalse();
-                if (((BoundingBox.y2 == Platform->BoundingBox.y1) && (BoundingBox.x2>Platform->BoundingBox.x1) && (BoundingBox.x1 < Platform->BoundingBox.x2))
-                    || (Position.y >= c_game::MAP_SIZE.y - Size))
-                    OnTheGround.SetTrue();
+                if (PreviousPosition.y < Platform->BoundingBox.y1)
+                {
+                    Position.y -= BoundingBox.y2 - Platform->BoundingBox.y1;
+                }
+                else
+                    if (PreviousPosition.y > Platform->BoundingBox.y2)
+                    {
+                    Position.y += Platform->BoundingBox.y2 - BoundingBox.y1;
+                    JumpImpulse = 0;
+                    }
+                    else
+                        if (Position.x < Platform->Position.x)
+                            Position.x -= BoundingBox.x2 - Platform->BoundingBox.x1;
+                        else
+                            Position.x += Platform->BoundingBox.x2 - BoundingBox.x1;
             }
+
+            if (((BoundingBox.y2 == Platform->BoundingBox.y1) && (BoundingBox.x2>Platform->BoundingBox.x1) && (BoundingBox.x1 < Platform->BoundingBox.x2))
+                || (Position.y >= c_game::MAP_SIZE.y - Size))
+                OnTheGround.SetTrue();
         }
     }
 
