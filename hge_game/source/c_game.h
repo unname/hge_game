@@ -28,6 +28,7 @@ public:
     static size_t SCREEN_WIDTH;
     static size_t SCREEN_HEIGHT;
     static hgeVector MAP_SIZE;
+    static hgeVector TILE_SIZE;
 
     bool Initialize();
     void Release();

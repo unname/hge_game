@@ -55,8 +55,20 @@ hgeVector c_drawobject::GetPosition()
 
 hgeRect c_drawobject::GetBoundingBox()
 {
+    Sprite->GetBoundingBox(Position.x, Position.y, &BoundingBox);
+
     return BoundingBox;
 };
+
+//bool c_drawobject::Intersect(hgeRect* rect)
+//{
+//    Sprite->GetBoundingBox(Position.x, Position.y, &BoundingBox);
+//
+//    if (BoundingBox.Intersect(rect))
+//        return true;
+//
+//    return false;
+//}
 
 
 void c_drawobject::Update(float delta)

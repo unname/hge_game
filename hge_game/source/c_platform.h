@@ -9,13 +9,12 @@
 
 class c_platform : public c_drawobject
 {
-protected:
+public:
     c_bool LeftBound;
     c_bool RightBound;
     c_bool TopBound;
     c_bool BottomBound;
 
-public:
     c_platform(hgeSprite* sprite, hgeVector sprite_coord);
     c_platform(hgeSprite* sprite, hgeVector sprite_coord, bool left, bool right, bool top, bool bottom);
 };

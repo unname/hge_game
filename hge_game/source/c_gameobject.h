@@ -8,10 +8,19 @@
 #include "c_bool.h"
 #include "c_drawobject.h"
  
+struct Moving
+{
+    c_bool MovingRigth;
+    c_bool MovingLeft;
+    c_bool MovingUp;
+    c_bool MovingDown;
+};
+
 class c_gameobject: public c_drawobject
 {
 protected:
-    hgeVector   Velocity;   // dx,dy
+    hgeVector   Velocity;
+    hgeVector   PreviousPosition;
 
     float   Speed;
     float   Max_Speed;
@@ -31,11 +40,12 @@ protected:
 
     size_t   Size;
     c_bool  OnTheGround;
-
-    void SetVelocity(hgeVector velocity);
 public:
-    hgeVector GetVelocity();
+    Moving moving;
 
+    c_gameobject();
+
+    hgeVector GetVelocity();
     virtual void Update(float delta);
 };
 

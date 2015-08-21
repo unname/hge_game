@@ -3,6 +3,7 @@
 size_t c_game::SCREEN_WIDTH = 800;
 size_t c_game::SCREEN_HEIGHT = 600;
 hgeVector c_game::MAP_SIZE = hgeVector(0, 0);
+hgeVector c_game::TILE_SIZE = hgeVector(0, 0);
 
 void c_game::SetWindowState(hgeCallback framefunc)
 {
@@ -51,6 +52,7 @@ bool c_game::LoadResources()
 
     map = new c_loadmap(map_path);
     MAP_SIZE = map->GetMapSize();
+    TILE_SIZE = map->GetTileSize();
 
     //Создание персонажа
     player = new c_player(16);
