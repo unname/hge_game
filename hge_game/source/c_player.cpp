@@ -159,26 +159,48 @@ void c_player::Update(float delta)
         //Если объект не платформа dynamic_cast вернёт NULL
         if (Platform)
         {
-            //Если пересекаемся, то обрабатываем столкновение
+            //Если пересекаемся, то обрабатываем столкновение и вычисляем новую позицию
             if (BoundingBox.Intersect(&Platform->GetBoundingBox()))
             {
-                if (PreviousPosition.y < Platform->BoundingBox.y1)
-                {
-                    Position.y -= BoundingBox.y2 - Platform->BoundingBox.y1;
-                }
+                //Проверяем какой угол платформы мы пересекли
+
+                //1.Верхний левый
+                if (BoundingBox.TestPoint(Platform->BoundingBox.x1, Platform->BoundingBox.y1))
+                    Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->BoundingBox.x1, Platform->BoundingBox.y1));
                 else
-                    if (PreviousPosition.y > Platform->BoundingBox.y2)
-                    {
-                    Position.y += Platform->BoundingBox.y2 - BoundingBox.y1;
-                    JumpImpulse = 0;
-                    }
+                    //2.Верхний правый
+                    if (BoundingBox.TestPoint(Platform->BoundingBox.x2, Platform->BoundingBox.y1))
+                        Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->BoundingBox.x2, Platform->BoundingBox.y1));
                     else
-                        if (Position.x < Platform->Position.x)
-                            Position.x -= BoundingBox.x2 - Platform->BoundingBox.x1;
+                        //3.Нижний левый
+                        if (BoundingBox.TestPoint(Platform->BoundingBox.x1, Platform->BoundingBox.y2))
+                            Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->BoundingBox.x1, Platform->BoundingBox.y2));
                         else
-                            Position.x += Platform->BoundingBox.x2 - BoundingBox.x1;
+                            //4.Нижний правый
+                            if (BoundingBox.TestPoint(Platform->BoundingBox.x2, Platform->BoundingBox.y2))
+                                Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->BoundingBox.x2, Platform->BoundingBox.y2));
+                            else
+
+                                //Если не один из углов не был пересечён, то проверяем стороны
+
+                                //1.Верхняя сторона
+                                if (PreviousPosition.y < Platform->BoundingBox.y1)
+                                    Position.y = BoundingBox.y1;
+                                else
+                                    //2.Нижняя сторона
+                                    if (PreviousPosition.y > Platform->BoundingBox.y2)
+                                        Position.y = BoundingBox.y2;
+                                    else
+                                        //3.Левая сторона
+                                        if (PreviousPosition.x < Platform->BoundingBox.x1)
+                                            Position.x = BoundingBox.x1;
+                                        else
+                                            //4.Правая сторона
+                                            if (PreviousPosition.x > Platform->BoundingBox.x2)
+                                                Position.x = BoundingBox.x2;
             }
 
+            //Если достигли нижнего края карты или встали на платформу
             if (((BoundingBox.y2 == Platform->BoundingBox.y1) && (BoundingBox.x2>Platform->BoundingBox.x1) && (BoundingBox.x1 < Platform->BoundingBox.x2))
                 || (Position.y >= c_game::MAP_SIZE.y - Size))
                 OnTheGround.SetTrue();
@@ -210,7 +232,6 @@ void c_player::Update(float delta)
     {
         PlayerPosition.y = c_game::MAP_SIZE.y - GetScreenHeight()/2;
     }
-
 
     Render();
 }

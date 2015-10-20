@@ -57,3 +57,34 @@ void c_gameobject::Update(float delta)
 
     Render();
 }
+
+hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C)
+{
+    hgeVector NewPosition;
+    c_bool PointUnderLine;
+
+    // Уравнения прямых
+    // AB: (A.y - B.y)*X + (B.x - A.x)*Y + (A.x*B.y - B.x*A.y) = 0
+    // C-h: Y - C.y = 0
+    // C-v: X - C.x = 0
+
+    //Проверяем ниже ли точка C относительно прямой AB
+    if ((A.y - B.y)*C.x + (B.x - A.x)*C.y + (A.x*B.y - B.x*A.y) < 0)
+    {
+        PointUnderLine.SetTrue();
+    }
+
+    if (((moving.MovingDown.GetState()) && (PointUnderLine.GetState())) ||
+        ((moving.MovingUp.GetState()) && (!PointUnderLine.GetState())))
+    {
+        NewPosition.y = C.y;
+        NewPosition.x = -(((A.x*B.y - B.x*A.y) - (-C.y)*(B.x - A.x)) / (A.y - B.y));
+    }
+    else
+    {
+        NewPosition.x = C.x;
+        NewPosition.y = -(((A.y - B.y)*(-C.x) - (A.x*B.y - B.x*A.y)) / -(B.x - A.x));
+    }
+
+    return NewPosition;
+ };
