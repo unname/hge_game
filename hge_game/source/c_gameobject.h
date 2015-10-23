@@ -48,8 +48,8 @@ public:
     hgeVector GetVelocity();
     virtual void Update(float delta);
 
-    //A и B это PreviousPosition и CurrentPosiion необходимые дл€ вычислени€ уравнени€ пр€мой
-    //C это крайн€€ точка (угол) другого объекта, котора€ расположена в наешм объекте после пересечени€
+    //A и B - это PreviousPosition и CurrentPosiion соответственно
+    //C - это крайн€€ точка (угол) другого объекта, котора€ расположена в наешм объекте после пересечени€
     hgeVector GetNewPosition(hgeVector A, hgeVector B, hgeVector C);
 };
 

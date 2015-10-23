@@ -41,7 +41,7 @@ void c_gameobject::Update(float delta)
     if (Position.x < PreviousPosition.x)
     {
         moving.MovingLeft.SetTrue();
-      }
+    }
 
     if (Position.y > PreviousPosition.y)
     {
@@ -61,6 +61,7 @@ void c_gameobject::Update(float delta)
 hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C)
 {
     hgeVector NewPosition;
+    hgeVector SwapPosition;
     c_bool PointUnderLine;
 
     // Уравнения прямых
@@ -68,8 +69,18 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C)
     // C-h: Y - C.y = 0
     // C-v: X - C.x = 0
 
+    //Если коэф. при Y меньше 0, то меняем точки местами (нужно для одназначности дальнейших результатов)
+    if ((B.x - A.x) < 0)
+    {
+        SwapPosition = A;
+        A = B;
+        B = SwapPosition;
+    }
+
     //Проверяем ниже ли точка C относительно прямой AB
-    if ((A.y - B.y)*C.x + (B.x - A.x)*C.y + (A.x*B.y - B.x*A.y) < 0)
+    //Так как ось Y инвертрована (отсчёт идёт сверху вниз),
+    //то значение больше нуля означает, что точка лежит под линией
+    if ((A.y - B.y)*C.x + (B.x - A.x)*C.y + (A.x*B.y - B.x*A.y) > 0)
     {
         PointUnderLine.SetTrue();
     }
