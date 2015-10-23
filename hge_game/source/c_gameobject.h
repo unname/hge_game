@@ -38,7 +38,8 @@ protected:
 
     static float    g;
 
-    size_t   Size;
+    size_t   Size_x;
+    size_t   Size_y;
     c_bool  OnTheGround;
 public:
     Moving moving;
@@ -50,7 +51,8 @@ public:
 
     //A и B - это PreviousPosition и CurrentPosiion соответственно
     //C - это крайняя точка (угол) другого объекта, которая расположена в наешм объекте после пересечения
-    hgeVector GetNewPosition(hgeVector A, hgeVector B, hgeVector C);
+    //C - номер угла (нумерация с верхнего левого по часовой 1,2,3,4)
+    hgeVector GetNewPosition(hgeVector A, hgeVector B, hgeVector C, size_t C_number);
 };
 
 
