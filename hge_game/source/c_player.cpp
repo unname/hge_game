@@ -189,6 +189,7 @@ void c_player::Update(float delta)
                                 {
                                     Position.y = Platform->BoundingBox.y1 - Size_y;
                                     Velocity.y = 0;
+                                    JumpImpulse = 0;
                                 }
                                 else
                                     //2.Нижняя сторона
@@ -196,6 +197,7 @@ void c_player::Update(float delta)
                                     {
                                         Position.y = Platform->BoundingBox.y2 + Size_y;
                                         Velocity.y = 0;
+                                        JumpImpulse = 0;
                                     }
                                     else
                                         //3.Левая сторона
@@ -203,6 +205,7 @@ void c_player::Update(float delta)
                                         {
                                             Position.x = Platform->BoundingBox.x1 - Size_x;
                                             Velocity.x = 0;
+                                            Acceleration = 0;
                                         }
                                         else
                                             //4.Правая сторона
@@ -210,6 +213,7 @@ void c_player::Update(float delta)
                                             {
                                                 Position.x = Platform->BoundingBox.x2 + Size_x;
                                                 Velocity.x = 0;
+                                                Acceleration = 0;
                                             }
             }
 

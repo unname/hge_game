@@ -69,6 +69,37 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
            B_coef_zero;
     c_bool Y_fixed;
 
+    //AB - лини€ перемещени€ угла (пересечЄнного)
+    switch (C_number)
+    {
+    case 1:
+        A.x = A.x + Size_x;
+        A.y = A.y + Size_y;
+        B.x = B.x + Size_x;
+        B.y = B.y + Size_y;
+        break;
+    case 2:
+        A.x = A.x - Size_x;
+        A.y = A.y + Size_y;
+        B.x = B.x - Size_x;
+        B.y = B.y + Size_y;
+        break;
+    case 3:
+        A.x = A.x - Size_x;
+        A.y = A.y - Size_y;
+        B.x = B.x - Size_x;
+        B.y = B.y - Size_y;
+        break;
+    case 4:
+    default:
+        A.x = A.x + Size_x;
+        A.y = A.y - Size_y;
+        B.x = B.x + Size_x;
+        B.y = B.y - Size_y;
+        break;
+    }
+
+
     // ”равнени€ пр€мых
     // AB: (A.y - B.y)*X + (B.x - A.x)*Y + (A.x*B.y - B.x*A.y) = 0
     // C-h: Y - C.y = 0
@@ -132,41 +163,37 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
     switch (C_number)
     {
     case 1:
+        //“ак как возвращаем координаты центра (а не угла)
+        NewPosition.x -= Size_x;
+        NewPosition.y -= Size_y;
+
         if (!A_coef_zero.GetState() && !B_coef_zero.GetState())
         {
             //1
             if (PointUnderLine.GetState() && A_coef_negative.GetState() && !B_coef_negative.GetState())
             {
                 Y_fixed.SetTrue();
-                //NewPosition.x -= Size_x;
-                NewPosition.y -= Size_y;
-
                 Velocity.y = 0;
+                JumpImpulse = 0;
             }
             //2
             if (!PointUnderLine.GetState() && !A_coef_negative.GetState() && B_coef_negative.GetState())
             {
                 Y_fixed.SetTrue();
-                //NewPosition.x += Size_x;
-                NewPosition.y -= Size_y;
-
                 Velocity.y = 0;
+                JumpImpulse = 0;
             }
             //15
             if (!PointUnderLine.GetState() && !A_coef_negative.GetState() && !B_coef_negative.GetState())
             {
-                NewPosition.x -= Size_x;
-                //NewPosition.y += Size_y;
-
                 Velocity.x = 0;
+                Acceleration = 0;
             }
             //16
             if (!PointUnderLine.GetState() && A_coef_negative.GetState() && !B_coef_negative.GetState())
             {
-                NewPosition.x -= Size_x;
-                //NewPosition.y -= Size_y;
-
                 Velocity.x = 0;
+                Acceleration = 0;
             }
         }
         else
@@ -175,53 +202,49 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
             if (B_coef_zero.GetState())
             {
                 Y_fixed.SetTrue();
-                NewPosition.y -= Size_y;
                 Velocity.y = 0;
+                JumpImpulse = 0;
             }
             //h
             if (A_coef_zero.GetState())
             {
-                NewPosition.x -= Size_x;
                 Velocity.x = 0;
+                Acceleration = 0;
             }
         }
         break;
     case 2:
+        //“ак как возвращаем координаты центра (а не угла)
+        NewPosition.x += Size_x;
+        NewPosition.y -= Size_y;
+
         if (!A_coef_zero.GetState() && !B_coef_zero.GetState())
         {
             //3
             if (!PointUnderLine.GetState() && A_coef_negative.GetState() && !B_coef_negative.GetState())
             {
                 Y_fixed.SetTrue();
-                //NewPosition.x -= Size_x;
-                NewPosition.y -= Size_y;
-
                 Velocity.y = 0;
+                JumpImpulse = 0;
             }
             //4
             if (PointUnderLine.GetState() && !A_coef_negative.GetState() && B_coef_negative.GetState())
             {
                 Y_fixed.SetTrue();
-                //NewPosition.x += Size_x;
-                NewPosition.y -= Size_y;
-
                 Velocity.y = 0;
+                JumpImpulse = 0;
             }
             //5
             if (!PointUnderLine.GetState() && !A_coef_negative.GetState() && B_coef_negative.GetState())
             {
-                NewPosition.x += Size_x;
-                //NewPosition.y -= Size_y;
-
                 Velocity.x = 0;
+                Acceleration = 0;
             }
             //6
             if (!PointUnderLine.GetState() && A_coef_negative.GetState() && B_coef_negative.GetState())
             {
-                NewPosition.x += Size_x;
-                //NewPosition.y += Size_y;
-
                 Velocity.x = 0;
+                Acceleration = 0;
             }
         }
         else
@@ -230,53 +253,49 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
             if (B_coef_zero.GetState())
             {
                 Y_fixed.SetTrue();
-                NewPosition.y -= Size_y;
                 Velocity.y = 0;
+                JumpImpulse = 0;
             }
             //c
             if (A_coef_zero.GetState())
             {
-                NewPosition.x += Size_x;
                 Velocity.x = 0;
+                Acceleration = 0;
             }
         }
         break;
     case 3:
+        //“ак как возвращаем координаты центра (а не угла)
+        NewPosition.x += Size_x;
+        NewPosition.y += Size_y;
+
         if (!A_coef_zero.GetState() && !B_coef_zero.GetState())
         {
             //9
             if (!PointUnderLine.GetState() && A_coef_negative.GetState() && B_coef_negative.GetState())
             {
                 Y_fixed.SetTrue();
-                //NewPosition.x += Size_x;
-                NewPosition.y += Size_y;
-
                 Velocity.y = 0;
+                JumpImpulse = 0;
             }
             //10
             if (PointUnderLine.GetState() && !A_coef_negative.GetState() && !B_coef_negative.GetState())
             {
                 Y_fixed.SetTrue();
-                //NewPosition.x -= Size_x;
-                NewPosition.y += Size_y;
-
                 Velocity.y = 0;
+                JumpImpulse = 0;
             }
             //7
             if (PointUnderLine.GetState() && !A_coef_negative.GetState() && B_coef_negative.GetState())
             {
-                NewPosition.x += Size_x;
-                //NewPosition.y -= Size_y;
-
                 Velocity.x = 0;
+                Acceleration = 0;
             }
             //8
             if (PointUnderLine.GetState() && A_coef_negative.GetState() && B_coef_negative.GetState())
             {
-                NewPosition.x += Size_x;
-                //NewPosition.y += Size_y;
-
                 Velocity.x = 0;
+                Acceleration = 0;
             }
         }
         else
@@ -285,54 +304,50 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
             if (B_coef_zero.GetState())
             {
                 Y_fixed.SetTrue();
-                NewPosition.y += Size_y;
                 Velocity.y = 0;
+                JumpImpulse = 0;
             }
             //d
             if (A_coef_zero.GetState())
             {
-                NewPosition.x += Size_x;
                 Velocity.x = 0;
+                Acceleration = 0;
             }
         }
         break;
     case 4:
     default:
+        //“ак как возвращаем координаты центра (а не угла)
+        NewPosition.x -= Size_x;
+        NewPosition.y += Size_y;
+
         if (!A_coef_zero.GetState() && !B_coef_zero.GetState())
         {
             //11
             if (PointUnderLine.GetState() && A_coef_negative.GetState() && B_coef_negative.GetState())
             {
                 Y_fixed.SetTrue();
-                //NewPosition.x += Size_x;
-                NewPosition.y += Size_y;
-
                 Velocity.y = 0;
+                JumpImpulse = 0;
             }
             //12
             if (!PointUnderLine.GetState() && !A_coef_negative.GetState() && !B_coef_negative.GetState())
             {
                 Y_fixed.SetTrue();
-                //NewPosition.x -= Size_x;
-                NewPosition.y += Size_y;
-
                 Velocity.y = 0;
+                JumpImpulse = 0;
             }
             //13
             if (PointUnderLine.GetState() && !A_coef_negative.GetState() && !B_coef_negative.GetState())
             {
-                NewPosition.x -= Size_x;
-                //NewPosition.y += Size_y;
-
                 Velocity.x = 0;
+                Acceleration = 0;
             }
             //14
             if (PointUnderLine.GetState() && A_coef_negative.GetState() && !B_coef_negative.GetState())
             {
-                NewPosition.x -= Size_x;
-                //NewPosition.y -= Size_y;
-
                 Velocity.x = 0;
+                Acceleration = 0;
             }
         }
         else
@@ -341,14 +356,14 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
             if (B_coef_zero.GetState())
             {
                 Y_fixed.SetTrue();
-                NewPosition.y += Size_y;
                 Velocity.y = 0;
+                JumpImpulse = 0;
             }
             //g
             if (A_coef_zero.GetState())
             {
-                NewPosition.x -= Size_x;
                 Velocity.x = 0;
+                Acceleration = 0;
             }
         }
         break;
@@ -365,7 +380,6 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
         NewPosition.x += C.x;
         NewPosition.y += -(((A.y - B.y)*(-C.x) - (A.x*B.y - B.x*A.y)) / -(B.x - A.x));
     }
-
 
     return NewPosition;
  };
