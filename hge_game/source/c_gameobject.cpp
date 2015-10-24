@@ -65,12 +65,15 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
     c_bool PointUnderLine;
     c_bool A_coef_negative,
            B_coef_negative;
+    c_bool A_coef_zero,
+           B_coef_zero;
     c_bool Y_fixed;
 
     // Уравнения прямых
     // AB: (A.y - B.y)*X + (B.x - A.x)*Y + (A.x*B.y - B.x*A.y) = 0
     // C-h: Y - C.y = 0
     // C-v: X - C.x = 0
+
 
     //Узнаем знак коэф. при Y
     //Если коэф. при Y меньше 0, то меняем точки местами (нужно для однозначности дальнейших результатов)
@@ -83,12 +86,21 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
         B = SwapPosition;
     }
 
+    if ((B.x - A.x) == 0)
+    {
+        B_coef_zero.SetTrue();
+    }
+
     //Узнаем знак коэф. при X
     if ((A.y - B.y) < 0)
     {
         A_coef_negative.SetTrue();
     }
 
+    if ((A.y - B.y) == 0)
+    {
+        A_coef_zero.SetTrue();
+    }
 
     //Проверяем ниже ли точка C относительно прямой AB
     //Так как ось Y инвертрована (отсчёт идёт сверху вниз),
@@ -120,116 +132,224 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
     switch (C_number)
     {
     case 1:
-        //1
-        if (PointUnderLine.GetState() && A_coef_negative.GetState() && !B_coef_negative.GetState())
+        if (!A_coef_zero.GetState() && !B_coef_zero.GetState())
         {
-            Y_fixed.SetTrue();
-            NewPosition.x -= Size_x;
-            NewPosition.y -= Size_y;
+            //1
+            if (PointUnderLine.GetState() && A_coef_negative.GetState() && !B_coef_negative.GetState())
+            {
+                Y_fixed.SetTrue();
+                //NewPosition.x -= Size_x;
+                NewPosition.y -= Size_y;
+
+                Velocity.y = 0;
+            }
+            //2
+            if (!PointUnderLine.GetState() && !A_coef_negative.GetState() && B_coef_negative.GetState())
+            {
+                Y_fixed.SetTrue();
+                //NewPosition.x += Size_x;
+                NewPosition.y -= Size_y;
+
+                Velocity.y = 0;
+            }
+            //15
+            if (!PointUnderLine.GetState() && !A_coef_negative.GetState() && !B_coef_negative.GetState())
+            {
+                NewPosition.x -= Size_x;
+                //NewPosition.y += Size_y;
+
+                Velocity.x = 0;
+            }
+            //16
+            if (!PointUnderLine.GetState() && A_coef_negative.GetState() && !B_coef_negative.GetState())
+            {
+                NewPosition.x -= Size_x;
+                //NewPosition.y -= Size_y;
+
+                Velocity.x = 0;
+            }
         }
-        //2
-        if (!PointUnderLine.GetState() && !A_coef_negative.GetState() && B_coef_negative.GetState())
+        else
         {
-            Y_fixed.SetTrue();
-            NewPosition.x += Size_x;
-            NewPosition.y -= Size_y;
-        }
-        //15
-        if (!PointUnderLine.GetState() && !A_coef_negative.GetState() && !B_coef_negative.GetState())
-        {
-            NewPosition.x -= Size_x;
-            NewPosition.y += Size_y;
-        }
-        //16
-        if (!PointUnderLine.GetState() && A_coef_negative.GetState() && !B_coef_negative.GetState())
-        {
-            NewPosition.x -= Size_x;
-            NewPosition.y -= Size_y;
+            //a
+            if (B_coef_zero.GetState())
+            {
+                Y_fixed.SetTrue();
+                NewPosition.y -= Size_y;
+                Velocity.y = 0;
+            }
+            //h
+            if (A_coef_zero.GetState())
+            {
+                NewPosition.x -= Size_x;
+                Velocity.x = 0;
+            }
         }
         break;
     case 2:
-        //3
-        if (!PointUnderLine.GetState() && A_coef_negative.GetState() && !B_coef_negative.GetState())
+        if (!A_coef_zero.GetState() && !B_coef_zero.GetState())
         {
-            Y_fixed.SetTrue();
-            NewPosition.x -= Size_x;
-            NewPosition.y -= Size_y;
+            //3
+            if (!PointUnderLine.GetState() && A_coef_negative.GetState() && !B_coef_negative.GetState())
+            {
+                Y_fixed.SetTrue();
+                //NewPosition.x -= Size_x;
+                NewPosition.y -= Size_y;
+
+                Velocity.y = 0;
+            }
+            //4
+            if (PointUnderLine.GetState() && !A_coef_negative.GetState() && B_coef_negative.GetState())
+            {
+                Y_fixed.SetTrue();
+                //NewPosition.x += Size_x;
+                NewPosition.y -= Size_y;
+
+                Velocity.y = 0;
+            }
+            //5
+            if (!PointUnderLine.GetState() && !A_coef_negative.GetState() && B_coef_negative.GetState())
+            {
+                NewPosition.x += Size_x;
+                //NewPosition.y -= Size_y;
+
+                Velocity.x = 0;
+            }
+            //6
+            if (!PointUnderLine.GetState() && A_coef_negative.GetState() && B_coef_negative.GetState())
+            {
+                NewPosition.x += Size_x;
+                //NewPosition.y += Size_y;
+
+                Velocity.x = 0;
+            }
         }
-        //4
-        if (PointUnderLine.GetState() && !A_coef_negative.GetState() && B_coef_negative.GetState())
+        else
         {
-            Y_fixed.SetTrue();
-            NewPosition.x += Size_x;
-            NewPosition.y -= Size_y;
-        }
-        //5
-        if (!PointUnderLine.GetState() && !A_coef_negative.GetState() && B_coef_negative.GetState())
-        {
-            NewPosition.x += Size_x;
-            NewPosition.y -= Size_y;
-        }
-        //6
-        if (!PointUnderLine.GetState() && A_coef_negative.GetState() && B_coef_negative.GetState())
-        {
-            NewPosition.x += Size_x;
-            NewPosition.y += Size_y;
+            //b
+            if (B_coef_zero.GetState())
+            {
+                Y_fixed.SetTrue();
+                NewPosition.y -= Size_y;
+                Velocity.y = 0;
+            }
+            //c
+            if (A_coef_zero.GetState())
+            {
+                NewPosition.x += Size_x;
+                Velocity.x = 0;
+            }
         }
         break;
     case 3:
-        //9
-        if (!PointUnderLine.GetState() && A_coef_negative.GetState() && B_coef_negative.GetState())
+        if (!A_coef_zero.GetState() && !B_coef_zero.GetState())
         {
-            Y_fixed.SetTrue();
-            NewPosition.x += Size_x;
-            NewPosition.y += Size_y;
+            //9
+            if (!PointUnderLine.GetState() && A_coef_negative.GetState() && B_coef_negative.GetState())
+            {
+                Y_fixed.SetTrue();
+                //NewPosition.x += Size_x;
+                NewPosition.y += Size_y;
+
+                Velocity.y = 0;
+            }
+            //10
+            if (PointUnderLine.GetState() && !A_coef_negative.GetState() && !B_coef_negative.GetState())
+            {
+                Y_fixed.SetTrue();
+                //NewPosition.x -= Size_x;
+                NewPosition.y += Size_y;
+
+                Velocity.y = 0;
+            }
+            //7
+            if (PointUnderLine.GetState() && !A_coef_negative.GetState() && B_coef_negative.GetState())
+            {
+                NewPosition.x += Size_x;
+                //NewPosition.y -= Size_y;
+
+                Velocity.x = 0;
+            }
+            //8
+            if (PointUnderLine.GetState() && A_coef_negative.GetState() && B_coef_negative.GetState())
+            {
+                NewPosition.x += Size_x;
+                //NewPosition.y += Size_y;
+
+                Velocity.x = 0;
+            }
         }
-        //10
-        if (PointUnderLine.GetState() && !A_coef_negative.GetState() && !B_coef_negative.GetState())
+        else
         {
-            Y_fixed.SetTrue();
-            NewPosition.x -= Size_x;
-            NewPosition.y += Size_y;
-        }
-        //7
-        if (PointUnderLine.GetState() && !A_coef_negative.GetState() && B_coef_negative.GetState())
-        {
-            NewPosition.x += Size_x;
-            NewPosition.y -= Size_y;
-        }
-        //8
-        if (PointUnderLine.GetState() && A_coef_negative.GetState() && B_coef_negative.GetState())
-        {
-            NewPosition.x += Size_x;
-            NewPosition.y += Size_y;
+            //e
+            if (B_coef_zero.GetState())
+            {
+                Y_fixed.SetTrue();
+                NewPosition.y += Size_y;
+                Velocity.y = 0;
+            }
+            //d
+            if (A_coef_zero.GetState())
+            {
+                NewPosition.x += Size_x;
+                Velocity.x = 0;
+            }
         }
         break;
     case 4:
     default:
-        //11
-        if (PointUnderLine.GetState() && A_coef_negative.GetState() && B_coef_negative.GetState())
+        if (!A_coef_zero.GetState() && !B_coef_zero.GetState())
         {
-            Y_fixed.SetTrue();
-            NewPosition.x += Size_x;
-            NewPosition.y += Size_y;
+            //11
+            if (PointUnderLine.GetState() && A_coef_negative.GetState() && B_coef_negative.GetState())
+            {
+                Y_fixed.SetTrue();
+                //NewPosition.x += Size_x;
+                NewPosition.y += Size_y;
+
+                Velocity.y = 0;
+            }
+            //12
+            if (!PointUnderLine.GetState() && !A_coef_negative.GetState() && !B_coef_negative.GetState())
+            {
+                Y_fixed.SetTrue();
+                //NewPosition.x -= Size_x;
+                NewPosition.y += Size_y;
+
+                Velocity.y = 0;
+            }
+            //13
+            if (PointUnderLine.GetState() && !A_coef_negative.GetState() && !B_coef_negative.GetState())
+            {
+                NewPosition.x -= Size_x;
+                //NewPosition.y += Size_y;
+
+                Velocity.x = 0;
+            }
+            //14
+            if (PointUnderLine.GetState() && A_coef_negative.GetState() && !B_coef_negative.GetState())
+            {
+                NewPosition.x -= Size_x;
+                //NewPosition.y -= Size_y;
+
+                Velocity.x = 0;
+            }
         }
-        //12
-        if (!PointUnderLine.GetState() && !A_coef_negative.GetState() && !B_coef_negative.GetState())
+        else
         {
-            Y_fixed.SetTrue();
-            NewPosition.x -= Size_x;
-            NewPosition.y += Size_y;
-        }
-        //13
-        if (PointUnderLine.GetState() && !A_coef_negative.GetState() && !B_coef_negative.GetState())
-        {
-            NewPosition.x -= Size_x;
-            NewPosition.y += Size_y;
-        }
-        //14
-        if (PointUnderLine.GetState() && A_coef_negative.GetState() && !B_coef_negative.GetState())
-        {
-            NewPosition.x -= Size_x;
-            NewPosition.y -= Size_y;
+            //f
+            if (B_coef_zero.GetState())
+            {
+                Y_fixed.SetTrue();
+                NewPosition.y += Size_y;
+                Velocity.y = 0;
+            }
+            //g
+            if (A_coef_zero.GetState())
+            {
+                NewPosition.x -= Size_x;
+                Velocity.x = 0;
+            }
         }
         break;
     }
@@ -237,13 +357,13 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
     //Новая позиция куда должны переместить край объекта (попавший внутрь платформы)
     if (Y_fixed.GetState())
     {
-        NewPosition.y = C.y;
-        NewPosition.x = -(((A.x*B.y - B.x*A.y) - (-C.y)*(B.x - A.x)) / (A.y - B.y));
+        NewPosition.y += C.y;
+        NewPosition.x += -(((A.x*B.y - B.x*A.y) - (-C.y)*(B.x - A.x)) / (A.y - B.y));
     }
     else
     {
-        NewPosition.x = C.x;
-        NewPosition.y = -(((A.y - B.y)*(-C.x) - (A.x*B.y - B.x*A.y)) / -(B.x - A.x));
+        NewPosition.x += C.x;
+        NewPosition.y += -(((A.y - B.y)*(-C.x) - (A.x*B.y - B.x*A.y)) / -(B.x - A.x));
     }
 
 

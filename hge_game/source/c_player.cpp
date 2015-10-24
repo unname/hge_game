@@ -173,33 +173,49 @@ void c_player::Update(float delta)
                     if (BoundingBox.TestPoint(Platform->BoundingBox.x2, Platform->BoundingBox.y1))
                         Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->BoundingBox.x2, Platform->BoundingBox.y1), 2);
                     else
-                        //3.Нижний левый
-                        if (BoundingBox.TestPoint(Platform->BoundingBox.x1, Platform->BoundingBox.y2))
-                            Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->BoundingBox.x1, Platform->BoundingBox.y2), 3);
+                        //3.Нижний правый
+                        if (BoundingBox.TestPoint(Platform->BoundingBox.x2, Platform->BoundingBox.y2))
+                            Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->BoundingBox.x2, Platform->BoundingBox.y2), 3);
                         else
-                            //4.Нижний правый
-                            if (BoundingBox.TestPoint(Platform->BoundingBox.x2, Platform->BoundingBox.y2))
-                                Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->BoundingBox.x2, Platform->BoundingBox.y2), 4);
+                            //4.Нижний левый
+                            if (BoundingBox.TestPoint(Platform->BoundingBox.x1, Platform->BoundingBox.y2))
+                                Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->BoundingBox.x1, Platform->BoundingBox.y2), 4);
                             else
 
                                 //Если не один из углов не был пересечён, то проверяем стороны
 
                                 //1.Верхняя сторона
                                 if (PreviousPosition.y < Platform->BoundingBox.y1)
+                                {
                                     Position.y = Platform->BoundingBox.y1 - Size_y;
+                                    Velocity.y = 0;
+                                }
                                 else
                                     //2.Нижняя сторона
                                     if (PreviousPosition.y > Platform->BoundingBox.y2)
+                                    {
                                         Position.y = Platform->BoundingBox.y2 + Size_y;
+                                        Velocity.y = 0;
+                                    }
                                     else
                                         //3.Левая сторона
                                         if (PreviousPosition.x < Platform->BoundingBox.x1)
+                                        {
                                             Position.x = Platform->BoundingBox.x1 - Size_x;
+                                            Velocity.x = 0;
+                                        }
                                         else
                                             //4.Правая сторона
                                             if (PreviousPosition.x > Platform->BoundingBox.x2)
+                                            {
                                                 Position.x = Platform->BoundingBox.x2 + Size_x;
+                                                Velocity.x = 0;
+                                            }
             }
+
+
+            //Обновим позицию
+            BoundingBox = GetBoundingBox();
 
             //Если достигли нижнего края карты или встали на платформу
             if (((BoundingBox.y2 == Platform->BoundingBox.y1) && (BoundingBox.x2>Platform->BoundingBox.x1) && (BoundingBox.x1 < Platform->BoundingBox.x2))
