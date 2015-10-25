@@ -49,7 +49,7 @@ void c_player::Update(float delta)
 {
     c_gameobject::Update(delta);
 
-    if (hge->Input_GetKeyState(HGEK_LEFT))
+    if (hge->Input_GetKeyState(HGEK_LEFT) && !OnTheRightWall.GetState())
     {
         if (Acceleration < Max_Acceleration)
             Acceleration += Acceleration_step;
@@ -59,7 +59,7 @@ void c_player::Update(float delta)
         Velocity.x -= Speed*Acceleration*delta;
     }
   
-    if (hge->Input_GetKeyState(HGEK_RIGHT))
+    if (hge->Input_GetKeyState(HGEK_RIGHT) && !OnTheLeftWall.GetState())
     {
         if (Acceleration < Max_Acceleration)
             Acceleration += Acceleration_step;
@@ -151,8 +151,11 @@ void c_player::Update(float delta)
     //Обработка столкновений
     BoundingBox = GetBoundingBox();
 
-    //Заного проверим стоим ли мы на платформе или земле
+    //Заного проверим стоим ли мы на платформе или земле и упироаемся ли в стену
     OnTheGround.SetFalse();
+    OnTheLeftWall.SetFalse();
+    OnTheRightWall.SetFalse();
+
     for (size_t obj_num = 0; obj_num < c_drawobject::DrawObjects.size(); obj_num++)
     {
         c_platform* Platform = dynamic_cast<c_platform*>(c_drawobject::DrawObjects[obj_num]);
@@ -225,6 +228,14 @@ void c_player::Update(float delta)
             if (((BoundingBox.y2 == Platform->BoundingBox.y1) && (BoundingBox.x2>Platform->BoundingBox.x1) && (BoundingBox.x1 < Platform->BoundingBox.x2))
                 || (Position.y >= c_game::MAP_SIZE.y - Size_y))
                 OnTheGround.SetTrue();
+
+            //Если упераемся в левую стенку
+            if ((BoundingBox.x2 == Platform->BoundingBox.x1) && (BoundingBox.y2>Platform->BoundingBox.y1) && (BoundingBox.y1 < Platform->BoundingBox.y2))
+                OnTheLeftWall.SetTrue();
+
+            //Если упераемся в правую стенку
+            if ((BoundingBox.x1 == Platform->BoundingBox.x2) && (BoundingBox.y2>Platform->BoundingBox.y1) && (BoundingBox.y1 < Platform->BoundingBox.y2))
+                OnTheRightWall.SetTrue();
         }
     }
 

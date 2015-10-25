@@ -160,7 +160,7 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
     // Y_fixed: 1, 2, 3, 4, 9, 10, 11, 12
     // X_fixed: 5, 6, 7, 8, 13, 14, 15, 16
 
-    switch (C_number)
+      switch (C_number)
     {
     case 1:
         //Так как возвращаем координаты центра (а не угла)
@@ -370,16 +370,32 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
     }
 
     //Новая позиция куда должны переместить край объекта (попавший внутрь платформы)
-    if (Y_fixed.GetState())
+    if (!A_coef_zero.GetState() && !B_coef_zero.GetState())
     {
-        NewPosition.y += C.y;
-        NewPosition.x += -(((A.x*B.y - B.x*A.y) - (-C.y)*(B.x - A.x)) / (A.y - B.y));
+        if (Y_fixed.GetState())
+        {
+            NewPosition.y += C.y;
+            NewPosition.x += -(((A.x*B.y - B.x*A.y) - (-C.y)*(B.x - A.x)) / (A.y - B.y));
+        }
+        else
+        {
+            NewPosition.x += C.x;
+            NewPosition.y += -(((A.y - B.y)*(-C.x) - (A.x*B.y - B.x*A.y)) / -(B.x - A.x));
+        }
     }
     else
     {
-        NewPosition.x += C.x;
-        NewPosition.y += -(((A.y - B.y)*(-C.x) - (A.x*B.y - B.x*A.y)) / -(B.x - A.x));
+        if (Y_fixed.GetState())
+        {
+            NewPosition.x += B.x;
+            NewPosition.y += C.y;
+        }
+        else
+        {
+            NewPosition.x += C.x;
+            NewPosition.y += B.y;
+        }
     }
-
+    
     return NewPosition;
  };

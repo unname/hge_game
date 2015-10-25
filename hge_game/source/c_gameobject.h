@@ -38,9 +38,11 @@ protected:
 
     static float    g;
 
-    size_t   Size_x;
-    size_t   Size_y;
+    size_t  Size_x;
+    size_t  Size_y;
     c_bool  OnTheGround;
+    c_bool  OnTheLeftWall;
+    c_bool  OnTheRightWall;
 public:
     Moving moving;
 

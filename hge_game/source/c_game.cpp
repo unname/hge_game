@@ -55,7 +55,7 @@ bool c_game::LoadResources()
     TILE_SIZE = map->GetTileSize();
 
     //Создание персонажа
-    player = new c_player(2);
+    player = new c_player(20);
 
     return true;
 }
