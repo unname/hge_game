@@ -118,16 +118,39 @@ void c_player::Update(float delta)
     Position.y += Velocity.y;
 
 
+    // -------------------------------------
+    //
+    //         ОБРАБОТКА ПЕРЕСЕЧЕНИЙ
+    //    + обновление статусов положений
+    //
+    // -------------------------------------
+
+    OnTheGround.SetFalse();
+    OnTheLeftWall.SetFalse();
+    OnTheRightWall.SetFalse();
+
+    // --------------------
+    //
+    // 1. Пересечение с краями карты
+    //
+    // --------------------
+
     //Если достигли правой границы
     if (Position.x >= c_game::MAP_SIZE.x - Sprite->GetWidth()/2)
     {
         Position.x = c_game::MAP_SIZE.x - Sprite->GetWidth()/2;
+        Velocity.x = 0;
+        Acceleration = 0;
+        OnTheRightWall.SetTrue();
     }
 
     //Если достигли левой границы
     if (Position.x <= Sprite->GetWidth()/2)
     {
         Position.x = Sprite->GetWidth()/2;
+        Velocity.x = 0;
+        Acceleration = 0;
+        OnTheLeftWall.SetTrue();
     }
 
     //Если достигли нижней границы
@@ -135,6 +158,7 @@ void c_player::Update(float delta)
     {
         Position.y = c_game::MAP_SIZE.y - Sprite->GetHeight()/2;
         Velocity.y = 0;
+        JumpImpulse = 0;
         OnTheGround.SetTrue();
     }
 
@@ -142,14 +166,15 @@ void c_player::Update(float delta)
     if (Position.y <= Sprite->GetHeight())
     {
         Position.y = Sprite->GetHeight();
+        Velocity.y = 0;
+        JumpImpulse = 0;
     }
 
-
-    //Обработка столкновений + обновление статусов игрока
-
-    OnTheGround.SetFalse();
-    OnTheLeftWall.SetFalse();
-    OnTheRightWall.SetFalse();
+    // -------------------
+    //
+    // 2. Пересечение с платформами
+    //
+    // --------------------
 
     for (size_t obj_num = 0; obj_num < c_drawobject::DrawObjects.size(); obj_num++)
     {
@@ -178,14 +203,12 @@ void c_player::Update(float delta)
         }
     }
 
-    //Если достигли нижнего края карты
-    if(Position.y >= c_game::MAP_SIZE.y - Sprite->GetHeight()/2)
-        OnTheGround.SetTrue();
-
-
     //-------------------------------------------
-    //Изменение перемещения камеры при достижение краёв карты
+    //
+    //   Изменение в положении камеры при достижение краёв карты
+    //
     //-------------------------------------------
+
     PlayerPosition = Position;
 
     //Если дошли до левого края экрана
