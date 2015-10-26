@@ -145,9 +145,8 @@ void c_player::Update(float delta)
     }
 
 
-    //Обработка столкновений
+    //Обработка столкновений + обновление статусов игрока
 
-    //Заного проверим стоим ли мы на платформе или земле и упироаемся ли в стену
     OnTheGround.SetFalse();
     OnTheLeftWall.SetFalse();
     OnTheRightWall.SetFalse();
@@ -165,23 +164,28 @@ void c_player::Update(float delta)
                 Position = GetNewPosition(Platform->GetBoundingBox());
             }
 
-            //Обнавляем параметры 'статуса' игрока 
-
-            //Если достигли нижнего края карты или встали на платформу
-            if (((GetBoundingBox().y2 == Platform->GetBoundingBox().y1) && (GetBoundingBox().x2>Platform->GetBoundingBox().x1) && (GetBoundingBox().x1 < Platform->GetBoundingBox().x2))
-                || (Position.y >= c_game::MAP_SIZE.y - Sprite->GetHeight()))
+            //Если встали на платформу
+            if ((GetBoundingBox().y2 == Platform->GetBoundingBox().y1) && (GetBoundingBox().x2>Platform->GetBoundingBox().x1) && (GetBoundingBox().x1 < Platform->GetBoundingBox().x2))
                 OnTheGround.SetTrue();
 
-            //Если упераемся в левую стенку
+            //Если упераемся в левую стенку платформы
             if ((GetBoundingBox().x2 == Platform->GetBoundingBox().x1) && (GetBoundingBox().y2>Platform->GetBoundingBox().y1) && (GetBoundingBox().y1 < Platform->GetBoundingBox().y2))
                 OnTheLeftWall.SetTrue();
 
-            //Если упераемся в правую стенку
+            //Если упераемся в правую стенку платформы
             if ((GetBoundingBox().x1 == Platform->GetBoundingBox().x2) && (GetBoundingBox().y2>Platform->GetBoundingBox().y1) && (GetBoundingBox().y1 < Platform->GetBoundingBox().y2))
                 OnTheRightWall.SetTrue();
         }
     }
 
+    //Если достигли нижнего края карты
+    if(Position.y >= c_game::MAP_SIZE.y - Sprite->GetHeight()/2)
+        OnTheGround.SetTrue();
+
+
+    //-------------------------------------------
+    //Изменение перемещения камеры при достижение краёв карты
+    //-------------------------------------------
     PlayerPosition = Position;
 
     //Если дошли до левого края экрана
