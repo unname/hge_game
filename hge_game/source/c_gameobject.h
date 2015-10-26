@@ -7,14 +7,6 @@
 
 #include "c_bool.h"
 #include "c_drawobject.h"
- 
-struct Moving
-{
-    c_bool MovingRigth;
-    c_bool MovingLeft;
-    c_bool MovingUp;
-    c_bool MovingDown;
-};
 
 class c_gameobject: public c_drawobject
 {
@@ -30,7 +22,7 @@ protected:
     float   Max_Acceleration;
     float   Acceleration_step;
 
-    float Friction;
+    float   Friction;
 
     float   JumpImpulse;
     float   Max_JumpImpulse;
@@ -38,23 +30,19 @@ protected:
 
     static float    g;
 
-    size_t  Size_x;
-    size_t  Size_y;
     c_bool  OnTheGround;
     c_bool  OnTheLeftWall;
     c_bool  OnTheRightWall;
 public:
-    Moving moving;
 
     c_gameobject();
 
     hgeVector GetVelocity();
     virtual void Update(float delta);
 
-    //A и B - это PreviousPosition и CurrentPosiion соответственно
-    //C - это крайняя точка (угол) другого объекта, которая расположена в наешм объекте после пересечения
-    //C - номер угла (нумерация с верхнего левого по часовой 1,2,3,4)
-    hgeVector GetNewPosition(hgeVector A, hgeVector B, hgeVector C, size_t C_number);
+    //Возвращает новую позицию (центр) при пересечении с другим спрайтом
+    //BoundingBox - границы пересечённого спрайта
+    hgeVector GetNewPosition(hgeRect BoundingBox);
 };
 
 

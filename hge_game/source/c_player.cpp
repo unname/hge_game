@@ -7,9 +7,6 @@ c_player::c_player(u_int size)
     SetPosition(hgeVector(2300, 3000));
     PlayerPosition = Position;
 
-    Size_x = size;
-    Size_y = size;
-
     Speed = 3.0;
     Max_Speed = Speed * 30;
 
@@ -30,8 +27,8 @@ c_player::c_player(u_int size)
         DisplayErrorHGE();
     }
 
-    Sprite = new hgeSprite(Texture, 0 + 0.5f, 0 + 0.5f, Size_x * 2, Size_y * 2);
-    Sprite->SetHotSpot(Size_x, Size_y);
+    Sprite = new hgeSprite(Texture, 0 + 0.5f, 0 + 0.5f, size * 2, size * 2);
+    Sprite->SetHotSpot(size, size);
     Sprite->SetColor(ARGB(255, 255, 255, 255));
 
     //Sprite = new hgeAnimation(Texture, 4, 4, 0, 0, 64, 29);
@@ -122,29 +119,29 @@ void c_player::Update(float delta)
 
 
     //Если достигли правой границы
-    if (Position.x >= c_game::MAP_SIZE.x - Size_x)
+    if (Position.x >= c_game::MAP_SIZE.x - Sprite->GetWidth()/2)
     {
-        Position.x = c_game::MAP_SIZE.x - Size_x;
+        Position.x = c_game::MAP_SIZE.x - Sprite->GetWidth()/2;
     }
 
     //Если достигли левой границы
-    if (Position.x <= Size_x)
+    if (Position.x <= Sprite->GetWidth()/2)
     {
-        Position.x = Size_x;
+        Position.x = Sprite->GetWidth()/2;
     }
 
     //Если достигли нижней границы
-    if (Position.y >= c_game::MAP_SIZE.y - Size_y)
+    if (Position.y >= c_game::MAP_SIZE.y - Sprite->GetHeight()/2)
     {
-        Position.y = c_game::MAP_SIZE.y - Size_y;
+        Position.y = c_game::MAP_SIZE.y - Sprite->GetHeight()/2;
         Velocity.y = 0;
         OnTheGround.SetTrue();
     }
 
     //Если достигли верхней границы
-    if (Position.y <= Size_y)
+    if (Position.y <= Sprite->GetHeight())
     {
-        Position.y = Size_y;
+        Position.y = Sprite->GetHeight();
     }
 
 
@@ -165,64 +162,14 @@ void c_player::Update(float delta)
             //Если пересекаемся, то обрабатываем столкновение и вычисляем новую позицию
             if (GetBoundingBox().Intersect(&Platform->GetBoundingBox()))
             {
-                //Проверяем какой угол платформы мы пересекли
-
-                //1.Верхний левый
-                if (GetBoundingBox().TestPoint(Platform->GetBoundingBox().x1, Platform->GetBoundingBox().y1))
-                    Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->GetBoundingBox().x1, Platform->GetBoundingBox().y1), 1);
-                else
-                    //2.Верхний правый
-                    if (GetBoundingBox().TestPoint(Platform->GetBoundingBox().x2, Platform->GetBoundingBox().y1))
-                        Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->GetBoundingBox().x2, Platform->GetBoundingBox().y1), 2);
-                    else
-                        //3.Нижний правый
-                        if (GetBoundingBox().TestPoint(Platform->GetBoundingBox().x2, Platform->GetBoundingBox().y2))
-                            Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->GetBoundingBox().x2, Platform->GetBoundingBox().y2), 3);
-                        else
-                            //4.Нижний левый
-                            if (GetBoundingBox().TestPoint(Platform->GetBoundingBox().x1, Platform->GetBoundingBox().y2))
-                                Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->GetBoundingBox().x1, Platform->GetBoundingBox().y2), 4);
-                            else
-
-                                //Если не один из углов не был пересечён, то проверяем стороны
-
-                                //1.Верхняя сторона
-                                if (PreviousPosition.y < Platform->GetBoundingBox().y1)
-                                {
-                    Position.y = Platform->GetBoundingBox().y1 - Size_y;
-                                    Velocity.y = 0;
-                                    JumpImpulse = 0;
-                                }
-                                else
-                                    //2.Нижняя сторона
-                                    if (PreviousPosition.y > Platform->GetBoundingBox().y2)
-                                    {
-                                        Position.y = Platform->GetBoundingBox().y2 + Size_y;
-                                        Velocity.y = 0;
-                                        JumpImpulse = 0;
-                                    }
-                                    else
-                                        //3.Левая сторона
-                                        if (PreviousPosition.x < Platform->GetBoundingBox().x1)
-                                        {
-                                            Position.x = Platform->GetBoundingBox().x1 - Size_x;
-                                            Velocity.x = 0;
-                                            Acceleration = 0;
-                                        }
-                                        else
-                                            //4.Правая сторона
-                                            if (PreviousPosition.x > Platform->GetBoundingBox().x2)
-                                            {
-                                                Position.x = Platform->GetBoundingBox().x2 + Size_x;
-                                                Velocity.x = 0;
-                                                Acceleration = 0;
-                                            }
+                Position = GetNewPosition(Platform->GetBoundingBox());
             }
 
+            //Обнавляем параметры 'статуса' игрока 
 
             //Если достигли нижнего края карты или встали на платформу
             if (((GetBoundingBox().y2 == Platform->GetBoundingBox().y1) && (GetBoundingBox().x2>Platform->GetBoundingBox().x1) && (GetBoundingBox().x1 < Platform->GetBoundingBox().x2))
-                || (Position.y >= c_game::MAP_SIZE.y - Size_y))
+                || (Position.y >= c_game::MAP_SIZE.y - Sprite->GetHeight()))
                 OnTheGround.SetTrue();
 
             //Если упераемся в левую стенку

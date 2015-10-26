@@ -27,41 +27,21 @@ void c_gameobject::Update(float delta)
         JumpImpulse = 0;
     }
 
-    //Определяем куда движется наш объект
-    moving.MovingLeft.SetFalse();
-    moving.MovingRigth.SetFalse();
-    moving.MovingUp.SetFalse();
-    moving.MovingDown.SetFalse();
-
-    if (Position.x > PreviousPosition.x)
-    {
-        moving.MovingRigth.SetTrue();
-    }
-
-    if (Position.x < PreviousPosition.x)
-    {
-        moving.MovingLeft.SetTrue();
-    }
-
-    if (Position.y > PreviousPosition.y)
-    {
-        moving.MovingDown.SetTrue();
-    }
-
-    if (Position.y < PreviousPosition.y)
-    {
-        moving.MovingUp.SetTrue();
-    }
-
     PreviousPosition = Position;
 
     Render();
 }
 
-hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, size_t C_number)
+hgeVector c_gameobject::GetNewPosition(hgeRect BoundingBox)
 {
+
+    hgeVector A = PreviousPosition;
+    hgeVector B = Position;
+    hgeVector C;
+
     hgeVector NewPosition(0,0);
     hgeVector SwapPosition;
+
     c_bool PointUnderLine;
     c_bool A_coef_negative,
            B_coef_negative;
@@ -69,42 +49,85 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
            B_coef_zero;
     c_bool Y_fixed;
 
-    //AB - линия перемещения угла (пересечённого)
-    switch (C_number)
+    float Size_x = Sprite->GetWidth()/2; 
+    float Size_y = Sprite->GetHeight()/2;
+    
+    //Определим номер угла спрайта, который мы пересекли 
+    //Верхний левый - 1, далее по часовой
+    size_t angle_number = 0;
+
+    //1.Верхний левый
+    if (GetBoundingBox().TestPoint(BoundingBox.x1, BoundingBox.y1))
+    {
+        angle_number = 1;
+        C = hgeVector(BoundingBox.x1, BoundingBox.y1);
+    }
+    //2.Верхний правый
+    if (GetBoundingBox().TestPoint(BoundingBox.x2, BoundingBox.y1))
+    {
+        angle_number = 2;
+        C = hgeVector(BoundingBox.x2, BoundingBox.y1);
+    }
+    //3.Нижний правый
+    if (GetBoundingBox().TestPoint(BoundingBox.x2, BoundingBox.y2))
+    {
+        angle_number = 3;
+        C = hgeVector(BoundingBox.x2, BoundingBox.y2);
+    }
+    //4.Нижний левый
+    if (GetBoundingBox().TestPoint(BoundingBox.x1, BoundingBox.y2))
+    {
+        angle_number = 4;
+        C = hgeVector(BoundingBox.x1, BoundingBox.y2);
+    }
+
+    //Смещаем точки, так как 'AB' - линия перемещения угла (который пересёк другой спрайт), а не центра
+    switch (angle_number)
     {
     case 1:
         A.x = A.x + Size_x;
         A.y = A.y + Size_y;
         B.x = B.x + Size_x;
         B.y = B.y + Size_y;
+
+        NewPosition.x -= Size_x;
+        NewPosition.y -= Size_y;
         break;
     case 2:
         A.x = A.x - Size_x;
         A.y = A.y + Size_y;
         B.x = B.x - Size_x;
         B.y = B.y + Size_y;
+
+        NewPosition.x += Size_x;
+        NewPosition.y -= Size_y;
         break;
     case 3:
         A.x = A.x - Size_x;
         A.y = A.y - Size_y;
         B.x = B.x - Size_x;
         B.y = B.y - Size_y;
+
+        NewPosition.x += Size_x;
+        NewPosition.y += Size_y;
         break;
     case 4:
-    default:
         A.x = A.x + Size_x;
         A.y = A.y - Size_y;
         B.x = B.x + Size_x;
         B.y = B.y - Size_y;
+
+        NewPosition.x -= Size_x;
+        NewPosition.y += Size_y;
+        break;
+    default:
         break;
     }
-
 
     // Уравнения прямых
     // AB: (A.y - B.y)*X + (B.x - A.x)*Y + (A.x*B.y - B.x*A.y) = 0
     // C-h: Y - C.y = 0
     // C-v: X - C.x = 0
-
 
     //Узнаем знак коэф. при Y
     //Если коэф. при Y меньше 0, то меняем точки местами (нужно для однозначности дальнейших результатов)
@@ -140,12 +163,12 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
     {
         PointUnderLine.SetTrue();
     }
-    //    1\/2  3\/4
-    // 16\          /5
-    // 15/          \6
-    // 
-    // 14\          /7
-    // 13/          \8
+    //    1\/2   3\/4
+    // 16\           /5
+    // 15/           \6
+    //         o
+    // 14\           /7
+    // 13/           \8
     //   12/\11  10/\9
     //
     // POINT_UNDER : 1, 4, 7, 8, 10, 11, 13, 14
@@ -160,13 +183,9 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
     // Y_fixed: 1, 2, 3, 4, 9, 10, 11, 12
     // X_fixed: 5, 6, 7, 8, 13, 14, 15, 16
 
-      switch (C_number)
+    switch (angle_number)
     {
     case 1:
-        //Так как возвращаем координаты центра (а не угла)
-        NewPosition.x -= Size_x;
-        NewPosition.y -= Size_y;
-
         if (!A_coef_zero.GetState() && !B_coef_zero.GetState())
         {
             //1
@@ -214,10 +233,6 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
         }
         break;
     case 2:
-        //Так как возвращаем координаты центра (а не угла)
-        NewPosition.x += Size_x;
-        NewPosition.y -= Size_y;
-
         if (!A_coef_zero.GetState() && !B_coef_zero.GetState())
         {
             //3
@@ -265,10 +280,6 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
         }
         break;
     case 3:
-        //Так как возвращаем координаты центра (а не угла)
-        NewPosition.x += Size_x;
-        NewPosition.y += Size_y;
-
         if (!A_coef_zero.GetState() && !B_coef_zero.GetState())
         {
             //9
@@ -316,11 +327,6 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
         }
         break;
     case 4:
-    default:
-        //Так как возвращаем координаты центра (а не угла)
-        NewPosition.x -= Size_x;
-        NewPosition.y += Size_y;
-
         if (!A_coef_zero.GetState() && !B_coef_zero.GetState())
         {
             //11
@@ -367,35 +373,75 @@ hgeVector c_gameobject::GetNewPosition(hgeVector A, hgeVector B, hgeVector C, si
             }
         }
         break;
+    default:
+        break;
     }
 
-    //Новая позиция куда должны переместить край объекта (попавший внутрь платформы)
-    if (!A_coef_zero.GetState() && !B_coef_zero.GetState())
+    //Вычисляем новую позицию куда должны переместить угол нашего объекта (попавший внутрь другого спрайта)
+    if (angle_number)
     {
-        if (Y_fixed.GetState())
+        if (!A_coef_zero.GetState() && !B_coef_zero.GetState())
         {
-            NewPosition.y += C.y;
-            NewPosition.x += -(((A.x*B.y - B.x*A.y) - (-C.y)*(B.x - A.x)) / (A.y - B.y));
+            if (Y_fixed.GetState())
+            {
+                NewPosition.y += C.y;
+                NewPosition.x += -(((A.x*B.y - B.x*A.y) - (-C.y)*(B.x - A.x)) / (A.y - B.y));
+            }
+            else
+            {
+                NewPosition.x += C.x;
+                NewPosition.y += -(((A.y - B.y)*(-C.x) - (A.x*B.y - B.x*A.y)) / -(B.x - A.x));
+            }
         }
         else
         {
-            NewPosition.x += C.x;
-            NewPosition.y += -(((A.y - B.y)*(-C.x) - (A.x*B.y - B.x*A.y)) / -(B.x - A.x));
+            if (Y_fixed.GetState())
+            {
+                NewPosition.x += B.x;
+                NewPosition.y += C.y;
+            }
+            else
+            {
+                NewPosition.x += C.x;
+                NewPosition.y += B.y;
+            }
         }
     }
     else
+    //Если углы спрайта не пересекались, то проверяем стороны
     {
-        if (Y_fixed.GetState())
+        //1.Верхняя сторона
+        if (PreviousPosition.y < BoundingBox.y1)
         {
-            NewPosition.x += B.x;
-            NewPosition.y += C.y;
+            NewPosition.y = BoundingBox.y1 - Size_y;
+            Velocity.y = 0;
+            JumpImpulse = 0;
         }
-        else
+
+        //2.Нижняя сторона
+        if (PreviousPosition.y > BoundingBox.y2)
         {
-            NewPosition.x += C.x;
-            NewPosition.y += B.y;
+            NewPosition.y = BoundingBox.y2 + Size_y;
+            Velocity.y = 0;
+            JumpImpulse = 0;
+        }
+
+        //3.Левая сторона
+        if (PreviousPosition.x < BoundingBox.x1)
+        {
+            NewPosition.x = BoundingBox.x1 - Size_x;
+            Velocity.x = 0;
+            Acceleration = 0;
+        }
+
+        //4.Правая сторона
+        if (PreviousPosition.x > BoundingBox.x2)
+        {
+            NewPosition.x = BoundingBox.x2 + Size_x;
+            Velocity.x = 0;
+            Acceleration = 0;
         }
     }
-    
+
     return NewPosition;
  };
