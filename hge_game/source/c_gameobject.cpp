@@ -14,22 +14,118 @@ hgeVector c_gameobject::GetVelocity()
 
 void c_gameobject::Update(float delta)
 {
-    c_drawobject::Update(delta);
+    // -------------------------------------
+    //
+    //    Обработка Физики
+    //
+    // -------------------------------------
 
     //Если объект в воздухе, то он падаем под силой гравитации
     if (!OnTheGround.GetState())
     {
         Velocity.y += g*delta;
     }
-    else
+
+    //Учёт силы трения
+    Velocity.x *= Friction;
+    Velocity.y *= Friction;
+
+    //Ограничение максимальной скорости
+    if (Velocity.x>Max_Speed)   Velocity.x = Max_Speed;
+    if (Velocity.y>Max_Speed)   Velocity.y = Max_Speed;
+
+    // Актуальная позиция после всех расчётов
+    Position.x += Velocity.x;
+    Position.y += Velocity.y;
+
+
+    // -------------------------------------
+    //
+    //         ОБРАБОТКА ПЕРЕСЕЧЕНИЙ
+    //    + обновление статусов положений
+    //
+    // -------------------------------------
+
+    OnTheGround.SetFalse();
+    OnTheLeftWall.SetFalse();
+    OnTheRightWall.SetFalse();
+
+    // --------------------
+    //
+    // 1. Пересечение с краями карты
+    //
+    // --------------------
+
+    //Если достигли правой границы
+    if (Position.x >= c_game::MAP_SIZE.x - Sprite->GetWidth() / 2)
     {
-        //Если объект на земле, то импульса нет
+        Position.x = c_game::MAP_SIZE.x - Sprite->GetWidth() / 2;
+        Velocity.x = 0;
+        Acceleration = 0;
+        OnTheRightWall.SetTrue();
+    }
+
+    //Если достигли левой границы
+    if (Position.x <= Sprite->GetWidth() / 2)
+    {
+        Position.x = Sprite->GetWidth() / 2;
+        Velocity.x = 0;
+        Acceleration = 0;
+        OnTheLeftWall.SetTrue();
+    }
+
+    //Если достигли нижней границы
+    if (Position.y >= c_game::MAP_SIZE.y - Sprite->GetHeight() / 2)
+    {
+        Position.y = c_game::MAP_SIZE.y - Sprite->GetHeight() / 2;
+        Velocity.y = 0;
+        JumpImpulse = 0;
+        OnTheGround.SetTrue();
+    }
+
+    //Если достигли верхней границы
+    if (Position.y <= Sprite->GetHeight())
+    {
+        Position.y = Sprite->GetHeight();
+        Velocity.y = 0;
         JumpImpulse = 0;
     }
 
-    PreviousPosition = Position;
+    // -------------------
+    //
+    // 2. Пересечение с платформами
+    //
+    // --------------------
 
-    Render();
+    for (size_t obj_num = 0; obj_num < c_drawobject::DrawObjects.size(); obj_num++)
+    {
+        c_platform* Platform = dynamic_cast<c_platform*>(c_drawobject::DrawObjects[obj_num]);
+
+        //Если объект не платформа dynamic_cast вернёт NULL
+        if (Platform)
+        {
+            //Если пересекаемся, то обрабатываем столкновение и вычисляем новую позицию
+            if (GetBoundingBox().Intersect(&Platform->GetBoundingBox()))
+            {
+                Position = GetNewPosition(Platform->GetBoundingBox());
+            }
+
+            //Если встали на платформу
+            if ((GetBoundingBox().y2 == Platform->GetBoundingBox().y1) && (GetBoundingBox().x2>Platform->GetBoundingBox().x1) && (GetBoundingBox().x1 < Platform->GetBoundingBox().x2))
+                OnTheGround.SetTrue();
+
+            //Если упераемся в левую стенку платформы
+            if ((GetBoundingBox().x2 == Platform->GetBoundingBox().x1) && (GetBoundingBox().y2>Platform->GetBoundingBox().y1) && (GetBoundingBox().y1 < Platform->GetBoundingBox().y2))
+                OnTheLeftWall.SetTrue();
+
+            //Если упераемся в правую стенку платформы
+            if ((GetBoundingBox().x1 == Platform->GetBoundingBox().x2) && (GetBoundingBox().y2>Platform->GetBoundingBox().y1) && (GetBoundingBox().y1 < Platform->GetBoundingBox().y2))
+                OnTheRightWall.SetTrue();
+        }
+    }
+
+    PreviousPosition = Position;
+    c_drawobject::Update(delta);
 }
 
 hgeVector c_gameobject::GetNewPosition(hgeRect BoundingBox)

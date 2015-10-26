@@ -9,9 +9,9 @@ class c_player;
 #include <vector>
 
 #include "c_hge.h"
-#include "c_player.h"
 #include "c_loadmap.h"
 #include "c_drawobject.h"
+#include "c_player.h"
 
 
 class c_game : public c_hge

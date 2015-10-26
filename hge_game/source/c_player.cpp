@@ -44,8 +44,6 @@ c_player::~c_player()
 //Повторный расчёт свойств объекта
 void c_player::Update(float delta)
 {
-    c_gameobject::Update(delta);
-
     if (hge->Input_GetKeyState(HGEK_LEFT) && !OnTheRightWall.GetState())
     {
         if (Acceleration < Max_Acceleration)
@@ -103,109 +101,11 @@ void c_player::Update(float delta)
         JumpImpulse = 0;
     }
 
-
-    //Учёт силы трения
-    Velocity.x *= Friction;
-    Velocity.y *= Friction;
-
-    //Ограничение максимальной скорости
-    if (Velocity.x>Max_Speed)   Velocity.x = Max_Speed;
-    if (Velocity.y>Max_Speed)   Velocity.y = Max_Speed;
-
-
-    // Актуальная позиция после всех расчётов
-    Position.x += Velocity.x;
-    Position.y += Velocity.y;
-
-
-    // -------------------------------------
-    //
-    //         ОБРАБОТКА ПЕРЕСЕЧЕНИЙ
-    //    + обновление статусов положений
-    //
-    // -------------------------------------
-
-    OnTheGround.SetFalse();
-    OnTheLeftWall.SetFalse();
-    OnTheRightWall.SetFalse();
-
-    // --------------------
-    //
-    // 1. Пересечение с краями карты
-    //
-    // --------------------
-
-    //Если достигли правой границы
-    if (Position.x >= c_game::MAP_SIZE.x - Sprite->GetWidth()/2)
-    {
-        Position.x = c_game::MAP_SIZE.x - Sprite->GetWidth()/2;
-        Velocity.x = 0;
-        Acceleration = 0;
-        OnTheRightWall.SetTrue();
-    }
-
-    //Если достигли левой границы
-    if (Position.x <= Sprite->GetWidth()/2)
-    {
-        Position.x = Sprite->GetWidth()/2;
-        Velocity.x = 0;
-        Acceleration = 0;
-        OnTheLeftWall.SetTrue();
-    }
-
-    //Если достигли нижней границы
-    if (Position.y >= c_game::MAP_SIZE.y - Sprite->GetHeight()/2)
-    {
-        Position.y = c_game::MAP_SIZE.y - Sprite->GetHeight()/2;
-        Velocity.y = 0;
-        JumpImpulse = 0;
-        OnTheGround.SetTrue();
-    }
-
-    //Если достигли верхней границы
-    if (Position.y <= Sprite->GetHeight())
-    {
-        Position.y = Sprite->GetHeight();
-        Velocity.y = 0;
-        JumpImpulse = 0;
-    }
-
-    // -------------------
-    //
-    // 2. Пересечение с платформами
-    //
-    // --------------------
-
-    for (size_t obj_num = 0; obj_num < c_drawobject::DrawObjects.size(); obj_num++)
-    {
-        c_platform* Platform = dynamic_cast<c_platform*>(c_drawobject::DrawObjects[obj_num]);
-
-        //Если объект не платформа dynamic_cast вернёт NULL
-        if (Platform)
-        {
-            //Если пересекаемся, то обрабатываем столкновение и вычисляем новую позицию
-            if (GetBoundingBox().Intersect(&Platform->GetBoundingBox()))
-            {
-                Position = GetNewPosition(Platform->GetBoundingBox());
-            }
-
-            //Если встали на платформу
-            if ((GetBoundingBox().y2 == Platform->GetBoundingBox().y1) && (GetBoundingBox().x2>Platform->GetBoundingBox().x1) && (GetBoundingBox().x1 < Platform->GetBoundingBox().x2))
-                OnTheGround.SetTrue();
-
-            //Если упераемся в левую стенку платформы
-            if ((GetBoundingBox().x2 == Platform->GetBoundingBox().x1) && (GetBoundingBox().y2>Platform->GetBoundingBox().y1) && (GetBoundingBox().y1 < Platform->GetBoundingBox().y2))
-                OnTheLeftWall.SetTrue();
-
-            //Если упераемся в правую стенку платформы
-            if ((GetBoundingBox().x1 == Platform->GetBoundingBox().x2) && (GetBoundingBox().y2>Platform->GetBoundingBox().y1) && (GetBoundingBox().y1 < Platform->GetBoundingBox().y2))
-                OnTheRightWall.SetTrue();
-        }
-    }
+    c_gameobject::Update(delta);
 
     //-------------------------------------------
     //
-    //   Изменение в положении камеры при достижение краёв карты
+    //  Проверка изменений в положении камеры
     //
     //-------------------------------------------
 
@@ -214,13 +114,13 @@ void c_player::Update(float delta)
     //Если дошли до левого края экрана
     if (Position.x <= GetScreenWidth() / 2)
     {
-        PlayerPosition.x = GetScreenWidth()/2;
+        PlayerPosition.x = GetScreenWidth() / 2;
     }
 
     //Если дошли до правого края экрана
-    if (Position.x >= c_game::MAP_SIZE.x - GetScreenWidth()/2)
+    if (Position.x >= c_game::MAP_SIZE.x - GetScreenWidth() / 2)
     {
-        PlayerPosition.x = c_game::MAP_SIZE.x - GetScreenWidth()/2;
+        PlayerPosition.x = c_game::MAP_SIZE.x - GetScreenWidth() / 2;
     }
 
     //Если дошли до верхнего края экрана
@@ -230,10 +130,8 @@ void c_player::Update(float delta)
     }
 
     //Если дошли до нижнего края экрана
-    if (Position.y >= c_game::MAP_SIZE.y - GetScreenHeight()/2)
+    if (Position.y >= c_game::MAP_SIZE.y - GetScreenHeight() / 2)
     {
-        PlayerPosition.y = c_game::MAP_SIZE.y - GetScreenHeight()/2;
+        PlayerPosition.y = c_game::MAP_SIZE.y - GetScreenHeight() / 2;
     }
-
-    Render();
 }

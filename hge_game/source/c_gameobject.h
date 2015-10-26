@@ -7,6 +7,8 @@
 
 #include "c_bool.h"
 #include "c_drawobject.h"
+#include "c_platform.h"
+#include "c_game.h"
 
 class c_gameobject: public c_drawobject
 {
