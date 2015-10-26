@@ -15,16 +15,14 @@ class c_drawobject : public c_hge
 protected:
     HTEXTURE        Texture;
     hgeSprite*      Sprite;
+    hgeVector       Position;
 
     void SetSprite(hgeSprite* sprite);
     void SetPosition(hgeVector position);
 public:
     static std::vector<c_drawobject*> DrawObjects;
 
-    hgeVector           Position;
     static hgeVector    PlayerPosition;
-
-    hgeRect             BoundingBox;
 
     c_drawobject();
     c_drawobject(hgeSprite* sprite, hgeVector sprite_coord);

@@ -149,7 +149,6 @@ void c_player::Update(float delta)
 
 
     //Обработка столкновений
-    BoundingBox = GetBoundingBox();
 
     //Заного проверим стоим ли мы на платформе или земле и упироаемся ли в стену
     OnTheGround.SetFalse();
@@ -164,77 +163,74 @@ void c_player::Update(float delta)
         if (Platform)
         {
             //Если пересекаемся, то обрабатываем столкновение и вычисляем новую позицию
-            if (BoundingBox.Intersect(&Platform->GetBoundingBox()))
+            if (GetBoundingBox().Intersect(&Platform->GetBoundingBox()))
             {
                 //Проверяем какой угол платформы мы пересекли
 
                 //1.Верхний левый
-                if (BoundingBox.TestPoint(Platform->BoundingBox.x1, Platform->BoundingBox.y1))
-                    Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->BoundingBox.x1, Platform->BoundingBox.y1), 1);
+                if (GetBoundingBox().TestPoint(Platform->GetBoundingBox().x1, Platform->GetBoundingBox().y1))
+                    Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->GetBoundingBox().x1, Platform->GetBoundingBox().y1), 1);
                 else
                     //2.Верхний правый
-                    if (BoundingBox.TestPoint(Platform->BoundingBox.x2, Platform->BoundingBox.y1))
-                        Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->BoundingBox.x2, Platform->BoundingBox.y1), 2);
+                    if (GetBoundingBox().TestPoint(Platform->GetBoundingBox().x2, Platform->GetBoundingBox().y1))
+                        Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->GetBoundingBox().x2, Platform->GetBoundingBox().y1), 2);
                     else
                         //3.Нижний правый
-                        if (BoundingBox.TestPoint(Platform->BoundingBox.x2, Platform->BoundingBox.y2))
-                            Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->BoundingBox.x2, Platform->BoundingBox.y2), 3);
+                        if (GetBoundingBox().TestPoint(Platform->GetBoundingBox().x2, Platform->GetBoundingBox().y2))
+                            Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->GetBoundingBox().x2, Platform->GetBoundingBox().y2), 3);
                         else
                             //4.Нижний левый
-                            if (BoundingBox.TestPoint(Platform->BoundingBox.x1, Platform->BoundingBox.y2))
-                                Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->BoundingBox.x1, Platform->BoundingBox.y2), 4);
+                            if (GetBoundingBox().TestPoint(Platform->GetBoundingBox().x1, Platform->GetBoundingBox().y2))
+                                Position = GetNewPosition(PreviousPosition, Position, hgeVector(Platform->GetBoundingBox().x1, Platform->GetBoundingBox().y2), 4);
                             else
 
                                 //Если не один из углов не был пересечён, то проверяем стороны
 
                                 //1.Верхняя сторона
-                                if (PreviousPosition.y < Platform->BoundingBox.y1)
+                                if (PreviousPosition.y < Platform->GetBoundingBox().y1)
                                 {
-                                    Position.y = Platform->BoundingBox.y1 - Size_y;
+                    Position.y = Platform->GetBoundingBox().y1 - Size_y;
                                     Velocity.y = 0;
                                     JumpImpulse = 0;
                                 }
                                 else
                                     //2.Нижняя сторона
-                                    if (PreviousPosition.y > Platform->BoundingBox.y2)
+                                    if (PreviousPosition.y > Platform->GetBoundingBox().y2)
                                     {
-                                        Position.y = Platform->BoundingBox.y2 + Size_y;
+                                        Position.y = Platform->GetBoundingBox().y2 + Size_y;
                                         Velocity.y = 0;
                                         JumpImpulse = 0;
                                     }
                                     else
                                         //3.Левая сторона
-                                        if (PreviousPosition.x < Platform->BoundingBox.x1)
+                                        if (PreviousPosition.x < Platform->GetBoundingBox().x1)
                                         {
-                                            Position.x = Platform->BoundingBox.x1 - Size_x;
+                                            Position.x = Platform->GetBoundingBox().x1 - Size_x;
                                             Velocity.x = 0;
                                             Acceleration = 0;
                                         }
                                         else
                                             //4.Правая сторона
-                                            if (PreviousPosition.x > Platform->BoundingBox.x2)
+                                            if (PreviousPosition.x > Platform->GetBoundingBox().x2)
                                             {
-                                                Position.x = Platform->BoundingBox.x2 + Size_x;
+                                                Position.x = Platform->GetBoundingBox().x2 + Size_x;
                                                 Velocity.x = 0;
                                                 Acceleration = 0;
                                             }
             }
 
 
-            //Обновим позицию
-            BoundingBox = GetBoundingBox();
-
             //Если достигли нижнего края карты или встали на платформу
-            if (((BoundingBox.y2 == Platform->BoundingBox.y1) && (BoundingBox.x2>Platform->BoundingBox.x1) && (BoundingBox.x1 < Platform->BoundingBox.x2))
+            if (((GetBoundingBox().y2 == Platform->GetBoundingBox().y1) && (GetBoundingBox().x2>Platform->GetBoundingBox().x1) && (GetBoundingBox().x1 < Platform->GetBoundingBox().x2))
                 || (Position.y >= c_game::MAP_SIZE.y - Size_y))
                 OnTheGround.SetTrue();
 
             //Если упераемся в левую стенку
-            if ((BoundingBox.x2 == Platform->BoundingBox.x1) && (BoundingBox.y2>Platform->BoundingBox.y1) && (BoundingBox.y1 < Platform->BoundingBox.y2))
+            if ((GetBoundingBox().x2 == Platform->GetBoundingBox().x1) && (GetBoundingBox().y2>Platform->GetBoundingBox().y1) && (GetBoundingBox().y1 < Platform->GetBoundingBox().y2))
                 OnTheLeftWall.SetTrue();
 
             //Если упераемся в правую стенку
-            if ((BoundingBox.x1 == Platform->BoundingBox.x2) && (BoundingBox.y2>Platform->BoundingBox.y1) && (BoundingBox.y1 < Platform->BoundingBox.y2))
+            if ((GetBoundingBox().x1 == Platform->GetBoundingBox().x2) && (GetBoundingBox().y2>Platform->GetBoundingBox().y1) && (GetBoundingBox().y1 < Platform->GetBoundingBox().y2))
                 OnTheRightWall.SetTrue();
         }
     }
