@@ -1,9 +1,8 @@
 #include "c_gameobject.h"
 
-float c_gameobject::g = 40.0;
-
 c_gameobject::c_gameobject()
 {
+    g = 40.0;
     PreviousPosition = Position;
 }
 
@@ -14,6 +13,8 @@ hgeVector c_gameobject::GetVelocity()
 
 void c_gameobject::Update(float delta)
 {
+    c_game_values& game_values = c_game_values::getInstance();
+
     // -------------------------------------
     //
     //    Обработка Физики
@@ -57,9 +58,9 @@ void c_gameobject::Update(float delta)
     // --------------------
 
     //Если достигли правой границы
-    if (Position.x >= c_game::MAP_SIZE.x - Sprite->GetWidth() / 2)
+    if (Position.x >= game_values.GetMapSize().x - Sprite->GetWidth() / 2)
     {
-        Position.x = c_game::MAP_SIZE.x - Sprite->GetWidth() / 2;
+        Position.x = game_values.GetMapSize().x - Sprite->GetWidth() / 2;
         Velocity.x = 0;
         Acceleration = 0;
         OnTheRightWall.SetTrue();
@@ -75,9 +76,9 @@ void c_gameobject::Update(float delta)
     }
 
     //Если достигли нижней границы
-    if (Position.y >= c_game::MAP_SIZE.y - Sprite->GetHeight() / 2)
+    if (Position.y >= game_values.GetMapSize().y - Sprite->GetHeight() / 2)
     {
-        Position.y = c_game::MAP_SIZE.y - Sprite->GetHeight() / 2;
+        Position.y = game_values.GetMapSize().y - Sprite->GetHeight() / 2;
         Velocity.y = 0;
         JumpImpulse = 0;
         OnTheGround.SetTrue();

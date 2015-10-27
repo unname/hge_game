@@ -8,7 +8,7 @@
 #include "c_bool.h"
 #include "c_drawobject.h"
 #include "c_platform.h"
-#include "c_game.h"
+#include "c_game_values.h"
 
 class c_gameobject: public c_drawobject
 {
@@ -30,7 +30,7 @@ protected:
     float   Max_JumpImpulse;
     float   JumpImpulse_step;
 
-    static float    g;
+    float    g;
 
     c_bool  OnTheGround;
     c_bool  OnTheLeftWall;

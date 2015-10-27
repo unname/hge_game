@@ -1,20 +1,28 @@
 #include "c_game.h"
 
-size_t c_game::SCREEN_WIDTH = 800;
-size_t c_game::SCREEN_HEIGHT = 600;
-hgeVector c_game::MAP_SIZE = hgeVector(0, 0);
-hgeVector c_game::TILE_SIZE = hgeVector(0, 0);
-
 void c_game::SetWindowState(hgeCallback framefunc)
 {
+    size_t  screen_width= 800;
+    size_t  screen_height = 600;
+    size_t  screen_bpp = 32;
+    bool    screen_windowed = true;
+    size_t  fps = 100;
+
     hge->System_SetState(HGE_FRAMEFUNC, framefunc);
-    hge->System_SetState(HGE_WINDOWED, true);
-    hge->System_SetState(HGE_SCREENWIDTH, SCREEN_WIDTH);
-    hge->System_SetState(HGE_SCREENHEIGHT, SCREEN_HEIGHT);
-    hge->System_SetState(HGE_SCREENBPP, 32);
+    hge->System_SetState(HGE_WINDOWED, screen_windowed);
+    hge->System_SetState(HGE_SCREENWIDTH, screen_width);
+    hge->System_SetState(HGE_SCREENHEIGHT, screen_height);
+    hge->System_SetState(HGE_SCREENBPP, screen_bpp);
     hge->System_SetState(HGE_USESOUND, false);
     hge->System_SetState(HGE_TITLE, "Main window");
-    hge->System_SetState(HGE_FPS, 100);
+    hge->System_SetState(HGE_FPS, fps);
+
+    c_game_values& game_values = c_game_values::getInstance();
+    game_values.SCREEN_WIDTH = screen_width;
+    game_values.SCREEN_HEIGHT = screen_height;
+    game_values.SCREEN_BPP = screen_bpp;
+    game_values.SCREEN_WINDOWED = screen_windowed;
+    game_values.FPS = fps;
 }
 
 bool c_game::FrameFunc()
@@ -51,11 +59,14 @@ bool c_game::LoadResources()
     map_path.append(MAP_NAME);
 
     map = new c_loadmap(map_path);
-    MAP_SIZE = map->GetMapSize();
-    TILE_SIZE = map->GetTileSize();
+
+    c_game_values& game_values = c_game_values::getInstance();
+
+    game_values.MAP_SIZE = map->GetMapSize();
+    game_values.TILE_SIZE = map->GetTileSize();
 
     //Создание персонажа
-    player = new c_player(20);
+    //player = new c_player(20);
 
     return true;
 }
@@ -63,7 +74,7 @@ bool c_game::LoadResources()
 void c_game::Release()
 {
     delete map;
-    delete player;
+    //delete player;
 }
 
 bool c_game::Initialize()

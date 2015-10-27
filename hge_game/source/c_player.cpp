@@ -44,6 +44,8 @@ c_player::~c_player()
 //Повторный расчёт свойств объекта
 void c_player::Update(float delta)
 {
+    c_game_values& game_values = c_game_values::getInstance();
+
     if (hge->Input_GetKeyState(HGEK_LEFT) && !OnTheRightWall.GetState())
     {
         if (Acceleration < Max_Acceleration)
@@ -118,9 +120,9 @@ void c_player::Update(float delta)
     }
 
     //Если дошли до правого края экрана
-    if (Position.x >= c_game::MAP_SIZE.x - GetScreenWidth() / 2)
+    if (Position.x >= game_values.GetMapSize().x - GetScreenWidth() / 2)
     {
-        PlayerPosition.x = c_game::MAP_SIZE.x - GetScreenWidth() / 2;
+        PlayerPosition.x = game_values.GetMapSize().x - GetScreenWidth() / 2;
     }
 
     //Если дошли до верхнего края экрана
@@ -130,8 +132,8 @@ void c_player::Update(float delta)
     }
 
     //Если дошли до нижнего края экрана
-    if (Position.y >= c_game::MAP_SIZE.y - GetScreenHeight() / 2)
+    if (Position.y >= game_values.GetMapSize().y - GetScreenHeight() / 2)
     {
-        PlayerPosition.y = c_game::MAP_SIZE.y - GetScreenHeight() / 2;
+        PlayerPosition.y = game_values.GetMapSize().y - GetScreenHeight() / 2;
     }
 }

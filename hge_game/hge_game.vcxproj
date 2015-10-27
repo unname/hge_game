@@ -14,6 +14,7 @@
     <ClCompile Include="source\c_drawobject.cpp" />
     <ClCompile Include="source\c_game.cpp" />
     <ClCompile Include="source\c_gameobject.cpp" />
+    <ClCompile Include="source\c_game_values.cpp" />
     <ClCompile Include="source\c_hge.cpp" />
     <ClCompile Include="source\c_loadmap.cpp" />
     <ClCompile Include="source\c_platform.cpp" />
@@ -26,6 +27,7 @@
     <ClInclude Include="source\c_drawobject.h" />
     <ClInclude Include="source\c_game.h" />
     <ClInclude Include="source\c_gameobject.h" />
+    <ClInclude Include="source\c_game_values.h" />
     <ClInclude Include="source\c_hge.h" />
     <ClInclude Include="source\c_loadmap.h" />
     <ClInclude Include="source\c_platform.h" />
