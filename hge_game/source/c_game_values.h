@@ -5,8 +5,6 @@
 #include "hge.h"
 #include "hgevector.h"
 
-#include "c_game.h"
-
 class c_game_values
 {
 private:

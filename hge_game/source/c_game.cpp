@@ -66,7 +66,7 @@ bool c_game::LoadResources()
     game_values.TILE_SIZE = map->GetTileSize();
 
     //Создание персонажа
-    //player = new c_player(20);
+    player = new c_player(20);
 
     return true;
 }
@@ -74,7 +74,7 @@ bool c_game::LoadResources()
 void c_game::Release()
 {
     delete map;
-    //delete player;
+    delete player;
 }
 
 bool c_game::Initialize()

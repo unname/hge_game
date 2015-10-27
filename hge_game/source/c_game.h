@@ -9,7 +9,7 @@
 #include "c_hge.h"
 #include "c_loadmap.h"
 #include "c_drawobject.h"
-//#include "c_player.h"
+#include "c_player.h"
 #include "c_game_values.h"
 
 
@@ -22,7 +22,7 @@ private:
     bool LoadResources();
 
     c_loadmap* map;
-    //c_player* player;
+    c_player* player;
 
 public:    
     bool Initialize();
