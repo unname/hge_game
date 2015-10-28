@@ -63,7 +63,7 @@ void c_gameobject::Update(float delta)
         Position.x = game_values.GetMapSize().x - Sprite->GetWidth() / 2;
         Velocity.x = 0;
         Acceleration = 0;
-        OnTheRightWall.SetTrue();
+        OnTheLeftWall.SetTrue();
     }
 
     //Если достигли левой границы
@@ -72,7 +72,7 @@ void c_gameobject::Update(float delta)
         Position.x = Sprite->GetWidth() / 2;
         Velocity.x = 0;
         Acceleration = 0;
-        OnTheLeftWall.SetTrue();
+        OnTheRightWall.SetTrue();
     }
 
     //Если достигли нижней границы
@@ -85,9 +85,9 @@ void c_gameobject::Update(float delta)
     }
 
     //Если достигли верхней границы
-    if (Position.y <= Sprite->GetHeight())
+    if (Position.y <= Sprite->GetHeight() / 2)
     {
-        Position.y = Sprite->GetHeight();
+        Position.y = Sprite->GetHeight() / 2;
         Velocity.y = 0;
         JumpImpulse = 0;
     }
