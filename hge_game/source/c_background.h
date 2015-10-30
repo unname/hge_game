@@ -15,7 +15,6 @@ using namespace std;
 
 class c_background : public c_drawobject
 {
-    hgeQuad Quad;
     float t;
 
 public:
