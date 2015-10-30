@@ -4,7 +4,7 @@
 c_player::c_player(u_int size)
 {
     //Установка переменных
-    SetPosition(hgeVector(2300, 3000));
+    SetPosition(hgeVector(100, 100));
     PlayerPosition = Position;
 
     Speed = 3.0;

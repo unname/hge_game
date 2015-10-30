@@ -24,6 +24,10 @@ c_drawobject::c_drawobject(hgeSprite* sprite, hgeVector sprite_coord)
 
 c_drawobject::~c_drawobject()
 {
+
+    //TODO: How to be if releasing recourse out of this class ?
+    // Texture not NULL =(
+
     if (Texture)
         hge->Texture_Free(Texture);
 
