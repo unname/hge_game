@@ -10,6 +10,7 @@
 #include "c_loadmap.h"
 #include "c_drawobject.h"
 #include "c_player.h"
+#include "c_background.h"
 #include "c_game_values.h"
 
 
@@ -21,6 +22,7 @@ private:
     static bool FrameFunc();
     bool LoadResources();
 
+    c_background* background;
     c_loadmap* map;
     c_player* player;
 

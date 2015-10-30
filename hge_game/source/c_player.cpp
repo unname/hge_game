@@ -38,6 +38,9 @@ c_player::c_player(u_int size)
 //деструктор
 c_player::~c_player()
 {
+    if (Texture)
+        hge->Texture_Free(Texture);
+
     delete(Sprite);
 }
 

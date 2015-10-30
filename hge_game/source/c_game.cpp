@@ -36,7 +36,10 @@ bool c_game::FrameFunc()
     hge->Gfx_BeginScene();
     hge->Gfx_Clear(0);
 
-    //Рендерим всё тут:
+    //==========================/=============================/
+    //
+    //                  Рендерим всё тут:
+    //
     //==========================/=============================/
 
     for (size_t obj_num = 0; obj_num < c_drawobject::DrawObjects.size(); obj_num++)
@@ -45,6 +48,7 @@ bool c_game::FrameFunc()
     }
 
     //==========================/=============================/
+
     hge->Gfx_EndScene();
 
     return false;
@@ -53,15 +57,19 @@ bool c_game::FrameFunc()
 
 bool c_game::LoadResources()
 {
+    //Создание Бэкграунда
+    string backbround_path;
+    backbround_path.append(RESOURCES_PATH);
+    backbround_path.append(BACKGROUND_NAME);
+    background = new c_background(backbround_path);
+
     //Загрузка карты
     string map_path;
     map_path.append(RESOURCES_PATH);
     map_path.append(MAP_NAME);
-
     map = new c_loadmap(map_path);
 
     c_game_values& game_values = c_game_values::getInstance();
-
     game_values.MAP_SIZE = map->GetMapSize();
     game_values.TILE_SIZE = map->GetTileSize();
 
@@ -73,6 +81,7 @@ bool c_game::LoadResources()
 
 void c_game::Release()
 {
+    delete background;
     delete map;
     delete player;
 }
