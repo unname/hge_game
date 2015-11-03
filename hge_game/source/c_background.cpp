@@ -17,6 +17,9 @@ c_background::c_background(string background_file)
 
 c_background::~c_background()
 {
+    if (Texture)
+        hge->Texture_Free(Texture);
+
     delete Sprite;
 }
 
