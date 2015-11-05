@@ -68,17 +68,25 @@ void c_drawobject::Render()
 {
     if (Sprite)
     {
-        //TODO: Сейчас рендерится все объекты находящиеся в 'кресте'
-        // надо подумать как ограничеть одни экраном
-        // проблема в объектах которые растянуты: всё далеко от нас, кроме одного их края.
+        //--------------------------------------------------------------
+        //
+        //      Рендерим только то, что попало на экран
+        //
+        //--------------------------------------------------------------
 
-        //Рендерим только то, что выводится на экран
-        if (((PlayerPosition.x - GetBoundingBox().x2 > GetScreenWidth() / 2) || //Если виден правый край объекта
-            (GetBoundingBox().x1 - PlayerPosition.x > GetScreenWidth() / 2)) || //Если виден левый край объекта
-            ((PlayerPosition.y - GetBoundingBox().y2 > GetScreenHeight() / 2) || //Если виден нижний край объекта
-            (GetBoundingBox().y1 - PlayerPosition.y > GetScreenHeight() / 2))) //Если виден верхний край объекта
-
-            Sprite->Render(Position.x - PlayerPosition.x + GetScreenWidth() / 2, Position.y - PlayerPosition.y + GetScreenHeight() / 2);
+        //Заранее отсеиваем объекты которые не находятся в 'кресте' (вертикаль и горизонталь от нашего экрана)
+        if ((PlayerPosition.x - GetBoundingBox().x2 < GetScreenWidth() / 2) ||  //Попал правый край объекта
+            (GetBoundingBox().x1 - PlayerPosition.x < GetScreenWidth() / 2) ||  //Попал левый край объекта
+            (PlayerPosition.y - GetBoundingBox().y2 < GetScreenHeight() / 2) || //Попал нижний край объекта
+            (GetBoundingBox().y1 - PlayerPosition.y < GetScreenHeight() / 2))   //Попал верхний край объекта
+        {
+            //Теперь оставляем только то, что пересекает наш экран
+            //(Предполагается что Intersect дорогая операция, поэтому проверяем уже отсеенное)
+            if (GetBoundingBox().Intersect(&hgeRect(PlayerPosition.x - GetScreenWidth() / 2, PlayerPosition.y - GetScreenHeight() / 2, PlayerPosition.x + GetScreenWidth() / 2, PlayerPosition.y + GetScreenHeight() / 2)))
+            {
+                Sprite->Render(Position.x - PlayerPosition.x + GetScreenWidth() / 2, Position.y - PlayerPosition.y + GetScreenHeight() / 2);
+            }
+        }
     }
 }
 
