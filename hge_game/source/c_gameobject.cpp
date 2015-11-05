@@ -119,7 +119,38 @@ void c_gameobject::Update(float delta)
         }
     }
 
-    PreviousPosition = Position;
+    //Обновляем информацию о направлениях движения
+    if (Position.x > PreviousPosition.x)
+    {
+        Moving.MovingRigth.SetTrue();
+        Moving.MovingLeft.SetFalse();
+    }
+
+    if (Position.x < PreviousPosition.x)
+    {
+        Moving.MovingLeft.SetTrue();
+        Moving.MovingRigth.SetFalse();
+    }
+
+    if (Position.y > PreviousPosition.y)
+    {
+        Moving.MovingDown.SetTrue();
+        Moving.MovingUp.SetFalse();
+    }
+
+    if (Position.y < PreviousPosition.y)
+    {
+        Moving.MovingUp.SetTrue();
+        Moving.MovingDown.SetFalse();
+    }
+
+    if (Position == PreviousPosition)
+        Moving.NotMoving.SetTrue();
+    else
+        Moving.NotMoving.SetFalse();
+
+    PreviousPosition = Position;      
+
     c_drawobject::Update(delta);
 }
 

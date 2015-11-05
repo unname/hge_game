@@ -30,12 +30,15 @@ c_player::c_player(u_int size)
     Standing = new hgeAnimation(Texture, 3, 3, 0 + 0.5f, 0 + 0.5f, 64, 128);
     Running  = new hgeAnimation(Texture, 6, 6, 6 * 64 + 0.5f, 0 + 0.5f, 64, 128);
     Braking  = new hgeAnimation(Texture, 3, 3, 0 + 0.5f, 0 + 0.5f, 64, 128);
+    Jumping  = new hgeAnimation(Texture, 3, 3, 0 + 0.5f, 0 + 0.5f, 64, 128);
+    Falling  = new hgeAnimation(Texture, 3, 3, 0 + 0.5f, 0 + 0.5f, 64, 128);
 
     Sprite->SetHotSpot(64/2, 128/2);
     Sprite->SetColor(ARGB(255, 255, 255, 255));
 
     Sprite = Standing;
     Standing->Play();
+    CurrentAnimation = Standing;
 }
 
 //деструктор
@@ -52,8 +55,8 @@ void c_player::Update(float delta)
 {
     c_game_values& game_values = c_game_values::getInstance();
 
-    //Анимация стояния 
-    if ((Velocity.x == 0) && (Velocity.y == 0))
+    //Анимация стояния на месте
+    if (Moving.NotMoving.GetState())
     {
         StandingAnim(delta);
     }
@@ -81,7 +84,7 @@ void c_player::Update(float delta)
 
         Velocity.x += Speed*Acceleration*delta;
 
-        //Анимация бега вправо
+        //Анимация бега
         RunningAnim(delta);
     }
 
@@ -101,7 +104,6 @@ void c_player::Update(float delta)
         {
             //Позволяем удерживать клавишу прыжка для набора высоты
             SpaceHoldDown.SetTrue();
-
             OnTheGround.SetFalse();
 
             //При прыжке с земли даём максимальный импульс
@@ -164,38 +166,90 @@ void c_player::Update(float delta)
 
 void c_player::StandingAnim(float dt)
 {
-    Sprite = Standing;
+    if (CurrentAnimation != Standing)
+        CurrentAnimation->Stop();
+
+    //Разворачиваем спрайт, если двигались влево
+    if (Moving.MovingLeft.GetState())
+        Standing->SetFlip(true, false);
 
     if (Standing->IsPlaying())
         Standing->Update(dt);
     else
         Standing->Play();
+
+    CurrentAnimation = Standing;
+    Sprite = Standing;
 }
 
 void c_player::RunningAnim(float dt)
 {
-    Sprite = Running;
+    if (CurrentAnimation != Running)
+        CurrentAnimation->Stop();
 
     //Разворачиваем спрайт, если двигаемся влево
-    if (PreviousPosition.x > Position.x)
+    if (Moving.MovingLeft.GetState())
         Running->SetFlip(true, false);
 
     if (Running->IsPlaying())
         Running->Update(dt);
     else
         Running->Play();
+
+    CurrentAnimation = Running;
+    Sprite = Running;
 }
 
 void c_player::BrakingAnim(float dt)
 {
-    Sprite = Braking;
+    if (CurrentAnimation != Braking)
+        CurrentAnimation->Stop();
 
     //Разворачиваем спрайт, если двигаемся влево
-    if (PreviousPosition.x > Position.x)
+    if (Moving.MovingLeft.GetState())
         Braking->SetFlip(true, false);
 
     if (Braking->IsPlaying())
         Braking->Update(dt);
     else
         Braking->Play();
+
+    CurrentAnimation = Braking;
+    Sprite = Braking;
+}
+
+void c_player::JumpingAnim(float dt)
+{
+    if (CurrentAnimation != Jumping)
+        CurrentAnimation->Stop();
+
+    //Разворачиваем спрайт, если двигаемся влево
+    if (Moving.MovingLeft.GetState())
+        Jumping->SetFlip(true, false);
+
+    if (Jumping->IsPlaying())
+        Jumping->Update(dt);
+    else
+        Jumping->Play();
+
+    CurrentAnimation = Jumping;
+    Sprite = Jumping;
+}
+
+void c_player::FallingAnim(float dt)
+{
+    if (CurrentAnimation != Falling)
+        CurrentAnimation->Stop();
+
+    //Разворачиваем спрайт, если двигаемся влево
+    if (Moving.MovingLeft.GetState())
+        Falling->SetFlip(true, false);
+
+    if (Falling->IsPlaying())
+        Falling->Update(dt);
+    else
+        Falling->Play();
+
+    CurrentAnimation = Falling;
+    Sprite = Falling;
 }

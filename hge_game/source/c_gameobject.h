@@ -10,11 +10,22 @@
 #include "c_platform.h"
 #include "c_game_values.h"
 
+struct moving
+{
+    c_bool MovingLeft;
+    c_bool MovingRigth;
+    c_bool MovingDown;
+    c_bool MovingUp;
+    c_bool NotMoving;
+};
+
 class c_gameobject: public c_drawobject
 {
 protected:
     hgeVector   Velocity;
     hgeVector   PreviousPosition;
+
+    moving  Moving;
 
     float   Speed;
     float   Max_Speed;
