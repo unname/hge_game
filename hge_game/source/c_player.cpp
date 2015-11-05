@@ -4,7 +4,7 @@
 c_player::c_player(u_int size)
 {
     //Установка переменных
-    Position =  hgeVector(100, 100);
+    Position =  hgeVector(2300, 2300);
     PlayerPosition = Position;
 
     Speed = 3.0;
@@ -19,7 +19,7 @@ c_player::c_player(u_int size)
     JumpImpulse = 0.0;
     JumpImpulse_step = 4.0;
 
-    Friction = 0.96;
+    Friction = 0.95;
 
     Texture = hge->Texture_Load("resources/player.png");
     if (!Texture)
@@ -27,18 +27,18 @@ c_player::c_player(u_int size)
         DisplayErrorHGE();
     }
 
-    Standing = new hgeAnimation(Texture, 3, 3, 0 + 0.5f, 0 + 0.5f, 64, 128);
-    Running  = new hgeAnimation(Texture, 6, 6, 6 * 64 + 0.5f, 0 + 0.5f, 64, 128);
-    Braking  = new hgeAnimation(Texture, 3, 3, 0 + 0.5f, 0 + 0.5f, 64, 128);
-    Jumping  = new hgeAnimation(Texture, 3, 3, 0 + 0.5f, 0 + 0.5f, 64, 128);
-    Falling  = new hgeAnimation(Texture, 3, 3, 0 + 0.5f, 0 + 0.5f, 64, 128);
+    Standing = new hgeAnimation(Texture, 3, 3, 0, 0, 36, 64);
+    Running  = new hgeAnimation(Texture, 6, 6, 120, 0, 51, 64);
+    //Braking  = new hgeAnimation(Texture, 3, 3, 0 + 0.5f, 0 + 0.5f, 64, 128);
+    //Jumping  = new hgeAnimation(Texture, 3, 3, 0 + 0.5f, 0 + 0.5f, 64, 128);
+    //Falling  = new hgeAnimation(Texture, 3, 3, 0 + 0.5f, 0 + 0.5f, 64, 128);
 
-    Sprite->SetHotSpot(64/2, 128/2);
-    Sprite->SetColor(ARGB(255, 255, 255, 255));
-
-    Sprite = Standing;
+    Standing->SetHotSpot(Standing->GetWidth() / 2, Standing->GetHeight() / 2);
+    Standing->SetColor(ARGB(255, 255, 255, 255));
     Standing->Play();
+
     CurrentAnimation = Standing;
+    Sprite = Standing;
 }
 
 //деструктор
@@ -60,7 +60,18 @@ void c_player::Update(float delta)
     {
         StandingAnim(delta);
     }
+    else
+    {
+        if (Moving.MovingLeft.GetState() && OnTheGround.GetState())
+        {
+            RunningAnim(delta);
+        }
 
+        if (Moving.MovingRigth.GetState() && OnTheGround.GetState())
+        {
+            RunningAnim(delta);
+        }
+    }
     if (hge->Input_GetKeyState(HGEK_LEFT) && !OnTheRightWall.GetState())
     {
         if (Acceleration < Max_Acceleration)
@@ -69,10 +80,6 @@ void c_player::Update(float delta)
             Acceleration = Max_Acceleration;
 
         Velocity.x -= Speed*Acceleration*delta;
-
-        //Анимация бега
-        RunningAnim(delta);
-
     }
   
     if (hge->Input_GetKeyState(HGEK_RIGHT) && !OnTheLeftWall.GetState())
@@ -83,9 +90,6 @@ void c_player::Update(float delta)
             Acceleration = Max_Acceleration;
 
         Velocity.x += Speed*Acceleration*delta;
-
-        //Анимация бега
-        RunningAnim(delta);
     }
 
     //Ускорение сбрасывается, как только отпускаем кнопку движения
@@ -94,7 +98,7 @@ void c_player::Update(float delta)
         Acceleration = Min_Acceleration;
 
         //Анимация торможения
-        BrakingAnim(delta);
+        //BrakingAnim(delta);
     }
 
     if (hge->Input_GetKeyState(HGEK_SPACE))
@@ -171,7 +175,19 @@ void c_player::StandingAnim(float dt)
 
     //Разворачиваем спрайт, если двигались влево
     if (Moving.MovingLeft.GetState())
+    {
+        Standing->SetHotSpot(Standing->GetWidth() / 2, Standing->GetHeight() / 2);
         Standing->SetFlip(true, false);
+    }
+    else
+    {
+        bool Vflip = false;
+        bool Hflip = false;
+        Standing->GetFlip(&Vflip, &Hflip);
+
+        if (Vflip)
+            Standing->SetFlip(false, false);
+    }
 
     if (Standing->IsPlaying())
         Standing->Update(dt);
@@ -189,7 +205,19 @@ void c_player::RunningAnim(float dt)
 
     //Разворачиваем спрайт, если двигаемся влево
     if (Moving.MovingLeft.GetState())
+    {
+        Running->SetHotSpot(Running->GetWidth() / 2, Running->GetHeight() / 2);
         Running->SetFlip(true, false);
+    }
+    else
+    {
+        bool Vflip;
+        bool Hflip;
+        Running->GetFlip(&Vflip, &Hflip);
+
+        if (Vflip)
+            Running->SetFlip(false, false);
+    }
 
     if (Running->IsPlaying())
         Running->Update(dt);
