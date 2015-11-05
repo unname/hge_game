@@ -3,13 +3,7 @@
 c_gameobject::c_gameobject()
 {
     g = 40.0;
-    PreviousPosition = Position;
 }
-
-hgeVector c_gameobject::GetVelocity()
-{
-    return Velocity;
-};
 
 void c_gameobject::Update(float delta)
 {

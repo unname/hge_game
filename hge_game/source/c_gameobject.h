@@ -35,16 +35,15 @@ protected:
     c_bool  OnTheGround;
     c_bool  OnTheLeftWall;
     c_bool  OnTheRightWall;
-public:
-
-    c_gameobject();
-
-    hgeVector GetVelocity();
-    virtual void Update(float delta);
 
     //¬озвращает новую позицию (центр) при пересечении с другим спрайтом
     //BoundingBox - границы пересечЄнного спрайта
     hgeVector GetNewPosition(hgeRect BoundingBox);
+
+public:
+    c_gameobject();
+
+    virtual void Update(float delta);
 };
 
 

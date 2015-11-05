@@ -4,7 +4,7 @@
 c_player::c_player(u_int size)
 {
     //Установка переменных
-    SetPosition(hgeVector(100, 100));
+    Position =  hgeVector(100, 100);
     PlayerPosition = Position;
 
     Speed = 3.0;
@@ -21,18 +21,21 @@ c_player::c_player(u_int size)
 
     Friction = 0.96;
 
-    Texture = hge->Texture_Load("resources/cube_tex.jpg");
+    Texture = hge->Texture_Load("resources/player.png");
     if (!Texture)
     {
         DisplayErrorHGE();
     }
 
-    Sprite = new hgeSprite(Texture, 0 + 0.5f, 0 + 0.5f, size * 2, size * 2);
-    Sprite->SetHotSpot(size, size);
+    Standing = new hgeAnimation(Texture, 3, 3, 0 + 0.5f, 0 + 0.5f, 64, 128);
+    Running  = new hgeAnimation(Texture, 6, 6, 6 * 64 + 0.5f, 0 + 0.5f, 64, 128);
+    Braking  = new hgeAnimation(Texture, 3, 3, 0 + 0.5f, 0 + 0.5f, 64, 128);
+
+    Sprite->SetHotSpot(64/2, 128/2);
     Sprite->SetColor(ARGB(255, 255, 255, 255));
 
-    //Sprite = new hgeAnimation(Texture, 4, 4, 0, 0, 64, 29);
-    //Sprite->Play();
+    Sprite = Standing;
+    Standing->Play();
 }
 
 //деструктор
@@ -49,6 +52,12 @@ void c_player::Update(float delta)
 {
     c_game_values& game_values = c_game_values::getInstance();
 
+    //Анимация стояния 
+    if ((Velocity.x == 0) && (Velocity.y == 0))
+    {
+        StandingAnim(delta);
+    }
+
     if (hge->Input_GetKeyState(HGEK_LEFT) && !OnTheRightWall.GetState())
     {
         if (Acceleration < Max_Acceleration)
@@ -57,6 +66,10 @@ void c_player::Update(float delta)
             Acceleration = Max_Acceleration;
 
         Velocity.x -= Speed*Acceleration*delta;
+
+        //Анимация бега
+        RunningAnim(delta);
+
     }
   
     if (hge->Input_GetKeyState(HGEK_RIGHT) && !OnTheLeftWall.GetState())
@@ -67,11 +80,19 @@ void c_player::Update(float delta)
             Acceleration = Max_Acceleration;
 
         Velocity.x += Speed*Acceleration*delta;
+
+        //Анимация бега вправо
+        RunningAnim(delta);
     }
 
     //Ускорение сбрасывается, как только отпускаем кнопку движения
     if (!hge->Input_GetKeyState(HGEK_RIGHT) && !hge->Input_GetKeyState(HGEK_LEFT))
+    {
         Acceleration = Min_Acceleration;
+
+        //Анимация торможения
+        BrakingAnim(delta);
+    }
 
     if (hge->Input_GetKeyState(HGEK_SPACE))
     {
@@ -139,4 +160,42 @@ void c_player::Update(float delta)
     {
         PlayerPosition.y = game_values.GetMapSize().y - GetScreenHeight() / 2;
     }
+}
+
+void c_player::StandingAnim(float dt)
+{
+    Sprite = Standing;
+
+    if (Standing->IsPlaying())
+        Standing->Update(dt);
+    else
+        Standing->Play();
+}
+
+void c_player::RunningAnim(float dt)
+{
+    Sprite = Running;
+
+    //Разворачиваем спрайт, если двигаемся влево
+    if (PreviousPosition.x > Position.x)
+        Running->SetFlip(true, false);
+
+    if (Running->IsPlaying())
+        Running->Update(dt);
+    else
+        Running->Play();
+}
+
+void c_player::BrakingAnim(float dt)
+{
+    Sprite = Braking;
+
+    //Разворачиваем спрайт, если двигаемся влево
+    if (PreviousPosition.x > Position.x)
+        Braking->SetFlip(true, false);
+
+    if (Braking->IsPlaying())
+        Braking->Update(dt);
+    else
+        Braking->Play();
 }

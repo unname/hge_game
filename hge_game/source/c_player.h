@@ -12,6 +12,14 @@ class c_player: public c_gameobject
 private:
     c_bool SpaceHoldDown;
 
+    hgeAnimation* Standing;
+    hgeAnimation* Running;
+    hgeAnimation* Braking;
+
+    void StandingAnim(float dt);
+    void RunningAnim(float dt);
+    void BrakingAnim(float dt);
+
 public:
     c_player(u_int size);
     ~c_player();

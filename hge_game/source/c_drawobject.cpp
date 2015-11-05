@@ -16,8 +16,8 @@ c_drawobject::c_drawobject(hgeSprite* sprite, hgeVector sprite_coord)
     Texture = NULL;
     Sprite = nullptr;
 
-    SetSprite(sprite);
-    SetPosition(sprite_coord);
+    Sprite = sprite;
+    Position = sprite_coord;
 
     DrawObjects.push_back(this);
 }
@@ -33,22 +33,6 @@ c_drawobject::~c_drawobject()
         }
     }
 }
-
-void c_drawobject::SetSprite(hgeSprite* sprite)
-{
-    Sprite = sprite;
-}
-
-void c_drawobject::SetPosition(hgeVector position)
-{
-    Position = position;
-};
-
-hgeVector c_drawobject::GetPosition()
-{
-    return Position;
-};
-
 
 hgeRect c_drawobject::GetBoundingBox()
 {

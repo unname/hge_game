@@ -16,9 +16,6 @@ protected:
     HTEXTURE        Texture;
     hgeSprite*      Sprite;
     hgeVector       Position;
-
-    void SetSprite(hgeSprite* sprite);
-    void SetPosition(hgeVector position);
 public:
     static std::vector<c_drawobject*> DrawObjects;
 
@@ -28,9 +25,7 @@ public:
     c_drawobject(hgeSprite* sprite, hgeVector sprite_coord);
     ~c_drawobject();
 
-    hgeVector GetPosition();
     hgeRect GetBoundingBox();
-
     virtual void Update(float delta);
     virtual void Render();
 };
