@@ -21,13 +21,22 @@ void c_gameobject::Update(float delta)
         Velocity.y += g*delta;
     }
 
-    //Учёт силы трения
-    Velocity.x *= Friction;
-    Velocity.y *= Friction;
+    //Учёт силы трения земли
+    Velocity.x *= GroundFriction;
+    //Учёт силы трения воздуха
+    Velocity.y *= AirFriction;
 
     //Ограничение максимальной скорости
     if (Velocity.x>Max_Speed)   Velocity.x = Max_Speed;
     if (Velocity.y>Max_Speed)   Velocity.y = Max_Speed;
+
+    //Полное торможение происходит достаточно долго (несколько секунд)
+    //поэтому если скорость очень маленькая принудительно останавливаемся
+    if (abs(Velocity.x) < 1)
+        Velocity.x = 0;
+
+    if (abs(Velocity.y) < 1)
+        Velocity.x = 0;
 
     // Актуальная позиция после всех расчётов
     Position.x += Velocity.x;

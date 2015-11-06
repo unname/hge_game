@@ -2,6 +2,9 @@
 #define C_PLAYER_H
 #pragma once
 
+#define RESOURCES_PATH "resources/"
+#define PLAYER_TEX_NAME "player.png"
+
 #include "hge.h"
 
 #include "c_gameobject.h"

@@ -35,7 +35,8 @@ protected:
     float   Max_Acceleration;
     float   Acceleration_step;
 
-    float   Friction;
+    float   GroundFriction;
+    float   AirFriction;
 
     float   JumpImpulse;
     float   Max_JumpImpulse;
