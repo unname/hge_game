@@ -31,12 +31,12 @@ void c_gameobject::Update(float delta)
     if (Velocity.y>Max_Speed)   Velocity.y = Max_Speed;
 
     //ѕолное торможение происходит достаточно долго (несколько секунд)
-    //поэтому если скорость очень маленька€ принудительно останавливаемс€
-    if (abs(Velocity.x) < 1)
-        Velocity.x = 0;
-
-    if (abs(Velocity.y) < 1)
-        Velocity.x = 0;
+    //поэтому если скользим с очень маленькой скорость - принудительно останавливаемс€
+    if (isBarking.GetState())
+    {
+        if (abs(Velocity.x) < delta*100)
+            Velocity.x = 0;
+    }
 
     // јктуальна€ позици€ после всех расчЄтов
     Position.x += Velocity.x;

@@ -19,8 +19,8 @@ c_player::c_player(u_int size)
     JumpImpulse         = 0.0;
     JumpImpulse_step    = 4.0;
 
-    GroundFriction      = 0.96;
-    AirFriction         = 1.00;
+    GroundFriction      = 0.97;
+    AirFriction         = 0.97;
 
     std::string player_tex_path;
     player_tex_path.append(RESOURCES_PATH);
@@ -85,13 +85,13 @@ void c_player::Update(float delta)
     }
 
     //Анимация прыжка/падения
-    if (!OnTheGround.GetState())
-    {
-        if (Moving.MovingUp.GetState())
-            JumpingAnim(delta);
-        else
-            FallingAnim(delta);
-    }
+    //if (!OnTheGround.GetState())
+    //{
+    //    if (Moving.MovingUp.GetState())
+    //        JumpingAnim(delta);
+    //    else
+    //        FallingAnim(delta);
+    //}
 
     if (hge->Input_GetKeyState(HGEK_LEFT) && !OnTheRightWall.GetState())
     {
@@ -119,8 +119,11 @@ void c_player::Update(float delta)
         Acceleration = Min_Acceleration;
 
         //Анимация торможения
+        isBarking.SetTrue();
         //BrakingAnim(delta);
     }
+    else
+        isBarking.SetFalse();
 
     if (hge->Input_GetKeyState(HGEK_SPACE))
     {

@@ -48,6 +48,8 @@ protected:
     c_bool  OnTheLeftWall;
     c_bool  OnTheRightWall;
 
+    c_bool isBarking;
+
     //¬озвращает новую позицию (центр) при пересечении с другим спрайтом
     //BoundingBox - границы пересечЄнного спрайта
     hgeVector GetNewPosition(hgeRect BoundingBox);
