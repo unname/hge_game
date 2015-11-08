@@ -19,8 +19,10 @@ c_player::c_player(u_int size)
     JumpImpulse         = 0.0;
     JumpImpulse_step    = 4.0;
 
-    GroundFriction      = 0.97;
+    GroundFriction      = 0.99;
     AirFriction         = 0.97;
+
+    SpeedForBarking     = 6;
 
     std::string player_tex_path;
     player_tex_path.append(RESOURCES_PATH);
@@ -34,9 +36,10 @@ c_player::c_player(u_int size)
     //Кадры анимации
     Standing = new hgeAnimation(Texture, 3, 3, 0, 0, 36, 64);
     Running  = new hgeAnimation(Texture, 6, 6, 120, 0, 51, 64);
-    Braking  = new hgeAnimation(Texture, 3, 3, 0 + 0.5f, 0 + 0.5f, 64, 128);
-    Jumping  = new hgeAnimation(Texture, 3, 3, 0 + 0.5f, 0 + 0.5f, 64, 128);
-    Falling  = new hgeAnimation(Texture, 3, 3, 0 + 0.5f, 0 + 0.5f, 64, 128);
+    Braking  = new hgeAnimation(Texture, 3, 9, 440, 0, 56, 64);
+    Jumping  = new hgeAnimation(Texture, 2, 9, 625, 0, 36, 70);
+    Falling  = new hgeAnimation(Texture, 1, 1, 700, 0, 39, 64);
+    Landing  = new hgeAnimation(Texture, 1, 1, 740, 0, 37, 64);
 
     //Центы кадров
     Standing->SetHotSpot(Standing->GetWidth() / 2, Standing->GetHeight() / 2);
@@ -44,10 +47,13 @@ c_player::c_player(u_int size)
     Braking->SetHotSpot(Braking->GetWidth() / 2, Braking->GetHeight() / 2);
     Jumping->SetHotSpot(Jumping->GetWidth() / 2, Jumping->GetHeight() / 2);
     Falling->SetHotSpot(Falling->GetWidth() / 2, Falling->GetHeight() / 2);
+    Landing->SetHotSpot(Landing->GetWidth() / 2, Landing->GetHeight() / 2);
 
     //Режимы анимации
+    Braking->SetMode(HGEANIM_FWD | HGEANIM_NOLOOP);
     Jumping->SetMode(HGEANIM_FWD | HGEANIM_NOLOOP);
     Falling->SetMode(HGEANIM_FWD | HGEANIM_NOLOOP);
+    Landing->SetMode(HGEANIM_FWD | HGEANIM_NOLOOP);
 
     Standing->Play();
 
@@ -80,18 +86,23 @@ void c_player::Update(float delta)
         //Анимация бега
         if ((Moving.MovingLeft.GetState() || Moving.MovingRigth.GetState()) && OnTheGround.GetState())
         {
-            RunningAnim(delta);
+            if (isBraking.GetState())
+            {
+                BrakingAnim(delta);
+            }
+            else
+                RunningAnim(delta);
         }
     }
 
     //Анимация прыжка/падения
-    //if (!OnTheGround.GetState())
-    //{
-    //    if (Moving.MovingUp.GetState())
-    //        JumpingAnim(delta);
-    //    else
-    //        FallingAnim(delta);
-    //}
+    if (!OnTheGround.GetState())
+    {
+        if (Moving.MovingUp.GetState())
+            JumpingAnim(delta);
+        else
+            FallingAnim(delta);
+    }
 
     if (hge->Input_GetKeyState(HGEK_LEFT) && !OnTheRightWall.GetState())
     {
@@ -118,12 +129,14 @@ void c_player::Update(float delta)
     {
         Acceleration = Min_Acceleration;
 
-        //Анимация торможения
-        isBarking.SetTrue();
-        //BrakingAnim(delta);
+        if (!Moving.NotMoving.GetState())
+        {
+            if (abs(Velocity.x) > SpeedForBarking)
+                isBraking.SetTrue();
+        }
     }
     else
-        isBarking.SetFalse();
+        isBraking.SetFalse();
 
     if (hge->Input_GetKeyState(HGEK_SPACE))
     {
@@ -294,4 +307,24 @@ void c_player::FallingAnim(float dt)
 
     CurrentAnimation = Falling;
     Sprite = Falling;
+}
+
+void c_player::LandingAnim(float dt)
+{
+    if (CurrentAnimation != Landing)
+        CurrentAnimation->Stop();
+
+    //Разворачиваем спрайт, если двигаемся влево
+    if (Moving.MovingLeft.GetState())
+        Landing->SetFlip(true, false);
+    else
+        Landing->SetFlip(false, false);
+
+    if (Landing->IsPlaying())
+        Landing->Update(dt);
+    else
+        Landing->Play();
+
+    CurrentAnimation = Landing;
+    Sprite = Landing;
 }

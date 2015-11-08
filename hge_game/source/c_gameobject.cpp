@@ -32,7 +32,7 @@ void c_gameobject::Update(float delta)
 
     //Полное торможение происходит достаточно долго (несколько секунд)
     //поэтому если скользим с очень маленькой скорость - принудительно останавливаемся
-    if (isBarking.GetState())
+    if (abs(PreviousVelocity.x) > abs(Velocity.x))
     {
         if (abs(Velocity.x) < delta*100)
             Velocity.x = 0;
@@ -158,6 +158,7 @@ void c_gameobject::Update(float delta)
     else
         Moving.NotMoving.SetFalse();
 
+    PreviousVelocity = Velocity;
     PreviousPosition = Position;      
 
     c_drawobject::Update(delta);

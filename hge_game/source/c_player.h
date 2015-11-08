@@ -21,12 +21,14 @@ private:
     hgeAnimation* Braking;
     hgeAnimation* Jumping;
     hgeAnimation* Falling;
+    hgeAnimation* Landing;
 
     void StandingAnim(float dt);
     void RunningAnim(float dt);
     void BrakingAnim(float dt);
     void JumpingAnim(float dt);
     void FallingAnim(float dt);
+    void LandingAnim(float dt);
 
 public:
     c_player(u_int size);

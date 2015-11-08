@@ -23,6 +23,7 @@ class c_gameobject: public c_drawobject
 {
 protected:
     hgeVector   Velocity;
+    hgeVector   PreviousVelocity;
     hgeVector   PreviousPosition;
 
     moving  Moving;
@@ -42,13 +43,16 @@ protected:
     float   Max_JumpImpulse;
     float   JumpImpulse_step;
 
+    float   SpeedForBarking;
+
     float    g;
 
     c_bool  OnTheGround;
     c_bool  OnTheLeftWall;
     c_bool  OnTheRightWall;
 
-    c_bool isBarking;
+    //–ежим торможени€ (при сидьном разбеге)
+    c_bool isBraking;
 
     //¬озвращает новую позицию (центр) при пересечении с другим спрайтом
     //BoundingBox - границы пересечЄнного спрайта
