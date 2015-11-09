@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\c_anim_manager.cpp" />
     <ClCompile Include="source\c_background.cpp" />
     <ClCompile Include="source\c_drawobject.cpp" />
     <ClCompile Include="source\c_game.cpp" />
@@ -25,6 +26,7 @@
     <ClCompile Include="support\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\c_anim_manager.h" />
     <ClInclude Include="source\c_background.h" />
     <ClInclude Include="source\c_drawobject.h" />
     <ClInclude Include="source\c_game.h" />

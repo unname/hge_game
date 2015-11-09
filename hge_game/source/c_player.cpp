@@ -1,7 +1,7 @@
 #include "c_player.h"
 
 //конструктор
-c_player::c_player(u_int size)
+c_player::c_player()
 {
     //Установка переменных
     Position =  hgeVector(2300, 2300);
@@ -33,41 +33,43 @@ c_player::c_player(u_int size)
         DisplayErrorHGE();
     }
 
-    //Кадры анимации
+    PlayerAnimation = new c_anim_manager(Sprite);
+
+    //Добавляем анмации для игрока
     Standing = new hgeAnimation(Texture, 3, 3, 0, 0, 36, 64);
-    Running  = new hgeAnimation(Texture, 6, 6, 120, 0, 51, 64);
-    Braking  = new hgeAnimation(Texture, 3, 9, 440, 0, 56, 64);
-    Jumping  = new hgeAnimation(Texture, 2, 9, 625, 0, 36, 70);
-    Falling  = new hgeAnimation(Texture, 1, 1, 700, 0, 39, 64);
-    Landing  = new hgeAnimation(Texture, 1, 1, 740, 0, 37, 64);
+    Running = new hgeAnimation(Texture, 6, 6, 120, 0, 51, 64);
+    Braking = new hgeAnimation(Texture, 3, 9, 440, 0, 56, 64);
+    Jumping = new hgeAnimation(Texture, 2, 9, 625, 0, 36, 70);
+    Falling = new hgeAnimation(Texture, 1, 1, 700, 0, 39, 64);
+    Landing = new hgeAnimation(Texture, 1, 1, 740, 0, 37, 64);
 
-    //Центы кадров
-    Standing->SetHotSpot(Standing->GetWidth() / 2, Standing->GetHeight() / 2);
-    Running->SetHotSpot(Running->GetWidth() / 2, Running->GetHeight() / 2);
-    Braking->SetHotSpot(Braking->GetWidth() / 2, Braking->GetHeight() / 2);
-    Jumping->SetHotSpot(Jumping->GetWidth() / 2, Jumping->GetHeight() / 2);
-    Falling->SetHotSpot(Falling->GetWidth() / 2, Falling->GetHeight() / 2);
-    Landing->SetHotSpot(Landing->GetWidth() / 2, Landing->GetHeight() / 2);
+    PlayerAnimation->AddElement(Standing, "Standing");
+    PlayerAnimation->AddElement(Running, "Running");
+    PlayerAnimation->AddElement(Braking, "Braking", HGEANIM_FWD | HGEANIM_NOLOOP);
+    PlayerAnimation->AddElement(Jumping, "Jumping", HGEANIM_FWD | HGEANIM_NOLOOP);
+    PlayerAnimation->AddElement(Falling, "Falling", HGEANIM_FWD | HGEANIM_NOLOOP);
+    PlayerAnimation->AddElement(Landing, "Landing", HGEANIM_FWD | HGEANIM_NOLOOP);
 
-    //Режимы анимации
-    Braking->SetMode(HGEANIM_FWD | HGEANIM_NOLOOP);
-    Jumping->SetMode(HGEANIM_FWD | HGEANIM_NOLOOP);
-    Falling->SetMode(HGEANIM_FWD | HGEANIM_NOLOOP);
-    Landing->SetMode(HGEANIM_FWD | HGEANIM_NOLOOP);
-
-    Standing->Play();
-
-    CurrentAnimation = Standing;
+    //В начале стоим
     Sprite = Standing;
 }
 
 //деструктор
 c_player::~c_player()
 {
+    //Текстуры
     if (Texture)
         hge->Texture_Free(Texture);
 
-    delete(Sprite);
+    //Анимации
+    delete(Standing);
+    delete(Running);
+    delete(Braking);
+    delete(Jumping);
+    delete(Falling);
+    delete(Landing);
+
+    delete(PlayerAnimation);
 }
 
 //Повторный расчёт свойств объекта
@@ -79,7 +81,7 @@ void c_player::Update(float delta)
     //Анимация стояния на месте
     if (Moving.NotMoving.GetState())
     {
-        StandingAnim(delta);
+        PlayerAnimation->Animate("Standing", delta, &Moving);
     }
     else
     {
@@ -88,10 +90,10 @@ void c_player::Update(float delta)
         {
             if (isBraking.GetState())
             {
-                BrakingAnim(delta);
+                PlayerAnimation->Animate("Braking", delta, &Moving);
             }
             else
-                RunningAnim(delta);
+                PlayerAnimation->Animate("Running", delta, &Moving);
         }
     }
 
@@ -99,9 +101,9 @@ void c_player::Update(float delta)
     if (!OnTheGround.GetState())
     {
         if (Moving.MovingUp.GetState())
-            JumpingAnim(delta);
+            PlayerAnimation->Animate("Jumping", delta, &Moving);
         else
-            FallingAnim(delta);
+            PlayerAnimation->Animate("Falling", delta, &Moving);
     }
 
     if (hge->Input_GetKeyState(HGEK_LEFT) && !OnTheRightWall.GetState())
@@ -203,128 +205,4 @@ void c_player::Update(float delta)
     {
         PlayerPosition.y = game_values.GetMapSize().y - GetScreenHeight() / 2;
     }
-}
-
-void c_player::StandingAnim(float dt)
-{
-    if (CurrentAnimation != Standing)
-        CurrentAnimation->Stop();
-
-    //Разворачиваем спрайт, если двигались влево
-    if (Moving.MovingLeft.GetState())
-        Standing->SetFlip(true, false);
-    else
-        Standing->SetFlip(false, false);
-
-    if (Standing->IsPlaying())
-        Standing->Update(dt);
-    else
-        Standing->Play();
-
-    CurrentAnimation = Standing;
-    Sprite = Standing;
-}
-
-void c_player::RunningAnim(float dt)
-{
-    if (CurrentAnimation != Running)
-        CurrentAnimation->Stop();
-
-    //Разворачиваем спрайт, если двигаемся влево
-    if (Moving.MovingLeft.GetState())
-        Running->SetFlip(true, false);
-    else
-        Running->SetFlip(false, false);
-
-    if (Running->IsPlaying())
-        Running->Update(dt);
-    else
-        Running->Play();
-
-    CurrentAnimation = Running;
-    Sprite = Running;
-}
-
-void c_player::BrakingAnim(float dt)
-{
-    if (CurrentAnimation != Braking)
-        CurrentAnimation->Stop();
-
-    //Разворачиваем спрайт, если двигаемся влево
-    if (Moving.MovingLeft.GetState())
-        Braking->SetFlip(true, false);
-    else
-        Braking->SetFlip(false, false);
-
-    if (Braking->IsPlaying())
-        Braking->Update(dt);
-    else
-        Braking->Play();
-
-    CurrentAnimation = Braking;
-    Sprite = Braking;
-}
-
-void c_player::JumpingAnim(float dt)
-{
-    if (CurrentAnimation != Jumping)
-        CurrentAnimation->Stop();
-
-    //Разворачиваем спрайт, если двигаемся влево
-    if (Moving.MovingLeft.GetState())
-    {
-        Jumping->SetFlip(true, false);
-    }
-    else
-    {
-        Jumping->SetFlip(false, false);
-    }
-
-    if (Jumping->IsPlaying())
-        Jumping->Update(dt);
-    else
-        Jumping->Play();
-
-    CurrentAnimation = Jumping;
-    Sprite = Jumping;
-}
-
-void c_player::FallingAnim(float dt)
-{
-    if (CurrentAnimation != Falling)
-        CurrentAnimation->Stop();
-
-    //Разворачиваем спрайт, если двигаемся влево
-    if (Moving.MovingLeft.GetState())
-        Falling->SetFlip(true, false);
-    else
-        Falling->SetFlip(false, false);
-
-    if (Falling->IsPlaying())
-        Falling->Update(dt);
-    else
-        Falling->Play();
-
-    CurrentAnimation = Falling;
-    Sprite = Falling;
-}
-
-void c_player::LandingAnim(float dt)
-{
-    if (CurrentAnimation != Landing)
-        CurrentAnimation->Stop();
-
-    //Разворачиваем спрайт, если двигаемся влево
-    if (Moving.MovingLeft.GetState())
-        Landing->SetFlip(true, false);
-    else
-        Landing->SetFlip(false, false);
-
-    if (Landing->IsPlaying())
-        Landing->Update(dt);
-    else
-        Landing->Play();
-
-    CurrentAnimation = Landing;
-    Sprite = Landing;
 }
