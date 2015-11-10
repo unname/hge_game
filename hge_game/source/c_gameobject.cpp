@@ -109,21 +109,21 @@ void c_gameobject::Update(float delta)
         if (Platform)
         {
             //Если пересекаемся, то обрабатываем столкновение и вычисляем новую позицию
-            if (IntersectBoindingBox.Intersect(&Platform->GetBoundingBox()))
+            if (GetIntersectBoundingBox().Intersect(&Platform->GetBoundingBox()))
             {
-                Position = GetNewPosition(IntersectBoindingBox, Platform->GetBoundingBox());
+                Position = GetNewPosition(GetIntersectBoundingBox(), Platform->GetBoundingBox());
             }
 
             //Если встали на платформу
-            if ((IntersectBoindingBox.y2 == Platform->GetBoundingBox().y1) && (IntersectBoindingBox.x2>Platform->GetBoundingBox().x1) && (IntersectBoindingBox.x1 < Platform->GetBoundingBox().x2))
+            if ((GetIntersectBoundingBox().y2 == Platform->GetBoundingBox().y1) && (GetIntersectBoundingBox().x2>Platform->GetBoundingBox().x1) && (GetIntersectBoundingBox().x1 < Platform->GetBoundingBox().x2))
                 OnTheGround.SetTrue();
 
             //Если упераемся в левую стенку платформы
-            if ((IntersectBoindingBox.x2 == Platform->GetBoundingBox().x1) && (IntersectBoindingBox.y2>Platform->GetBoundingBox().y1) && (IntersectBoindingBox.y1 < Platform->GetBoundingBox().y2))
+            if ((GetIntersectBoundingBox().x2 == Platform->GetBoundingBox().x1) && (GetIntersectBoundingBox().y2>Platform->GetBoundingBox().y1) && (GetIntersectBoundingBox().y1 < Platform->GetBoundingBox().y2))
                 OnTheLeftWall.SetTrue();
 
             //Если упераемся в правую стенку платформы
-            if ((IntersectBoindingBox.x1 == Platform->GetBoundingBox().x2) && (IntersectBoindingBox.y2>Platform->GetBoundingBox().y1) && (IntersectBoindingBox.y1 < Platform->GetBoundingBox().y2))
+            if ((GetIntersectBoundingBox().x1 == Platform->GetBoundingBox().x2) && (GetIntersectBoundingBox().y2>Platform->GetBoundingBox().y1) && (GetIntersectBoundingBox().y1 < Platform->GetBoundingBox().y2))
                 OnTheRightWall.SetTrue();
         }
     }
@@ -162,6 +162,18 @@ void c_gameobject::Update(float delta)
     PreviousPosition = Position;      
 
     c_drawobject::Update(delta);
+}
+
+hgeRect c_gameobject::GetIntersectBoundingBox()
+{
+    hgeRect BoundingBox;
+
+    BoundingBox.x1 = Position.x - (IntersectBoindingBox.x2 - IntersectBoindingBox.x1) / 2;
+    BoundingBox.x2 = Position.x + (IntersectBoindingBox.x2 - IntersectBoindingBox.x1) / 2;
+    BoundingBox.y1 = Position.y - (IntersectBoindingBox.y2 - IntersectBoindingBox.y1) / 2;
+    BoundingBox.y2 = Position.y + (IntersectBoindingBox.y2 - IntersectBoindingBox.y1) / 2;
+
+    return BoundingBox;
 }
 
 hgeVector c_gameobject::GetNewPosition(hgeRect BoundingBox1,hgeRect BoundingBox2)
