@@ -43,7 +43,7 @@ protected:
     float   Max_JumpImpulse;
     float   JumpImpulse_step;
 
-    float   SpeedForBarking;
+    float   SpeedForBraking;
 
     float    g;
 
@@ -51,8 +51,10 @@ protected:
     c_bool  OnTheLeftWall;
     c_bool  OnTheRightWall;
 
-    //–ежим торможени€ (при сидьном разбеге)
+    //“ормозим ?
     c_bool isBraking;
+    //ѕриземлились после падени€ ? (сейчас никак не обрабатываетс€, может не нужен ?)
+    c_bool isLanding;
 
     //¬озвращает новую позицию (центр) при пересечении с другим спрайтом
     //BoundingBox - границы пересечЄнного спрайта

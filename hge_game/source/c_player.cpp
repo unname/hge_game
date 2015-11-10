@@ -22,7 +22,7 @@ c_player::c_player()
     GroundFriction      = 0.99;
     AirFriction         = 0.97;
 
-    SpeedForBarking     = 6;
+    SpeedForBraking     = 6;
 
     std::string player_tex_path;
     player_tex_path.append(RESOURCES_PATH);
@@ -78,15 +78,20 @@ void c_player::Update(float delta)
     c_game_values& game_values = c_game_values::getInstance();
 
 
-    //Анимация стояния на месте
+    //Анимация стояния/презимления
     if (Moving.NotMoving.GetState())
     {
-        PlayerAnimation->Animate("Standing", delta, &Moving);
+        //if (isLanding.GetState())
+        //{
+        //    PlayerAnimation->Animate("Landing", delta, &Moving);
+        //}
+        //else
+            PlayerAnimation->Animate("Standing", delta, &Moving);
     }
     else
     {
-        //Анимация бега
-        if ((Moving.MovingLeft.GetState() || Moving.MovingRigth.GetState()) && OnTheGround.GetState())
+        //Анимация бега/торможения
+        if (OnTheGround.GetState())
         {
             if (isBraking.GetState())
             {
@@ -95,15 +100,14 @@ void c_player::Update(float delta)
             else
                 PlayerAnimation->Animate("Running", delta, &Moving);
         }
-    }
-
-    //Анимация прыжка/падения
-    if (!OnTheGround.GetState())
-    {
-        if (Moving.MovingUp.GetState())
-            PlayerAnimation->Animate("Jumping", delta, &Moving);
         else
-            PlayerAnimation->Animate("Falling", delta, &Moving);
+        {
+            //Анимация прыжка/падения
+            if (Moving.MovingUp.GetState())
+                PlayerAnimation->Animate("Jumping", delta, &Moving);
+            else
+                PlayerAnimation->Animate("Falling", delta, &Moving);
+        }
     }
 
     if (hge->Input_GetKeyState(HGEK_LEFT) && !OnTheRightWall.GetState())
@@ -131,13 +135,18 @@ void c_player::Update(float delta)
     {
         Acceleration = Min_Acceleration;
 
+        //Если двигаемся на большой скорости -> Торможение
         if (!Moving.NotMoving.GetState())
         {
-            if (abs(Velocity.x) > SpeedForBarking)
+            if (abs(Velocity.x) > SpeedForBraking)
                 isBraking.SetTrue();
         }
+        else
+            //Если остановились, сбрасываем торможение
+            isBraking.SetFalse();
     }
     else
+        //Как только начали двигаться, сбрасываем торможение
         isBraking.SetFalse();
 
     if (hge->Input_GetKeyState(HGEK_SPACE))
