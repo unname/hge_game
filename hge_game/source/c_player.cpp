@@ -36,8 +36,8 @@ c_player::c_player()
     PlayerAnimation = new c_anim_manager(Sprite);
 
     //Добавляем анмации для игрока
-    Standing = new hgeAnimation(Texture, 3, 3, 0, 0, 36, 64);
-    Running = new hgeAnimation(Texture, 6, 6, 120, 0, 51, 64);
+    Standing = new hgeAnimation(Texture, 3, 3, 0, 0, 100, 100);
+    Running = new hgeAnimation(Texture, 6, 6, 300, 0, 100, 100);
     Braking = new hgeAnimation(Texture, 3, 9, 440, 0, 56, 64);
     Jumping = new hgeAnimation(Texture, 2, 9, 625, 0, 36, 70);
     Falling = new hgeAnimation(Texture, 1, 1, 700, 0, 39, 64);
@@ -54,8 +54,11 @@ c_player::c_player()
     Sprite = Standing;
 
     //Выставляем общий IntersectBoindingBox для всех кадров
-    //Принимаем равным Standing->BoundingBox 
-    Standing->GetBoundingBox(Standing->GetWidth() / 2, Standing->GetHeight() / 2, &IntersectBoindingBox);
+    //Standing->GetBoundingBox(Standing->GetWidth() / 2, Standing->GetHeight() / 2, &IntersectBoindingBox);
+    IntersectBoindingBox.x1 = 0;
+    IntersectBoindingBox.x2 = 36;
+    IntersectBoindingBox.y1 = 0;
+    IntersectBoindingBox.y2 = 64;
 }
 
 //деструктор
@@ -97,20 +100,20 @@ void c_player::Update(float delta)
         //Анимация бега/торможения
         if (OnTheGround.GetState())
         {
-            if (isBraking.GetState())
-            {
-                PlayerAnimation->Animate("Braking", delta, &Moving);
-            }
-            else
+            //if (isBraking.GetState())
+            //{
+            //    PlayerAnimation->Animate("Braking", delta, &Moving);
+            //}
+            //else
                 PlayerAnimation->Animate("Running", delta, &Moving);
         }
         else
         {
             //Анимация прыжка/падения
-            if (Moving.MovingUp.GetState())
-                PlayerAnimation->Animate("Jumping", delta, &Moving);
-            else
-                PlayerAnimation->Animate("Falling", delta, &Moving);
+            //if (Moving.MovingUp.GetState())
+            //    PlayerAnimation->Animate("Jumping", delta, &Moving);
+            //else
+            //    PlayerAnimation->Animate("Falling", delta, &Moving);
         }
     }
 
