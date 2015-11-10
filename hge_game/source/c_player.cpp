@@ -52,6 +52,10 @@ c_player::c_player()
 
     //В начале стоим
     Sprite = Standing;
+
+    //Выставляем общий IntersectBoindingBox для всех кадров
+    //Принимаем равным Standing->BoundingBox 
+    Standing->GetBoundingBox(Standing->GetWidth() / 2, Standing->GetHeight() / 2, &IntersectBoindingBox);
 }
 
 //деструктор

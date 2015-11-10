@@ -109,21 +109,21 @@ void c_gameobject::Update(float delta)
         if (Platform)
         {
             //Если пересекаемся, то обрабатываем столкновение и вычисляем новую позицию
-            if (GetBoundingBox().Intersect(&Platform->GetBoundingBox()))
+            if (IntersectBoindingBox.Intersect(&Platform->GetBoundingBox()))
             {
-                Position = GetNewPosition(Platform->GetBoundingBox());
+                Position = GetNewPosition(IntersectBoindingBox, Platform->GetBoundingBox());
             }
 
             //Если встали на платформу
-            if ((GetBoundingBox().y2 == Platform->GetBoundingBox().y1) && (GetBoundingBox().x2>Platform->GetBoundingBox().x1) && (GetBoundingBox().x1 < Platform->GetBoundingBox().x2))
+            if ((IntersectBoindingBox.y2 == Platform->GetBoundingBox().y1) && (IntersectBoindingBox.x2>Platform->GetBoundingBox().x1) && (IntersectBoindingBox.x1 < Platform->GetBoundingBox().x2))
                 OnTheGround.SetTrue();
 
             //Если упераемся в левую стенку платформы
-            if ((GetBoundingBox().x2 == Platform->GetBoundingBox().x1) && (GetBoundingBox().y2>Platform->GetBoundingBox().y1) && (GetBoundingBox().y1 < Platform->GetBoundingBox().y2))
+            if ((IntersectBoindingBox.x2 == Platform->GetBoundingBox().x1) && (IntersectBoindingBox.y2>Platform->GetBoundingBox().y1) && (IntersectBoindingBox.y1 < Platform->GetBoundingBox().y2))
                 OnTheLeftWall.SetTrue();
 
             //Если упераемся в правую стенку платформы
-            if ((GetBoundingBox().x1 == Platform->GetBoundingBox().x2) && (GetBoundingBox().y2>Platform->GetBoundingBox().y1) && (GetBoundingBox().y1 < Platform->GetBoundingBox().y2))
+            if ((IntersectBoindingBox.x1 == Platform->GetBoundingBox().x2) && (IntersectBoindingBox.y2>Platform->GetBoundingBox().y1) && (IntersectBoindingBox.y1 < Platform->GetBoundingBox().y2))
                 OnTheRightWall.SetTrue();
         }
     }
@@ -164,7 +164,7 @@ void c_gameobject::Update(float delta)
     c_drawobject::Update(delta);
 }
 
-hgeVector c_gameobject::GetNewPosition(hgeRect BoundingBox)
+hgeVector c_gameobject::GetNewPosition(hgeRect BoundingBox1,hgeRect BoundingBox2)
 {
 
     hgeVector A = PreviousPosition;
@@ -181,36 +181,36 @@ hgeVector c_gameobject::GetNewPosition(hgeRect BoundingBox)
            B_coef_zero;
     c_bool Y_fixed;
 
-    float Size_x = Sprite->GetWidth()/2; 
-    float Size_y = Sprite->GetHeight()/2;
+    float Size_x = (BoundingBox1.x2 - BoundingBox1.x1) / 2;
+    float Size_y = (BoundingBox1.y2 - BoundingBox1.y1) / 2;
     
     //Определим номер угла спрайта, который мы пересекли 
     //Верхний левый - 1, далее по часовой
     size_t angle_number = 0;
 
     //1.Верхний левый
-    if (GetBoundingBox().TestPoint(BoundingBox.x1, BoundingBox.y1))
+    if (BoundingBox1.TestPoint(BoundingBox2.x1, BoundingBox2.y1))
     {
         angle_number = 1;
-        C = hgeVector(BoundingBox.x1, BoundingBox.y1);
+        C = hgeVector(BoundingBox2.x1, BoundingBox2.y1);
     }
     //2.Верхний правый
-    if (GetBoundingBox().TestPoint(BoundingBox.x2, BoundingBox.y1))
+    if (BoundingBox1.TestPoint(BoundingBox2.x2, BoundingBox2.y1))
     {
         angle_number = 2;
-        C = hgeVector(BoundingBox.x2, BoundingBox.y1);
+        C = hgeVector(BoundingBox2.x2, BoundingBox2.y1);
     }
     //3.Нижний правый
-    if (GetBoundingBox().TestPoint(BoundingBox.x2, BoundingBox.y2))
+    if (BoundingBox1.TestPoint(BoundingBox2.x2, BoundingBox2.y2))
     {
         angle_number = 3;
-        C = hgeVector(BoundingBox.x2, BoundingBox.y2);
+        C = hgeVector(BoundingBox2.x2, BoundingBox2.y2);
     }
     //4.Нижний левый
-    if (GetBoundingBox().TestPoint(BoundingBox.x1, BoundingBox.y2))
+    if (BoundingBox1.TestPoint(BoundingBox2.x1, BoundingBox2.y2))
     {
         angle_number = 4;
-        C = hgeVector(BoundingBox.x1, BoundingBox.y2);
+        C = hgeVector(BoundingBox2.x1, BoundingBox2.y2);
     }
 
     //Смещаем точки, так как 'AB' - линия перемещения угла (который пересёк другой спрайт), а не центра
@@ -543,33 +543,33 @@ hgeVector c_gameobject::GetNewPosition(hgeRect BoundingBox)
     //Если углы спрайта не пересекались, то проверяем стороны
     {
         //1.Верхняя сторона
-        if (PreviousPosition.y < BoundingBox.y1)
+        if (PreviousPosition.y < BoundingBox2.y1)
         {
-            NewPosition.y = BoundingBox.y1 - Size_y;
+            NewPosition.y = BoundingBox2.y1 - Size_y;
             Velocity.y = 0;
             JumpImpulse = 0;
         }
 
         //2.Нижняя сторона
-        if (PreviousPosition.y > BoundingBox.y2)
+        if (PreviousPosition.y > BoundingBox2.y2)
         {
-            NewPosition.y = BoundingBox.y2 + Size_y;
+            NewPosition.y = BoundingBox2.y2 + Size_y;
             Velocity.y = 0;
             JumpImpulse = 0;
         }
 
         //3.Левая сторона
-        if (PreviousPosition.x < BoundingBox.x1)
+        if (PreviousPosition.x < BoundingBox2.x1)
         {
-            NewPosition.x = BoundingBox.x1 - Size_x;
+            NewPosition.x = BoundingBox2.x1 - Size_x;
             Velocity.x = 0;
             Acceleration = 0;
         }
 
         //4.Правая сторона
-        if (PreviousPosition.x > BoundingBox.x2)
+        if (PreviousPosition.x > BoundingBox2.x2)
         {
-            NewPosition.x = BoundingBox.x2 + Size_x;
+            NewPosition.x = BoundingBox2.x2 + Size_x;
             Velocity.x = 0;
             Acceleration = 0;
         }
