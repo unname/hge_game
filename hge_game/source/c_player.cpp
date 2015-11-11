@@ -19,7 +19,7 @@ c_player::c_player()
     JumpImpulse         = 0.0;
     JumpImpulse_step    = 4.0;
 
-    GroundFriction      = 0.99;
+    GroundFriction      = 0.97;
     AirFriction         = 0.97;
 
     SpeedForBraking     = 6;
@@ -38,10 +38,10 @@ c_player::c_player()
     //Добавляем анмации для игрока
     Standing = new hgeAnimation(Texture, 3, 3, 0, 0, 100, 100);
     Running = new hgeAnimation(Texture, 6, 6, 300, 0, 100, 100);
-    Braking = new hgeAnimation(Texture, 3, 9, 440, 0, 56, 64);
-    Jumping = new hgeAnimation(Texture, 2, 9, 625, 0, 36, 70);
-    Falling = new hgeAnimation(Texture, 1, 1, 700, 0, 39, 64);
-    Landing = new hgeAnimation(Texture, 1, 1, 740, 0, 37, 64);
+    Braking = new hgeAnimation(Texture, 3, 9, 0, 100, 100, 100);
+    Jumping = new hgeAnimation(Texture, 2, 10, 300, 100, 100, 100);
+    Falling = new hgeAnimation(Texture, 1, 1, 500, 100, 100, 100);
+    Landing = new hgeAnimation(Texture, 1, 1, 600, 100, 100, 100);
 
     PlayerAnimation->AddElement(Standing, "Standing");
     PlayerAnimation->AddElement(Running, "Running");
@@ -98,20 +98,20 @@ void c_player::Update(float delta)
         //Анимация бега/торможения
         if (OnTheGround.GetState())
         {
-            //if (isBraking.GetState())
-            //{
-            //    PlayerAnimation->Animate("Braking", delta, Sprite, &Moving);
-            //}
-            //else
+            if (isBraking.GetState())
+            {
+                PlayerAnimation->Animate("Braking", delta, Sprite, &Moving);
+            }
+            else
             PlayerAnimation->Animate("Running", delta, Sprite, &Moving);
         }
         else
         {
             //Анимация прыжка/падения
-            //if (Moving.MovingUp.GetState())
-            //    PlayerAnimation->Animate("Jumping", delta, Sprite, &Moving);
-            //else
-            //    PlayerAnimation->Animate("Falling", delta, Sprite, &Moving);
+            if (Moving.MovingUp.GetState())
+                PlayerAnimation->Animate("Jumping", delta, Sprite, &Moving);
+            else
+                PlayerAnimation->Animate("Falling", delta, Sprite, &Moving);
         }
     }
 
