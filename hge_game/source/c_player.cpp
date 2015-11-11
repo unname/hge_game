@@ -33,7 +33,7 @@ c_player::c_player()
         DisplayErrorHGE();
     }
 
-    PlayerAnimation = new c_anim_manager(Sprite);
+    PlayerAnimation = new c_anim_manager();
 
     //Добавляем анмации для игрока
     Standing = new hgeAnimation(Texture, 3, 3, 0, 0, 100, 100);
@@ -50,15 +50,13 @@ c_player::c_player()
     PlayerAnimation->AddElement(Falling, "Falling", HGEANIM_FWD | HGEANIM_NOLOOP);
     PlayerAnimation->AddElement(Landing, "Landing", HGEANIM_FWD | HGEANIM_NOLOOP);
 
-    //В начале стоим
-    Sprite = Standing;
-
     //Выставляем общий IntersectBoindingBox для всех кадров
-    //Standing->GetBoundingBox(Standing->GetWidth() / 2, Standing->GetHeight() / 2, &IntersectBoindingBox);
-    IntersectBoindingBox.x1 = 0;
-    IntersectBoindingBox.x2 = 36;
-    IntersectBoindingBox.y1 = 0;
-    IntersectBoindingBox.y2 = 64;
+    IntersectBoindingBoxSize.x = 36;
+    IntersectBoindingBoxSize.y = 64;
+
+    //В начале стоим
+    //Sprite = Standing;
+
 }
 
 //деструктор
@@ -90,10 +88,10 @@ void c_player::Update(float delta)
     {
         //if (isLanding.GetState())
         //{
-        //    PlayerAnimation->Animate("Landing", delta, &Moving);
+        //    PlayerAnimation->Animate("Landing", delta, Sprite, &Moving);
         //}
         //else
-            PlayerAnimation->Animate("Standing", delta, &Moving);
+            PlayerAnimation->Animate("Standing", delta, Sprite, &Moving);
     }
     else
     {
@@ -102,18 +100,18 @@ void c_player::Update(float delta)
         {
             //if (isBraking.GetState())
             //{
-            //    PlayerAnimation->Animate("Braking", delta, &Moving);
+            //    PlayerAnimation->Animate("Braking", delta, Sprite, &Moving);
             //}
             //else
-                PlayerAnimation->Animate("Running", delta, &Moving);
+            PlayerAnimation->Animate("Running", delta, Sprite, &Moving);
         }
         else
         {
             //Анимация прыжка/падения
             //if (Moving.MovingUp.GetState())
-            //    PlayerAnimation->Animate("Jumping", delta, &Moving);
+            //    PlayerAnimation->Animate("Jumping", delta, Sprite, &Moving);
             //else
-            //    PlayerAnimation->Animate("Falling", delta, &Moving);
+            //    PlayerAnimation->Animate("Falling", delta, Sprite, &Moving);
         }
     }
 

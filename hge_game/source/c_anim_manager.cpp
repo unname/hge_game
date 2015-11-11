@@ -1,10 +1,5 @@
 #include "c_anim_manager.h"
 
-c_anim_manager::c_anim_manager(hgeSprite* sprite)
-{
-    AnimatedSprite = sprite;
-}
-
 void c_anim_manager::AddElement(hgeAnimation* anim, std::string anim_name, int mode, hgeVector hotspot)
 {
     if (hotspot == hgeVector(-1, -1))
@@ -46,7 +41,7 @@ void c_anim_manager::RemoveElement(std::string anim_name)
     }
 }
 
-void c_anim_manager::Animate(std::string anim_name, float delta, moving* moving)
+void c_anim_manager::Animate(std::string anim_name, float delta, hgeSprite*& sprite, moving* moving)
 {
     //Поиск нужной анимации
     auto it = Animations.find(anim_name);
@@ -86,7 +81,7 @@ void c_anim_manager::Animate(std::string anim_name, float delta, moving* moving)
         it->second->Play();
 
     CurrentAnimation = it->second;
-    AnimatedSprite = it->second;
+    sprite = it->second;
 }
 
 void c_anim_manager::GetAnimationList(std::vector<std::string>* anim_list)

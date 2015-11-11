@@ -61,36 +61,36 @@ void c_gameobject::Update(float delta)
     // --------------------
 
     //Если достигли правой границы
-    if (Position.x >= game_values.GetMapSize().x - Sprite->GetWidth() / 2)
+    if (Position.x >= game_values.GetMapSize().x - IntersectBoindingBoxSize.x / 2)
     {
-        Position.x = game_values.GetMapSize().x - Sprite->GetWidth() / 2;
+        Position.x = game_values.GetMapSize().x - IntersectBoindingBoxSize.x / 2;
         Velocity.x = 0;
         Acceleration = 0;
         OnTheLeftWall.SetTrue();
     }
 
     //Если достигли левой границы
-    if (Position.x <= Sprite->GetWidth() / 2)
+    if (Position.x <= IntersectBoindingBoxSize.x / 2)
     {
-        Position.x = Sprite->GetWidth() / 2;
+        Position.x = IntersectBoindingBoxSize.x / 2;
         Velocity.x = 0;
         Acceleration = 0;
         OnTheRightWall.SetTrue();
     }
 
     //Если достигли нижней границы
-    if (Position.y >= game_values.GetMapSize().y - Sprite->GetHeight() / 2)
+    if (Position.y >= game_values.GetMapSize().y - IntersectBoindingBoxSize.y / 2)
     {
-        Position.y = game_values.GetMapSize().y - Sprite->GetHeight() / 2;
+        Position.y = game_values.GetMapSize().y - IntersectBoindingBoxSize.y / 2;
         Velocity.y = 0;
         JumpImpulse = 0;
         OnTheGround.SetTrue();
     }
 
     //Если достигли верхней границы
-    if (Position.y <= Sprite->GetHeight() / 2)
+    if (Position.y <= IntersectBoindingBoxSize.y / 2)
     {
-        Position.y = Sprite->GetHeight() / 2;
+        Position.y = IntersectBoindingBoxSize.y / 2;
         Velocity.y = 0;
         JumpImpulse = 0;
     }
@@ -168,10 +168,10 @@ hgeRect c_gameobject::GetIntersectBoundingBox()
 {
     hgeRect BoundingBox;
 
-    BoundingBox.x1 = Position.x - (IntersectBoindingBox.x2 - IntersectBoindingBox.x1) / 2;
-    BoundingBox.x2 = Position.x + (IntersectBoindingBox.x2 - IntersectBoindingBox.x1) / 2;
-    BoundingBox.y1 = Position.y - (IntersectBoindingBox.y2 - IntersectBoindingBox.y1) / 2;
-    BoundingBox.y2 = Position.y + (IntersectBoindingBox.y2 - IntersectBoindingBox.y1) / 2;
+    BoundingBox.x1 = Position.x - IntersectBoindingBoxSize.x / 2;
+    BoundingBox.x2 = Position.x + IntersectBoindingBoxSize.x / 2;
+    BoundingBox.y1 = Position.y - IntersectBoindingBoxSize.y / 2;
+    BoundingBox.y2 = Position.y + IntersectBoindingBoxSize.y / 2;
 
     return BoundingBox;
 }
