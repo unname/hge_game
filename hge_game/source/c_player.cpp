@@ -86,11 +86,6 @@ void c_player::Update(float delta)
     //Анимация стояния/презимления
     if (Moving.NotMoving.GetState())
     {
-        //if (isLanding.GetState())
-        //{
-        //    PlayerAnimation->Animate("Landing", delta, Sprite, &Moving);
-        //}
-        //else
             PlayerAnimation->Animate("Standing", delta, Sprite, &Moving);
     }
     else
@@ -103,7 +98,10 @@ void c_player::Update(float delta)
                 PlayerAnimation->Animate("Braking", delta, Sprite, &Moving);
             }
             else
-            PlayerAnimation->Animate("Running", delta, Sprite, &Moving);
+                if (isLanding.GetState())
+                    PlayerAnimation->Animate("Landing", delta, Sprite, &Moving);
+                else
+                    PlayerAnimation->Animate("Running", delta, Sprite, &Moving);
         }
         else
         {
@@ -135,9 +133,9 @@ void c_player::Update(float delta)
         Velocity.x += Speed*Acceleration*delta;
     }
 
-    //Ускорение сбрасывается, как только отпускаем кнопку движения
     if (!hge->Input_GetKeyState(HGEK_RIGHT) && !hge->Input_GetKeyState(HGEK_LEFT))
     {
+        //Ускорение сбрасывается, как только отпускаем кнопку движения
         Acceleration = Min_Acceleration;
 
         //Если двигаемся на большой скорости -> Торможение

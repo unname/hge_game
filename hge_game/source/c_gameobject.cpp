@@ -54,6 +54,8 @@ void c_gameobject::Update(float delta)
     OnTheLeftWall.SetFalse();
     OnTheRightWall.SetFalse();
 
+    isLanding.SetFalse();
+
     // --------------------
     //
     // 1. Пересечение с краями карты
@@ -85,6 +87,7 @@ void c_gameobject::Update(float delta)
         Velocity.y = 0;
         JumpImpulse = 0;
         OnTheGround.SetTrue();
+        isLanding.SetTrue();
     }
 
     //Если достигли верхней границы
@@ -115,8 +118,11 @@ void c_gameobject::Update(float delta)
             }
 
             //Если встали на платформу
-            if ((GetIntersectBoundingBox().y2 == Platform->GetBoundingBox().y1) && (GetIntersectBoundingBox().x2>Platform->GetBoundingBox().x1) && (GetIntersectBoundingBox().x1 < Platform->GetBoundingBox().x2))
+            if ((GetIntersectBoundingBox().y2 == Platform->GetBoundingBox().y1) && (GetIntersectBoundingBox().x2 > Platform->GetBoundingBox().x1) && (GetIntersectBoundingBox().x1 < Platform->GetBoundingBox().x2))
+            {
                 OnTheGround.SetTrue();
+                isLanding.SetTrue();
+            }
 
             //Если упераемся в левую стенку платформы
             if ((GetIntersectBoundingBox().x2 == Platform->GetBoundingBox().x1) && (GetIntersectBoundingBox().y2>Platform->GetBoundingBox().y1) && (GetIntersectBoundingBox().y1 < Platform->GetBoundingBox().y2))
