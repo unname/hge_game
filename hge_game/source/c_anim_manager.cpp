@@ -65,7 +65,7 @@ void c_anim_manager::Animate(std::string anim_name, float delta, hgeSprite*& spr
         CurrentAnimation->Stop();
 
     //Разворачиваем спрайт, если надо
-    //(Предполагается что структуры 'moving' означает необходимость отображения)
+    //(Предполагается что структуры 'moving' означает необходимость отражения)
     if (moving)
     {
         if (moving->MovingLeft.GetState())
@@ -74,7 +74,7 @@ void c_anim_manager::Animate(std::string anim_name, float delta, hgeSprite*& spr
             it->second->SetFlip(false, false);
     }
 
-    //Начинаем или продожаем анимацию
+    //Начинаем или продолжаем анимацию
     if (it->second->IsPlaying())
         it->second->Update(delta);
     else

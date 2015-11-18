@@ -16,15 +16,14 @@
 
 class c_game : public c_hge
 {
-private:
-
     void SetWindowState(hgeCallback framefunc);
-    static bool FrameFunc();
     bool LoadResources();
 
-    c_background* background;
-    c_loadmap* map;
-    c_player* player;
+    static bool FrameFunc();
+
+    c_background*   background;
+    c_loadmap*      map;
+    c_player*       player;
 
 public:    
     bool Initialize();

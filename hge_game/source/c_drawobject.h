@@ -16,9 +16,9 @@ protected:
     HTEXTURE        Texture;
     hgeSprite*      Sprite;
     hgeVector       Position;
+
 public:
     static std::vector<c_drawobject*> DrawObjects;
-
     static hgeVector    PlayerPosition;
 
     c_drawobject();
@@ -26,6 +26,7 @@ public:
     ~c_drawobject();
 
     hgeRect GetBoundingBox();
+
     virtual void Update(float delta);
     virtual void Render();
 };

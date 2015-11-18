@@ -16,9 +16,6 @@ private:
     c_game_values(c_game_values const&) = delete;
     c_game_values& operator=(c_game_values const&) = delete;
 
-    //только c_game может устанавливать значения
-    friend class c_game;
-
     //Данные
     size_t  SCREEN_WIDTH;
     size_t  SCREEN_HEIGHT;
@@ -29,6 +26,10 @@ private:
 
     hgeVector MAP_SIZE;
     hgeVector TILE_SIZE;
+
+    //только c_game имеет доступ на изменение данных
+    friend class c_game;
+
 public:
     static c_game_values& getInstance();
 

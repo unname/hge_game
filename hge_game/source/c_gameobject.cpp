@@ -31,17 +31,16 @@ void c_gameobject::Update(float delta)
     if (Velocity.y>Max_Speed)   Velocity.y = Max_Speed;
 
     //Полное торможение происходит достаточно долго (несколько секунд)
-    //поэтому если скользим с очень маленькой скорость - принудительно останавливаемся
+    //поэтому если тормозим с очень маленькой скорость - принудительно останавливаемся
     if (abs(PreviousVelocity.x) > abs(Velocity.x))
     {
         if (abs(Velocity.x) < delta*100)
             Velocity.x = 0;
     }
 
-    // Актуальная позиция после всех расчётов
+    // Промежуточная позиция после расчётов физики
     Position.x += Velocity.x;
     Position.y += Velocity.y;
-
 
     // -------------------------------------
     //
@@ -56,11 +55,11 @@ void c_gameobject::Update(float delta)
 
     isLanding.SetFalse();
 
-    // --------------------
+    // ----------------------------------------
     //
-    // 1. Пересечение с краями карты
+    //      1. Пересечение с краями карты
     //
-    // --------------------
+    // ----------------------------------------
 
     //Если достигли правой границы
     if (Position.x >= game_values.GetMapSize().x - IntersectBoindingBoxSize.x / 2)
@@ -98,11 +97,11 @@ void c_gameobject::Update(float delta)
         JumpImpulse = 0;
     }
 
-    // -------------------
+    // ----------------------------------------
     //
-    // 2. Пересечение с платформами
+    //      2. Пересечение с платформами
     //
-    // --------------------
+    // ----------------------------------------
 
     for (size_t obj_num = 0; obj_num < c_drawobject::DrawObjects.size(); obj_num++)
     {
@@ -134,7 +133,12 @@ void c_gameobject::Update(float delta)
         }
     }
 
-    //Обновляем информацию о направлениях движения
+    // ----------------------------------------
+    //
+    // Обновляем информацию о направлениях движения
+    //
+    // ----------------------------------------
+
     if (Position.x > PreviousPosition.x)
     {
         Moving.MovingRigth.SetTrue();
@@ -164,6 +168,7 @@ void c_gameobject::Update(float delta)
     else
         Moving.NotMoving.SetFalse();
 
+    //Актальные значения скорости и позиции
     PreviousVelocity = Velocity;
     PreviousPosition = Position;      
 
@@ -313,6 +318,7 @@ hgeVector c_gameobject::GetNewPosition(hgeRect BoundingBox1,hgeRect BoundingBox2
     {
         PointUnderLine.SetTrue();
     }
+
     //    1\/2   3\/4
     // 16\           /5
     // 15/           \6
@@ -558,7 +564,7 @@ hgeVector c_gameobject::GetNewPosition(hgeRect BoundingBox1,hgeRect BoundingBox2
         }
     }
     else
-    //Если углы спрайта не пересекались, то проверяем стороны
+    //Если углы спрайтов не пересекались, то проверяем стороны
     {
         //1.Верхняя сторона
         if (PreviousPosition.y < BoundingBox2.y1)

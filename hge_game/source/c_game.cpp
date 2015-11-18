@@ -17,12 +17,12 @@ void c_game::SetWindowState(hgeCallback framefunc)
     hge->System_SetState(HGE_TITLE, "Main window");
     hge->System_SetState(HGE_FPS, fps);
 
-    c_game_values& game_values = c_game_values::getInstance();
-    game_values.SCREEN_WIDTH = screen_width;
-    game_values.SCREEN_HEIGHT = screen_height;
-    game_values.SCREEN_BPP = screen_bpp;
+    c_game_values& game_values  = c_game_values::getInstance();
+    game_values.SCREEN_WIDTH    = screen_width;
+    game_values.SCREEN_HEIGHT   = screen_height;
+    game_values.SCREEN_BPP      = screen_bpp;
     game_values.SCREEN_WINDOWED = screen_windowed;
-    game_values.FPS = fps;
+    game_values.FPS             = fps;
 }
 
 bool c_game::FrameFunc()
@@ -70,7 +70,7 @@ bool c_game::LoadResources()
     map = new c_loadmap(map_path);
 
     c_game_values& game_values = c_game_values::getInstance();
-    game_values.MAP_SIZE = map->GetMapSize();
+    game_values.MAP_SIZE  = map->GetMapSize();
     game_values.TILE_SIZE = map->GetTileSize();
 
     //Создание персонажа
@@ -81,9 +81,9 @@ bool c_game::LoadResources()
 
 void c_game::Release()
 {
-    delete background;
-    delete map;
     delete player;
+    delete map;
+    delete background;
 }
 
 bool c_game::Initialize()

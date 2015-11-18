@@ -11,14 +11,12 @@
 #include "c_game_values.h"
 #include <string>
 
-using namespace std;
-
 class c_background : public c_drawobject
 {
     float t;
 
 public:
-    c_background(string background_file);
+    c_background(std::string background_file);
     ~c_background();
 
     void Update(float delta);

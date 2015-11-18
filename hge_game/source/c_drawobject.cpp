@@ -14,7 +14,6 @@ c_drawobject::c_drawobject()
 c_drawobject::c_drawobject(hgeSprite* sprite, hgeVector sprite_coord)
 {
     Texture = NULL;
-    Sprite = nullptr;
 
     Sprite = sprite;
     Position = sprite_coord;

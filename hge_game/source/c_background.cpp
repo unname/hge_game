@@ -1,6 +1,6 @@
 #include "c_background.h"
 
-c_background::c_background(string background_file)
+c_background::c_background(std::string background_file)
 {
     Texture = hge->Texture_Load(background_file.c_str());
     if (!Texture)
@@ -39,6 +39,6 @@ void c_background::Update(float delta)
 void c_background::Render()
 {
     if (Sprite)
-        Sprite->Render(GetScreenWidth() / 2, GetScreenHeight()/2);
+        Sprite->Render(GetScreenWidth() / 2, GetScreenHeight() / 2);
 }
 

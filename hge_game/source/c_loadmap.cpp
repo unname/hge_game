@@ -32,7 +32,7 @@ c_loadmap::~c_loadmap()
     for (size_t l_count = 0; l_count < layers.size(); l_count++)
         for (size_t t_count = 0; t_count < layers[l_count].tiles.size(); t_count++)
         {
-        delete layers[l_count].tiles[t_count];
+            delete layers[l_count].tiles[t_count];
         }
 
     for (size_t do_count = 0; do_count < tiles.size(); do_count++)
@@ -108,6 +108,7 @@ bool c_loadmap::LoadFromFile(string filename)
 
     firstTileID = atoi(TileSet->Attribute("firstgid"));
 
+
     //Получение параметров картинки c тайлсетом
     XMLElement* Image;
     Image = TileSet->FirstChildElement("image");
@@ -120,6 +121,7 @@ bool c_loadmap::LoadFromFile(string filename)
 
     tileSetWidth = atoi(Image->Attribute("width"));
     tileSetHeight = atoi(Image->Attribute("height"));
+
 
     //Вектор с прямоугольниками тайлсета. 
     columns = tileSetWidth / tileWidth;
