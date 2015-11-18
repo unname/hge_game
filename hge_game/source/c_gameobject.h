@@ -65,7 +65,20 @@ protected:
     //Возвращает новую позицию (центр) при пересечении с другим спрайтом
     //BoundingBox1 - границы нашего спрайта
     //BoundingBox2 - границы пересечённого спрайта
-    hgeVector GetNewPosition(hgeRect BoundingBox1, hgeRect BoundingBox2);
+
+    //Дополнительыне значения (хранятся в свойствах тайлов):
+    //tilt_type    - тип наклона:
+    //                  1 - подъём        (ограничен горизонтальынми тайлами)
+    //                  2 - крутой подъём (ограничен вертикальными тайлами)
+    //                  3 - спуск         (ограничен горизонтальынми тайлами)
+    //                  4 - крутой спуск  (ограничен вертикальными тайлами)
+    //tilt_level   - уровень наклона (определяется количеством тайлов в прямой)
+    //tilt_number  - номер тайла в прямой
+
+    //Для обработки пересечения с прямоугольным спрайтом
+    hgeVector GetNewPosition_Rect(hgeRect BoundingBox1, hgeRect BoundingBox2);
+    //Для обработки пересечения с наклонным спрайтом
+    hgeVector GetNewPosition_Tilt(hgeRect BoundingBox1, hgeRect BoundingBox2, int tilt_type, int tilt_level, int tilt_number);
 
 public:
     c_gameobject();

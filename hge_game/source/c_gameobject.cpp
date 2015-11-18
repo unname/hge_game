@@ -113,7 +113,7 @@ void c_gameobject::Update(float delta)
             //Если пересекаемся, то обрабатываем столкновение и вычисляем новую позицию
             if (GetIntersectBoundingBox().Intersect(&Platform->GetBoundingBox()))
             {
-                Position = GetNewPosition(GetIntersectBoundingBox(), Platform->GetBoundingBox());
+                Position = GetNewPosition_Rect(GetIntersectBoundingBox(), Platform->GetBoundingBox());
             }
 
             //Если встали на платформу
@@ -187,7 +187,7 @@ hgeRect c_gameobject::GetIntersectBoundingBox()
     return BoundingBox;
 }
 
-hgeVector c_gameobject::GetNewPosition(hgeRect BoundingBox1,hgeRect BoundingBox2)
+hgeVector c_gameobject::GetNewPosition_Rect(hgeRect BoundingBox1,hgeRect BoundingBox2)
 {
 
     hgeVector A = PreviousPosition;
@@ -601,3 +601,22 @@ hgeVector c_gameobject::GetNewPosition(hgeRect BoundingBox1,hgeRect BoundingBox2
 
     return NewPosition;
  };
+
+hgeVector c_gameobject::GetNewPosition_Tilt(hgeRect BoundingBox1, hgeRect BoundingBox2, int tilt_type, int tilt_level, int tilt_number)
+{
+    hgeVector A = PreviousPosition;
+    hgeVector B = Position;
+    hgeVector C;
+
+    hgeVector NewPosition(0, 0);
+    hgeVector SwapPosition;
+
+    c_bool PointUnderLine;
+    c_bool A_coef_negative,
+        B_coef_negative;
+    c_bool A_coef_zero,
+        B_coef_zero;
+    c_bool Y_fixed;    
+
+    return NewPosition;
+ }
