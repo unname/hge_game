@@ -86,7 +86,9 @@ void c_gameobject::Update(float delta)
         Velocity.y = 0;
         JumpImpulse = 0;
         OnTheGround.SetTrue();
-        isLanding.SetTrue();
+
+        if (Position.x == PreviousPosition.x)
+            isLanding.SetTrue();
     }
 
     //Если достигли верхней границы
@@ -120,7 +122,9 @@ void c_gameobject::Update(float delta)
             if ((GetIntersectBoundingBox().y2 == Platform->GetBoundingBox().y1) && (GetIntersectBoundingBox().x2 > Platform->GetBoundingBox().x1) && (GetIntersectBoundingBox().x1 < Platform->GetBoundingBox().x2))
             {
                 OnTheGround.SetTrue();
-                isLanding.SetTrue();
+
+                if (Position.x == PreviousPosition.x)
+                    isLanding.SetTrue();
             }
 
             //Если упераемся в левую стенку платформы

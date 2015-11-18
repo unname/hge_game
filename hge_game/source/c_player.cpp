@@ -39,7 +39,7 @@ c_player::c_player()
     Standing = new hgeAnimation(Texture, 3, 3, 0, 0, 100, 100);
     Running = new hgeAnimation(Texture, 6, 6, 300, 0, 100, 100);
     Braking = new hgeAnimation(Texture, 3, 9, 0, 100, 100, 100);
-    Jumping = new hgeAnimation(Texture, 2, 10, 300, 100, 100, 100);
+    Jumping = new hgeAnimation(Texture, 2, 7, 300, 100, 100, 100);
     Falling = new hgeAnimation(Texture, 1, 1, 500, 100, 100, 100);
     Landing = new hgeAnimation(Texture, 1, 1, 600, 100, 100, 100);
 
@@ -175,10 +175,13 @@ void c_player::Update(float delta)
         }
 
         Velocity.y -= JumpImpulse*delta;
+
+
     }
     else
     {
-        SpaceHoldDown.SetFalse();
+        if (OnTheGround.GetState())
+            SpaceHoldDown.SetFalse();
 
         //Если отпустили клавишу прыжка, импульс исчезает
         JumpImpulse = 0;

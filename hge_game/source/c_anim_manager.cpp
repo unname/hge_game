@@ -62,7 +62,10 @@ void c_anim_manager::Animate(std::string anim_name, float delta, hgeSprite*& spr
     //-------------------------------
 
     if (CurrentAnimation != it->second)
+    {
         CurrentAnimation->Stop();
+        CurrentAnimation->SetFrame(0);
+    }
 
     //Разворачиваем спрайт, если надо
     //(Предполагается что структуры 'moving' означает необходимость отражения)
@@ -78,7 +81,11 @@ void c_anim_manager::Animate(std::string anim_name, float delta, hgeSprite*& spr
     if (it->second->IsPlaying())
         it->second->Update(delta);
     else
-        it->second->Play();
+    {
+        //Нециклические анимации останавливаюстя на последнем кадре
+        if ((it->second->GetFrame() == 0) || (it->second->GetMode()&HGEANIM_LOOP))
+            it->second->Play();
+    }
 
     CurrentAnimation = it->second;
     sprite = it->second;
