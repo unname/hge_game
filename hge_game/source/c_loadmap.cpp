@@ -199,8 +199,6 @@ bool c_loadmap::LoadFromFile(string filename)
             int tileGID = atoi(Tiles->Attribute("gid"));
             int tileSetRectToUse = tileGID - firstTileID;
 
-            //Добавляем свойство "gid"
-            tile.properties.insert(std::pair<std::string, int>("gid", tileGID));
 
             //Присваиваем каждому тайлу свой Sprite и координаты hgeVector
             if (tileSetRectToUse >= 0)
@@ -208,16 +206,40 @@ bool c_loadmap::LoadFromFile(string filename)
                 hgeSprite* sprite = new hgeSprite(0, 0, 0, 0, 0);
                 sprite->SetTexture(tilesetImageTex);
                 sprite->SetTextureRect(tileSetRects[tileSetRectToUse].x1 + 0.5, tileSetRects[tileSetRectToUse].y1 + 0.5, tileWidth, tileHeight);
-                sprite->SetHotSpot(tileWidth/2, tileHeight/2);
+                sprite->SetHotSpot(tileWidth / 2, tileHeight / 2);
                 sprite->SetColor(ARGB(255, 255, 255, layer.opacity));
 
                 tile.tile_sprite_ptr = sprite;
 
                 hgeVector coord;
-                coord.x = tileHotSpot_X * tileWidth + tileWidth/2;
-                coord.y = tileHotSpot_Y * tileHeight + tileHeight/2;
+                coord.x = tileHotSpot_X * tileWidth + tileWidth / 2;
+                coord.y = tileHotSpot_Y * tileHeight + tileHeight / 2;
 
                 tile.tile_coord = coord;
+            }
+
+            //Заполняем различные свойста
+            tile.properties.insert(std::pair<std::string, int>("gid", tileGID));
+
+            if (tileGID)
+            {
+                if (Tiles->Attribute("tilt_type"))
+                {
+                    int tileTiltType = atoi(Tiles->Attribute("tilt_type"));
+                    tile.properties.insert(std::pair<std::string, int>("tilt_type", tileTiltType));
+                }
+
+                if (Tiles->Attribute("tilt_level"))
+                {
+                    int tileTiltLevel = atoi(Tiles->Attribute("tilt_level"));
+                    tile.properties.insert(std::pair<std::string, int>("tilt_level", tileTiltLevel));
+                }
+
+                if (Tiles->Attribute("tilt_number"))
+                {
+                    int tileTiltNumber = atoi(Tiles->Attribute("tilt_number"));
+                    tile.properties.insert(std::pair<std::string, int>("tilt_number", tileTiltNumber));
+                }
             }
 
             //Добавляем объект тайла к текущему слою
@@ -251,7 +273,57 @@ bool c_loadmap::LoadFromFile(string filename)
         {
             if (layers[layers_count].tiles[tiles_count].tile_sprite_ptr)
             {
-                c_platform* tile = new c_platform(layers[layers_count].tiles[tiles_count].tile_sprite_ptr, layers[layers_count].tiles[tiles_count].tile_coord);
+                //Проверяем есть ли наклон у платформы
+
+                c_platform* tile;
+
+                auto it = layers[layers_count].tiles[tiles_count].properties.find("tilt_type");
+
+                if (it == layers[layers_count].tiles[tiles_count].properties.end())
+                {
+                    //Обычная платформа
+                    tile = new c_platform(layers[layers_count].tiles[tiles_count].tile_sprite_ptr, layers[layers_count].tiles[tiles_count].tile_coord);
+                }
+                else
+                {
+                    if (it->second)
+                    {
+                        //Наклонная платформа
+                        int tilt_type = it->second;
+                        int tilt_level;
+                        int tilt_number;
+
+                        it = layers[layers_count].tiles[tiles_count].properties.find("tilt_level");
+                        if (it == layers[layers_count].tiles[tiles_count].properties.end())
+                        {
+                            std::string err_string;
+                            err_string += "Tile porperty not found: ";
+                            err_string += "\"tilt_level\"";
+
+                            DisplayError(err_string.c_str());
+                        }
+                        else
+                            tilt_level = it->second;
+
+                        it = layers[layers_count].tiles[tiles_count].properties.find("tilt_number");
+                        if (it == layers[layers_count].tiles[tiles_count].properties.end())
+                        {
+                            std::string err_string;
+                            err_string += "Tile porperty not found: ";
+                            err_string += "\"tilt_number\"";
+
+                            DisplayError(err_string.c_str());
+                        }
+                        else
+                            tilt_number = it->second;
+
+                        tile = new c_platform(layers[layers_count].tiles[tiles_count].tile_sprite_ptr, layers[layers_count].tiles[tiles_count].tile_coord, tilt_type, tilt_level, tilt_number);
+                    }
+                    else
+                        //Обычная платформа
+                        tile = new c_platform(layers[layers_count].tiles[tiles_count].tile_sprite_ptr, layers[layers_count].tiles[tiles_count].tile_coord);
+                }
+
                 layers[layers_count].tiles[tiles_count].tile_drawobject_ptr = tile;
             }
         }
