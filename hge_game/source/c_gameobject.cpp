@@ -115,40 +115,32 @@ void c_gameobject::Update(float delta)
             //Если пересекаемся, то обрабатываем столкновение и вычисляем новую позицию
             if (GetIntersectBoundingBox().Intersect(&Platform->GetBoundingBox()))
             {
-                hgeVector NewPostition = Position;
-
                 //Разделяем обычные (tilt_type = 0) и наклонные платформы
                 if (!Platform->TiltType)
-                    NewPostition = GetNewPosition_Rect(GetIntersectBoundingBox(), Platform->GetBoundingBox());
+                    Position = GetNewPosition_Rect(GetIntersectBoundingBox(), Platform->GetBoundingBox());
                 else
-                    NewPostition = GetNewPosition_Tilt(GetIntersectBoundingBox(), Platform->GetBoundingBox(), Platform->TiltType, Platform->TiltLevel, Platform->TiltNumber);
-            
-                //Если позиция изменилась (врезались в платформу), возможно нужно обновить некоторые параметры ?
-                if (NewPostition != Position)
-                {
-                    Position = NewPostition;
+                    Position = GetNewPosition_Tilt(GetIntersectBoundingBox(), Platform->GetBoundingBox(), Platform->TiltType, Platform->TiltLevel, Platform->TiltNumber);
+            }
 
-                    //Встали на наклонную платформу
-                    if ((Platform->TiltType > 0) && (Platform->GetBoundingBox().TestPoint(Position.x, Position.y + IntersectBoindingBoxSize.y)))
-                    {
-                        OnTheGround.SetTrue();
+            //Встали на наклонную платформу
+            if ((Platform->TiltType > 0) && (Platform->GetBoundingBox().TestPoint(Position.x, Position.y + IntersectBoindingBoxSize.y)))
+            {
+                OnTheGround.SetTrue();
 
-                        if (PreviousPosition.y < Position.y)
-                            isLanding.SetTrue();
-                    }
+                if (PreviousPosition.y < Position.y)
+                    isLanding.SetTrue();
+            }
 
-                    //Встали на обычную платформу
-                    if ((!Platform->TiltType) &&
-                        (GetIntersectBoundingBox().y2 == Platform->GetBoundingBox().y1) &&
-                        (GetIntersectBoundingBox().x2 > Platform->GetBoundingBox().x1) &&
-                        (GetIntersectBoundingBox().x1 < Platform->GetBoundingBox().x2))
-                    {
-                        OnTheGround.SetTrue();
+            //Встали на обычную платформу
+            if ((!Platform->TiltType) &&
+                (GetIntersectBoundingBox().y2 == Platform->GetBoundingBox().y1) &&
+                (GetIntersectBoundingBox().x2 > Platform->GetBoundingBox().x1) &&
+                (GetIntersectBoundingBox().x1 < Platform->GetBoundingBox().x2))
+            {
+                OnTheGround.SetTrue();
 
-                        if (PreviousPosition.y < Position.y)
-                            isLanding.SetTrue();
-                    }
-                }
+                if (PreviousPosition.y < Position.y)
+                    isLanding.SetTrue();
             }
 
             //Упераемся в левую стенку платформы
