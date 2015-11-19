@@ -1,20 +1,20 @@
 #include "c_loadmap.h"
 
 
-int Object::GetPropertyInt(string name)
-{
-    return atoi(properties[name].c_str());
-}
-
-float Object::GetPropertyFloat(std::string name)
-{
-    return (float) strtod(properties[name].c_str(), NULL);
-}
-
-std::string Object::GetPropertyString(std::string name)
-{
-    return properties[name];
-}
+//int Object::GetPropertyInt(string name)
+//{
+//    return atoi(properties[name].c_str());
+//}
+//
+//float Object::GetPropertyFloat(std::string name)
+//{
+//    return (float) strtod(properties[name].c_str(), NULL);
+//}
+//
+//std::string Object::GetPropertyString(std::string name)
+//{
+//    return properties[name];
+//}
 
 
 c_loadmap::c_loadmap(string map_file)
@@ -32,36 +32,34 @@ c_loadmap::~c_loadmap()
     for (size_t l_count = 0; l_count < layers.size(); l_count++)
         for (size_t t_count = 0; t_count < layers[l_count].tiles.size(); t_count++)
         {
-            delete layers[l_count].tiles[t_count];
+            delete layers[l_count].tiles[t_count].tile_drawobject_ptr;
+            delete layers[l_count].tiles[t_count].tile_sprite_ptr;
         }
-
-    for (size_t do_count = 0; do_count < tiles.size(); do_count++)
-        delete tiles[do_count];
 }
 
-Object* c_loadmap::GetObject(string name)
-{
-    for (size_t obj_num = 0; obj_num < objects.size(); obj_num++)
-    {
-        if (objects[obj_num]->name == name)
-            return objects[obj_num];
-    }
+//Object* c_loadmap::GetObject(string name)
+//{
+//    for (size_t obj_num = 0; obj_num < objects.size(); obj_num++)
+//    {
+//        if (objects[obj_num]->name == name)
+//            return objects[obj_num];
+//    }
+//
+//    return nullptr;
+//}
 
-    return nullptr;
-}
-
-vector<Object*> c_loadmap::GetObjects(string name)
-{
-    vector<Object*> vec = { nullptr };
-
-    for (size_t obj_num = 0; obj_num < objects.size(); obj_num++)
-    {
-        if (objects[obj_num]->name == name)
-            vec.push_back(objects[obj_num]);
-    }
-
-    return vec;
-}
+//vector<Object*> c_loadmap::GetObjects(string name)
+//{
+//    vector<Object*> vec = { nullptr };
+//
+//    for (size_t obj_num = 0; obj_num < objects.size(); obj_num++)
+//    {
+//        if (objects[obj_num]->name == name)
+//            vec.push_back(objects[obj_num]);
+//    }
+//
+//    return vec;
+//}
 
 hgeVector c_loadmap::GetTileSize()
 {
@@ -196,8 +194,13 @@ bool c_loadmap::LoadFromFile(string filename)
 
         while (Tiles)
         {
+            Tile tile;
+
             int tileGID = atoi(Tiles->Attribute("gid"));
             int tileSetRectToUse = tileGID - firstTileID;
+
+            //Добавляем свойство "gid"
+            tile.properties.insert(std::pair<std::string, int>("gid", tileGID));
 
             //Присваиваем каждому тайлу свой Sprite и координаты hgeVector
             if (tileSetRectToUse >= 0)
@@ -208,14 +211,17 @@ bool c_loadmap::LoadFromFile(string filename)
                 sprite->SetHotSpot(tileWidth/2, tileHeight/2);
                 sprite->SetColor(ARGB(255, 255, 255, layer.opacity));
 
-                layer.tiles.push_back(sprite);
+                tile.tile_sprite_ptr = sprite;
 
                 hgeVector coord;
                 coord.x = tileHotSpot_X * tileWidth + tileWidth/2;
                 coord.y = tileHotSpot_Y * tileHeight + tileHeight/2;
 
-                layer.tiles_coord.push_back(coord);
+                tile.tile_coord = coord;
             }
+
+            //Добавляем объект тайла к текущему слою
+            layer.tiles.push_back(tile);
 
             Tiles = Tiles->NextSiblingElement("tile");
 
@@ -243,8 +249,11 @@ bool c_loadmap::LoadFromFile(string filename)
     {
         for (size_t tiles_count = 0; tiles_count < layers[layers_count].tiles.size(); tiles_count++)
         {
-            c_platform* tile = new c_platform(layers[layers_count].tiles[tiles_count], layers[layers_count].tiles_coord[tiles_count]);
-            tiles.push_back(tile);
+            if (layers[layers_count].tiles[tiles_count].tile_sprite_ptr)
+            {
+                c_platform* tile = new c_platform(layers[layers_count].tiles[tiles_count].tile_sprite_ptr, layers[layers_count].tiles[tiles_count].tile_coord);
+                layers[layers_count].tiles[tiles_count].tile_drawobject_ptr = tile;
+            }
         }
     }
 

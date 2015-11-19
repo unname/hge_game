@@ -22,25 +22,27 @@
 using namespace tinyxml2;
 using namespace std;
 
-struct Object
+struct Tile
 {
-    int GetPropertyInt(string name);
-    float GetPropertyFloat(string name);
-    string GetPropertyString(string name);
+    //int GetPropertyInt(string name);
+    //float GetPropertyFloat(string name);
+    //string GetPropertyString(string name);
 
-    string name;
-    string type;
-    hgeRect rect;
-    map <string, string> properties;
+    //string name;
+    //string type;
+    //hgeRect rect;
 
-    hgeSprite* sprite;
+    map <string, int> properties;
+
+    hgeVector       tile_coord;
+    hgeSprite*      tile_sprite_ptr = nullptr;
+    c_drawobject*   tile_drawobject_ptr = nullptr;
 };
 
 struct Layer
 {
     int opacity;
-    vector<hgeSprite*>  tiles;
-    vector<hgeVector>   tiles_coord;
+    vector<Tile>  tiles;
 };
 
 
@@ -57,10 +59,10 @@ public:
     void Release();
 
     //Возвращает указатель на первый объект с указанным именем
-    Object* GetObject(string name);
+    Tile* GetObject(string name);
 
     //Возвращает список указателей на объекты с указанным именем
-    vector<Object*> GetObjects(string name);
+    vector<Tile*> GetObjects(string name);
 
     //Получаем размер карты
     hgeVector GetMapSize();
@@ -77,8 +79,6 @@ private:
     hgeRect         drawingBounds;
     HTEXTURE        tilesetImageTex;
 
-    vector<c_drawobject*> tiles;
-    vector<Object*>  objects;
     vector<Layer>   layers;
 };
 
