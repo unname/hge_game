@@ -87,7 +87,7 @@ void c_gameobject::Update(float delta)
         JumpImpulse = 0;
         OnTheGround.SetTrue();
 
-        if (Position.x == PreviousPosition.x)
+        if (PreviousPosition.y < Position.y)
             isLanding.SetTrue();
     }
 
@@ -115,25 +115,55 @@ void c_gameobject::Update(float delta)
             //Если пересекаемся, то обрабатываем столкновение и вычисляем новую позицию
             if (GetIntersectBoundingBox().Intersect(&Platform->GetBoundingBox()))
             {
-                Position = GetNewPosition_Rect(GetIntersectBoundingBox(), Platform->GetBoundingBox());
+                hgeVector NewPostition = Position;
+
+                //Разделяем обычные (tilt_type = 0) и наклонные платформы
+                if (!Platform->TiltType)
+                    NewPostition = GetNewPosition_Rect(GetIntersectBoundingBox(), Platform->GetBoundingBox());
+                else
+                    NewPostition = GetNewPosition_Tilt(GetIntersectBoundingBox(), Platform->GetBoundingBox(), Platform->TiltType, Platform->TiltLevel, Platform->TiltNumber);
+            
+                //Если позиция изменилась (врезались в платформу), возможно нужно обновить некоторые параметры ?
+                if (NewPostition != Position)
+                {
+                    Position = NewPostition;
+
+                    //Встали на наклонную платформу
+                    if ((Platform->TiltType > 0) && (Platform->GetBoundingBox().TestPoint(Position.x, Position.y + IntersectBoindingBoxSize.y)))
+                    {
+                        OnTheGround.SetTrue();
+
+                        if (PreviousPosition.y < Position.y)
+                            isLanding.SetTrue();
+                    }
+
+                    //Встали на обычную платформу
+                    if ((!Platform->TiltType) &&
+                        (GetIntersectBoundingBox().y2 == Platform->GetBoundingBox().y1) &&
+                        (GetIntersectBoundingBox().x2 > Platform->GetBoundingBox().x1) &&
+                        (GetIntersectBoundingBox().x1 < Platform->GetBoundingBox().x2))
+                    {
+                        OnTheGround.SetTrue();
+
+                        if (PreviousPosition.y < Position.y)
+                            isLanding.SetTrue();
+                    }
+                }
             }
 
-            //Если встали на платформу
-            if ((GetIntersectBoundingBox().y2 == Platform->GetBoundingBox().y1) && (GetIntersectBoundingBox().x2 > Platform->GetBoundingBox().x1) && (GetIntersectBoundingBox().x1 < Platform->GetBoundingBox().x2))
+            //Упераемся в левую стенку платформы
+            if ((Platform->TiltType == 0) || (Platform->TiltType == 3) || (Platform->TiltType == 4) || (Platform->TiltType == -1) || (Platform->TiltType == -2))
             {
-                OnTheGround.SetTrue();
-
-                if (Position.x == PreviousPosition.x)
-                    isLanding.SetTrue();
+                if ((GetIntersectBoundingBox().x2 == Platform->GetBoundingBox().x1) && (GetIntersectBoundingBox().y2 > Platform->GetBoundingBox().y1) && (GetIntersectBoundingBox().y1 < Platform->GetBoundingBox().y2))
+                    OnTheLeftWall.SetTrue();
             }
 
-            //Если упераемся в левую стенку платформы
-            if ((GetIntersectBoundingBox().x2 == Platform->GetBoundingBox().x1) && (GetIntersectBoundingBox().y2>Platform->GetBoundingBox().y1) && (GetIntersectBoundingBox().y1 < Platform->GetBoundingBox().y2))
-                OnTheLeftWall.SetTrue();
-
-            //Если упераемся в правую стенку платформы
-            if ((GetIntersectBoundingBox().x1 == Platform->GetBoundingBox().x2) && (GetIntersectBoundingBox().y2>Platform->GetBoundingBox().y1) && (GetIntersectBoundingBox().y1 < Platform->GetBoundingBox().y2))
-                OnTheRightWall.SetTrue();
+            //У упераемся в правую стенку платформы
+            if ((Platform->TiltType == 0) || (Platform->TiltType == 1) || (Platform->TiltType == 2) || (Platform->TiltType == -3) || (Platform->TiltType == -4))
+            {
+                if ((GetIntersectBoundingBox().x1 == Platform->GetBoundingBox().x2) && (GetIntersectBoundingBox().y2>Platform->GetBoundingBox().y1) && (GetIntersectBoundingBox().y1 < Platform->GetBoundingBox().y2))
+                    OnTheRightWall.SetTrue();
+            }
         }
     }
 
@@ -608,19 +638,100 @@ hgeVector c_gameobject::GetNewPosition_Rect(hgeRect BoundingBox1,hgeRect Boundin
 
 hgeVector c_gameobject::GetNewPosition_Tilt(hgeRect BoundingBox1, hgeRect BoundingBox2, int tilt_type, int tilt_level, int tilt_number)
 {
-    hgeVector A = PreviousPosition;
-    hgeVector B = Position;
-    hgeVector C;
+    hgeVector A1 = PreviousPosition;
+    hgeVector B1 = Position;
 
     hgeVector NewPosition(0, 0);
-    hgeVector SwapPosition;
 
-    c_bool PointUnderLine;
-    c_bool A_coef_negative,
-        B_coef_negative;
-    c_bool A_coef_zero,
-        B_coef_zero;
-    c_bool Y_fixed;    
+    //Смещаем точки, так как 'A1B1' - линия перемещения середины нижней или верхней границы спрайта, а не центра
+    float Size_y = (BoundingBox1.y2 - BoundingBox1.y1) / 2;
+
+    if (tilt_type > 0)
+    {
+        A1.y = A1.y + Size_y;
+        B1.y = B1.y + Size_y;
+
+        NewPosition.y -= Size_y;
+    }
+    else
+    {
+        A1.y = A1.y - Size_y;
+        B1.y = B1.y - Size_y;
+
+        NewPosition.y += Size_y;
+    }
+
+    // Общее уравнения прямых
+    // AB: (A.y - B.y)*X + (B.x - A.x)*Y + (A.x*B.y - B.x*A.y) = 0
+
+    //----------------------------------------------------------
+    //
+    //        Уравнение ската наклонного припятствия
+    //
+    //----------------------------------------------------------
+
+    hgeVector A2;
+    hgeVector B2;
+
+    c_game_values& game_values = c_game_values::getInstance();
+
+    switch (abs(tilt_type))
+    {
+    case 1:
+        A2.x = BoundingBox2.x1 - (tilt_number - 1)*game_values.GetTileSize().x;
+        A2.y = BoundingBox2.y2;
+        B2.x = BoundingBox2.x2 + (tilt_level - tilt_number)*game_values.GetTileSize().x;
+        B2.y = BoundingBox2.y1;
+        break;
+    case 2:
+        A2.x = BoundingBox2.x1;
+        A2.y = BoundingBox2.y2 + (tilt_number - 1)*game_values.GetTileSize().y;
+        B2.x = BoundingBox2.x2;
+        B2.y = BoundingBox2.y1 - (tilt_level - tilt_number)*game_values.GetTileSize().y;
+        break;
+    case 3:
+        A2.x = BoundingBox2.x1 - (tilt_number - 1)*game_values.GetTileSize().x;
+        A2.y = BoundingBox2.y1;
+        B2.x = BoundingBox2.x2 + (tilt_level - tilt_number)*game_values.GetTileSize().x;
+        B2.y = BoundingBox2.y2;
+        break;
+    case 4:
+        A2.x = BoundingBox2.x1;
+        A2.y = BoundingBox2.y1 - (tilt_number - 1)*game_values.GetTileSize().y;
+        B2.x = BoundingBox2.x2;
+        B2.y = BoundingBox2.y2 + (tilt_level - tilt_number)*game_values.GetTileSize().y;
+        break;
+    default:
+        break;
+    }
+
+    //Проверяем ниже ли точка B1 (текущая позиция) относительно прямой A2B2
+    //Так как ось Y инвертрована (отсчёт идёт сверху вниз),
+    //то значение больше нуля означает, что точка лежит под линией
+    //
+    //tilt_type / abs(tilt_type) = +1 or -1 - совмещает в одном условие пересечение снизу и сверху
+    if (((tilt_type / abs(tilt_type)) *(A2.y - B2.y)*B1.x + (B2.x - A2.x)*B1.y + (A2.x*B2.y - B2.x*A2.y)) > 0)
+    {
+        //Отсекаем пересечения с ненаклонными сторонами
+        //Предыдущая позиция (A1) с той же 'недопустимой' стороны линии, что и нынешняя
+        if (((tilt_type / abs(tilt_type)) *(A2.y - B2.y)*A1.x + (B2.x - A2.x)*A1.y + (A2.x*B2.y - B2.x*A2.y)) > 0)
+            return GetNewPosition_Rect(BoundingBox1, BoundingBox2);
+
+        // Перемещаем позицию в точку пересечения прямых
+        // A1B1: (A1.y - B1.y)*X + (B1.x - A1.x)*Y + (A1.x*B1.y - B1.x*A1.y) = 0
+        // A2B2: (A2.y - B2.y)*X + (B2.x - A2.x)*Y + (A2.x*B2.y - B2.x*A2.y) = 0
+        // X = - (C1*B2 - C2*B1) / (A1*B2 - A2*B1)
+        // Y = - (A1*C2 - A2*C1) / (A1*B2 - A2*B1)
+
+        NewPosition.x += -(((A1.x*B1.y - B1.x*A1.y)*(B2.x - A2.x) - (A2.x*B2.y - B2.x*A2.y)*(B1.x - A1.x)) / ((A1.y - B1.y)*(B2.x - A2.x) - (A2.y - B2.y)*(B1.x - A1.x)));
+        NewPosition.y += -(((A1.y - B1.y)*(A2.x*B2.y - B2.x*A2.y) - (A2.y - B2.y)*(A1.x*B1.y - B1.x*A1.y)) / ((A1.y - B1.y)*(B2.x - A2.x) - (A2.y - B2.y)*(B1.x - A1.x)));
+
+        Velocity.y = 0;
+        JumpImpulse = 0;
+    }
+    else
+        //Не меняем позицию, так как ещё ничего не пересекли
+        return  Position;
 
     return NewPosition;
  }

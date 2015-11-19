@@ -22,7 +22,6 @@
 using namespace tinyxml2;
 using namespace std;
 
-
 struct Object
 {
     int GetPropertyInt(string name);

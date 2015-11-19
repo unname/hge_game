@@ -15,8 +15,13 @@ public:
     c_bool TopBound;
     c_bool BottomBound;
 
+    int TiltType;
+    int TiltLevel;
+    int TiltNumber;
+
     c_platform(hgeSprite* sprite, hgeVector sprite_coord);
     c_platform(hgeSprite* sprite, hgeVector sprite_coord, bool left, bool right, bool top, bool bottom);
+    c_platform(hgeSprite* sprite, hgeVector sprite_coord, int tilt_type, int tilt_level, int tilt_number);
 };
 
 
