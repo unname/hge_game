@@ -32,7 +32,7 @@ struct Tile
     //string type;
     //hgeRect rect;
 
-    map <string, int> properties;
+    size_t id;
 
     hgeVector       tile_coord;
     hgeSprite*      tile_sprite_ptr = nullptr;
@@ -45,6 +45,13 @@ struct Layer
     vector<Tile>  tiles;
 };
 
+struct TileSet
+{
+    size_t firstgid;
+    size_t tilecount;
+
+    map <size_t, map<string, string>> properties;
+};
 
 class c_loadmap: public c_hge
 {
@@ -74,11 +81,13 @@ private:
     size_t          mapWidth, mapHeight,
                     tileWidth, tileHeight,
                     tileSetWidth, tileSetHeight;
-    size_t          firstTileID;
 
-    hgeRect         drawingBounds;
+    size_t          firstTileID;
+    vector<hgeRect> tileSetRects;
+
     HTEXTURE        tilesetImageTex;
 
+    TileSet         tileset;
     vector<Layer>   layers;
 };
 
