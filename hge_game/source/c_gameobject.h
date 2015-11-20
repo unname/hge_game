@@ -80,6 +80,11 @@ protected:
     //Для обработки пересечения с наклонным спрайтом
     hgeVector GetNewPosition_Tilt(hgeRect BoundingBox1, hgeRect BoundingBox2, int tilt_type, int tilt_level, int tilt_number);
 
+    //Проверяет стоим ли мы на склоне платформы
+    // point    - Position
+    // platform - указатель на платформу на которой стоим
+    bool TestPoint_Tilt(hgeVector point, c_platform &platform);
+
 public:
     c_gameobject();
 

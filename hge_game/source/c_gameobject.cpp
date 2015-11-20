@@ -123,7 +123,7 @@ void c_gameobject::Update(float delta)
             }
 
             //Встали на наклонную платформу
-            if ((Platform->TiltType > 0) && (Platform->GetBoundingBox().TestPoint(Position.x, Position.y + IntersectBoindingBoxSize.y)))
+            if ((Platform->TiltType > 0) && TestPoint_Tilt (Position, *Platform))
             {
                 OnTheGround.SetTrue();
 
@@ -131,8 +131,8 @@ void c_gameobject::Update(float delta)
                     isLanding.SetTrue();
             }
 
-            //Встали на обычную платформу
-            if ((!Platform->TiltType) &&
+            //Встали на обычную платформу или на наклонную с прямым верхом
+            if ((Platform->TiltType <= 0) &&
                 (GetIntersectBoundingBox().y2 == Platform->GetBoundingBox().y1) &&
                 (GetIntersectBoundingBox().x2 > Platform->GetBoundingBox().x1) &&
                 (GetIntersectBoundingBox().x1 < Platform->GetBoundingBox().x2))
@@ -727,3 +727,67 @@ hgeVector c_gameobject::GetNewPosition_Tilt(hgeRect BoundingBox1, hgeRect Boundi
 
     return NewPosition;
  }
+
+bool c_gameobject::TestPoint_Tilt(hgeVector position, c_platform &platform)
+{
+    //С - середина нижней границы спрайта, а не центра
+    hgeVector C = Position;
+    C.y = C.y + IntersectBoindingBoxSize.y;
+
+    // Общее уравнение прямой
+    // AB: (A.y - B.y)*X + (B.x - A.x)*Y + (A.x*B.y - B.x*A.y) = 0
+
+    hgeVector A;
+    hgeVector B;
+
+    c_game_values& game_values = c_game_values::getInstance();
+
+    int tilt_type       = platform.TiltType;
+    int tilt_level      = platform.TiltLevel;
+    int tilt_number     = platform.TiltNumber;
+    hgeRect BoundingBox = platform.GetBoundingBox();
+        
+    switch (abs(tilt_type))
+    {
+    case 1:
+        A.x = BoundingBox.x1 - (tilt_number - 1)*game_values.GetTileSize().x;
+        A.y = BoundingBox.y2;
+        B.x = BoundingBox.x2 + (tilt_level - tilt_number)*game_values.GetTileSize().x;
+        B.y = BoundingBox.y1;
+        break;
+    case 2:
+        A.x = BoundingBox.x1;
+        A.y = BoundingBox.y2 + (tilt_number - 1)*game_values.GetTileSize().y;
+        B.x = BoundingBox.x2;
+        B.y = BoundingBox.y1 - (tilt_level - tilt_number)*game_values.GetTileSize().y;
+        break;
+    case 3:
+        A.x = BoundingBox.x1 - (tilt_number - 1)*game_values.GetTileSize().x;
+        A.y = BoundingBox.y1;
+        B.x = BoundingBox.x2 + (tilt_level - tilt_number)*game_values.GetTileSize().x;
+        B.y = BoundingBox.y2;
+        break;
+    case 4:
+        A.x = BoundingBox.x1;
+        A.y = BoundingBox.y1 - (tilt_number - 1)*game_values.GetTileSize().y;
+        B.x = BoundingBox.x2;
+        B.y = BoundingBox.y2 + (tilt_level - tilt_number)*game_values.GetTileSize().y;
+        break;
+    default:
+        break;
+    }
+
+    //Проверяем что точка С (текущая нижняя позиция) находится на прямой AB (склон)
+    float Result = (A.y - B.y)*C.x + (B.x - A.x)*C.y + (A.x*B.y - B.x*A.y);
+    
+    //Сверяем с эпсилон (пусть бует 0.0001f)
+    const float eps = 0.0001f;
+
+    if (abs(Result) < eps)
+        Result = 0.0f;
+
+    if (Result == 0)
+        return true;
+    else
+        return false;
+}

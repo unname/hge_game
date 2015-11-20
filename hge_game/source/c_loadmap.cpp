@@ -313,7 +313,7 @@ bool c_loadmap::LoadFromFile(string filename)
                         if (it_p == it->second.end())
                         {
                             std::string err_string;
-                            err_string += "Tilted tile porperty not found: ";
+                            err_string += "Tilted tile property not found: ";
                             err_string += "\"tilt_level\"";
 
                             DisplayError(err_string.c_str());
@@ -325,7 +325,7 @@ bool c_loadmap::LoadFromFile(string filename)
                         if (it_p == it->second.end())
                         {
                             std::string err_string;
-                            err_string += "Tilted tile porperty not found: ";
+                            err_string += "Tilted tile property not found: ";
                             err_string += "\"tilt_number\"";
 
                             DisplayError(err_string.c_str());
