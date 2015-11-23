@@ -47,6 +47,9 @@ protected:
 
     float    g;
 
+    hgeVector TiltPoint1;
+    hgeVector TiltPoint2;
+
     c_bool  OnTheGround;
     c_bool  OnTheLeftWall;
     c_bool  OnTheRightWall;
@@ -55,6 +58,8 @@ protected:
     c_bool isBraking;
     //Приземлились после падения ?
     c_bool isLanding;
+    //Стоим на наклонной поверхности ?
+    c_bool isGroundTilted;
     
     //Так как кадры у разных анимаций разного размера, выделим общий кусок, по которому будем считать пересечения
     //Тогда края анимаций (для болших кадров) смогут накладываться на другие объекты

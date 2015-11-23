@@ -54,6 +54,7 @@ void c_gameobject::Update(float delta)
     OnTheRightWall.SetFalse();
 
     isLanding.SetFalse();
+    isGroundTilted.SetFalse();
 
     // ----------------------------------------
     //
@@ -119,11 +120,24 @@ void c_gameobject::Update(float delta)
                 if (!Platform->TiltType)
                     Position = GetNewPosition_Rect(GetIntersectBoundingBox(), Platform->GetBoundingBox());
                 else
-                    Position = GetNewPosition_Tilt(GetIntersectBoundingBox(), Platform->GetBoundingBox(), Platform->TiltType, Platform->TiltLevel, Platform->TiltNumber);
+                {
+                    //Стоим на наклонной платформе ?
+                    if ((Platform->TiltType > 0) && TestPoint_Tilt(Position, *Platform))
+                    {
+                        isGroundTilted.SetTrue();
+                    }
+
+                    //Если не стоим на наклонной поверхности, то получаем новую позицию.
+                    //Функция также устанавливает точки прямой и isGroundTilted, если встали.
+                    if (!isGroundTilted.GetState())
+                        Position = GetNewPosition_Tilt(GetIntersectBoundingBox(), Platform->GetBoundingBox(), Platform->TiltType, Platform->TiltLevel, Platform->TiltNumber);
+                }
             }
 
-            //Встали на наклонную платформу
-            if ((Platform->TiltType > 0) && TestPoint_Tilt (Position, *Platform))
+            //TODO: 'стоим' - наддо уменьшить количество проверяемых блоков, брыть только ближайшее (если только которые пересекаем корректно не работает)
+
+            //Стоим на наклонной платформе
+            if (isGroundTilted.GetState())
             {
                 OnTheGround.SetTrue();
 
@@ -131,7 +145,7 @@ void c_gameobject::Update(float delta)
                     isLanding.SetTrue();
             }
 
-            //Встали на обычную платформу или на наклонную с прямым верхом
+            //Стоим на обычной платформе или на наклонной с прямым верхом
             if ((Platform->TiltType <= 0) &&
                 (GetIntersectBoundingBox().y2 == Platform->GetBoundingBox().y1) &&
                 (GetIntersectBoundingBox().x2 > Platform->GetBoundingBox().x1) &&
@@ -720,6 +734,12 @@ hgeVector c_gameobject::GetNewPosition_Tilt(hgeRect BoundingBox1, hgeRect Boundi
 
         Velocity.y = 0;
         JumpImpulse = 0;
+
+        //Устанавливаем прямую по которой теперь будем перемещаться.
+        TiltPoint1 = A2;
+        TiltPoint1 = B2;
+
+        isGroundTilted.SetTrue();
     }
     else
         //Не меняем позицию, так как ещё ничего не пересекли
