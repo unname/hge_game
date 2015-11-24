@@ -781,7 +781,7 @@ hgeVector c_gameobject::GetNewPosition_Tilt(hgeRect BoundingBox1, hgeRect Boundi
 
         //”станавливаем пр€мую по которой теперь будем перемещатьс€.
         TiltPoint1 = A2;
-        TiltPoint1 = B2;
+        TiltPoint2 = B2;
 
         isGroundTilted.SetTrue();
     }
@@ -801,7 +801,7 @@ hgeVector c_gameobject::GetNewPosition_Tilt(hgeRect BoundingBox1, hgeRect Boundi
 
      L1 = abs(Velocity.x);
      L2 = sqrt(pow((PointToMove.x - Position.x), 2) + pow((PointToMove.y - Position.y), 2));
-     dL = L2 / L1;
+     dL = L1 / L2;
 
      NewPostion.x = (Position.x + dL*PointToMove.x) / (1 + dL);
      NewPostion.y = (Position.y + dL*PointToMove.y) / (1 + dL);
@@ -813,7 +813,7 @@ bool c_gameobject::TestPoint_Tilt(hgeVector position, c_platform &platform)
 {
     //— - середина нижней границы спрайта, а не центра
     hgeVector C = Position;
-    C.y = C.y + IntersectBoindingBoxSize.y;
+    C.y = C.y + IntersectBoindingBoxSize.y/2;
 
     // ќбщее уравнение пр€мой
     // AB: (A.y - B.y)*X + (B.x - A.x)*Y + (A.x*B.y - B.x*A.y) = 0
