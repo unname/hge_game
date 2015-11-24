@@ -24,7 +24,10 @@ void c_gameobject::Update(float delta)
     //Учёт силы трения земли
     Velocity.x *= GroundFriction;
     //Учёт силы трения воздуха
-    Velocity.y *= AirFriction;
+    if (!OnTheGround.GetState())
+        Velocity.y *= AirFriction;
+    else
+        Velocity.y *= GroundFriction;
 
     //Ограничение максимальной скорости
     if (Velocity.x>Max_Speed)   Velocity.x = Max_Speed;
@@ -39,8 +42,50 @@ void c_gameobject::Update(float delta)
     }
 
     // Промежуточная позиция после расчётов физики
-    Position.x += Velocity.x;
-    Position.y += Velocity.y;
+    if (!isGroundTilted.GetState())
+    {
+        //Обычное перемещение
+        Position.x += Velocity.x;
+        Position.y += Velocity.y;
+    }
+    else
+    {
+        //Перемещение по наклонной
+        if (Velocity.y == 0)
+        {
+            //Платформа со спуском 
+            if (TiltPoint1.y < TiltPoint2.y)
+            {
+                //Спуск
+                if (Velocity.x > 0)
+                {
+                    Position = GetNewPositionOnTiltLine(TiltPoint2);
+                }
+                //Подъём
+                else
+                {
+                    Position = GetNewPositionOnTiltLine(TiltPoint1);
+                }
+                
+            }
+
+            //Платформа с подъёмом
+            if (TiltPoint1.y > TiltPoint2.y)
+            {
+                //Спуск
+                if (Velocity.x < 0)
+                {
+                    Position = GetNewPositionOnTiltLine(TiltPoint1);
+                }
+                //Подъём
+                else
+                {
+                    Position = GetNewPositionOnTiltLine(TiltPoint2);
+                }
+            }
+        }
+
+    }
 
     // -------------------------------------
     //
@@ -126,10 +171,9 @@ void c_gameobject::Update(float delta)
                     {
                         isGroundTilted.SetTrue();
                     }
-
-                    //Если не стоим на наклонной поверхности, то получаем новую позицию.
-                    //Функция также устанавливает точки прямой и isGroundTilted, если встали.
-                    if (!isGroundTilted.GetState())
+                    else
+                        //Если не стоим на наклонной поверхности, то получаем новую позицию.
+                        //Функция также устанавливает точки прямой и isGroundTilted, если встали.
                         Position = GetNewPosition_Tilt(GetIntersectBoundingBox(), Platform->GetBoundingBox(), Platform->TiltType, Platform->TiltLevel, Platform->TiltNumber);
                 }
             }
@@ -208,7 +252,7 @@ void c_gameobject::Update(float delta)
     else
         Moving.NotMoving.SetFalse();
 
-    //Актальные значения скорости и позиции
+    //Актульные значения скорости и позиции
     PreviousVelocity = Velocity;
     PreviousPosition = Position;      
 
@@ -746,6 +790,23 @@ hgeVector c_gameobject::GetNewPosition_Tilt(hgeRect BoundingBox1, hgeRect Boundi
         return  Position;
 
     return NewPosition;
+ }
+
+ hgeVector c_gameobject::GetNewPositionOnTiltLine(hgeVector PointToMove)
+ {
+     hgeVector NewPostion;
+
+     float L1, L2;
+     float dL;
+
+     L1 = abs(Velocity.x);
+     L2 = sqrt(pow((PointToMove.x - Position.x), 2) + pow((PointToMove.y - Position.y), 2));
+     dL = L2 / L1;
+
+     NewPostion.x = (Position.x + dL*PointToMove.x) / (1 + dL);
+     NewPostion.y = (Position.y + dL*PointToMove.y) / (1 + dL);
+    
+     return NewPostion;
  }
 
 bool c_gameobject::TestPoint_Tilt(hgeVector position, c_platform &platform)

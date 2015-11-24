@@ -84,6 +84,8 @@ protected:
     hgeVector GetNewPosition_Rect(hgeRect BoundingBox1, hgeRect BoundingBox2);
     //Для обработки пересечения с наклонным спрайтом
     hgeVector GetNewPosition_Tilt(hgeRect BoundingBox1, hgeRect BoundingBox2, int tilt_type, int tilt_level, int tilt_number);
+    //Возвращает новую позицию пи пересечении по наклону
+    hgeVector GetNewPositionOnTiltLine(hgeVector PointToMove);
 
     //Проверяет стоим ли мы на склоне платформы
     // point    - Position
