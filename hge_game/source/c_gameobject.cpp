@@ -201,15 +201,19 @@ void c_gameobject::Update(float delta)
                     isLanding.SetTrue();
             }
 
+            //TODO: 
+            //Так будет работать только для наклонов с целым числом платформ (начинаются и заканчиваются в углах спрайта)
+            //Надо подумать как можно реалзиовать проверки, чтобы можно было использовать наклоны с неполным числом платформ
+
             //Упераемся в левую стенку платформы
-            if ((Platform->TiltType == 0) || (Platform->TiltType == 3) || (Platform->TiltType == 4) || (Platform->TiltType == -1) || (Platform->TiltType == -2))
+            if ((Platform->TiltType == 0) || (((Platform->TiltType == 3) || (Platform->TiltType == 4) || (Platform->TiltType == -1) || (Platform->TiltType == -2))&&(Platform->TiltNumber == 1)))
             {
                 if ((GetIntersectBoundingBox().x2 == Platform->GetBoundingBox().x1) && (GetIntersectBoundingBox().y2 > Platform->GetBoundingBox().y1) && (GetIntersectBoundingBox().y1 < Platform->GetBoundingBox().y2))
                     OnTheLeftWall.SetTrue();
             }
 
-            //У упераемся в правую стенку платформы
-            if ((Platform->TiltType == 0) || (Platform->TiltType == 1) || (Platform->TiltType == 2) || (Platform->TiltType == -3) || (Platform->TiltType == -4))
+            //Упераемся в правую стенку платформы
+            if ((Platform->TiltType == 0) || (((Platform->TiltType == 1) || (Platform->TiltType == 2) || (Platform->TiltType == -3) || (Platform->TiltType == -4))&&(Platform->TiltNumber == Platform->TiltLevel)))
             {
                 if ((GetIntersectBoundingBox().x1 == Platform->GetBoundingBox().x2) && (GetIntersectBoundingBox().y2>Platform->GetBoundingBox().y1) && (GetIntersectBoundingBox().y1 < Platform->GetBoundingBox().y2))
                     OnTheRightWall.SetTrue();
@@ -709,6 +713,12 @@ hgeVector c_gameobject::GetNewPosition_Tilt(hgeRect BoundingBox1, hgeRect Boundi
         B1.y = B1.y - Size_y;
 
         NewPosition.y += Size_y;
+    }
+
+    //Дальнейшие проверки только для платформы, на которую можем приземлиться
+    if (!BoundingBox2.TestPoint(B1.x,B1.y))
+    {
+        return Position;
     }
 
     // Общее уравнения прямых
