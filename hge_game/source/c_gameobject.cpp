@@ -166,8 +166,8 @@ void c_gameobject::Update(float delta)
                     Position = GetNewPosition_Rect(GetIntersectBoundingBox(), Platform->GetBoundingBox());
                 else
                 {
-                    //Стоим на наклонной платформе ?
-                    if ((Platform->TiltType > 0) && TestPoint_Tilt(Position, *Platform))
+                    //Стоим на наклонной платформе ? (услоявия: 1)наклонная 2)стоим 3)наклонная на которую можем встать, а не соседние
+                    if ((Platform->TiltType > 0) && TestPoint_Tilt(Position, *Platform) && (Platform->GetBoundingBox().TestPoint(Position.x, Position.y + IntersectBoindingBoxSize.y / 2)))
                     {
                         isGroundTilted.SetTrue();
                     }
@@ -804,19 +804,38 @@ hgeVector c_gameobject::GetNewPosition_Tilt(hgeRect BoundingBox1, hgeRect Boundi
 
  hgeVector c_gameobject::GetNewPositionOnTiltLine(hgeVector PointToMove)
  {
-     hgeVector NewPostion;
+     if (Velocity.x)
+     {
+         hgeVector NewPosition;
+         hgeVector IntersectPoint = Position;
 
-     float L1, L2;
-     float dL;
+         IntersectPoint.y   += IntersectBoindingBoxSize.y / 2;
+         NewPosition.y      -= IntersectBoindingBoxSize.y / 2;
 
-     L1 = abs(Velocity.x);
-     L2 = sqrt(pow((PointToMove.x - Position.x), 2) + pow((PointToMove.y - Position.y), 2));
-     dL = L1 / L2;
+         float L1, L2;
+         float dL;
 
-     NewPostion.x = (Position.x + dL*PointToMove.x) / (1 + dL);
-     NewPostion.y = (Position.y + dL*PointToMove.y) / (1 + dL);
-    
-     return NewPostion;
+         L1 = abs(Velocity.x);
+
+         hgeVector Length;
+         Length.x = PointToMove.x - IntersectPoint.x;
+         Length.y = PointToMove.y - IntersectPoint.y;
+
+         L2 = Length.Length();//sqrtf(powf((PointToMove.x - IntersectPoint.x), 2) + powf((PointToMove.y - IntersectPoint.y), 2));
+
+         if (L2)
+         {
+             dL = L1 / L2;
+             
+             NewPosition.x += (IntersectPoint.x + dL*PointToMove.x) / (1 + dL);
+             NewPosition.y += (IntersectPoint.y + dL*PointToMove.y) / (1 + dL);
+
+             return NewPosition;
+         }
+         else Position;
+     }
+     else
+        return Position;
  }
 
 bool c_gameobject::TestPoint_Tilt(hgeVector position, c_platform &platform)
@@ -872,9 +891,10 @@ bool c_gameobject::TestPoint_Tilt(hgeVector position, c_platform &platform)
     float Result = (A.y - B.y)*C.x + (B.x - A.x)*C.y + (A.x*B.y - B.x*A.y);
     
     //Сверяем с эпсилон (пусть бует 0.0001f)
-    const float eps = 0.0001f;
+    const float eps         = 0.0001f;
+    const float unknown_eps = 0.03125f;
 
-    if (abs(Result) < eps)
+    if (abs(Result) < eps || abs(Result) == unknown_eps)
         Result = 0.0f;
 
     if (Result == 0)
